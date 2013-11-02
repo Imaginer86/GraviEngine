@@ -172,6 +172,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\src\Box.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Camera.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Game.cpp"
 				>
 			</File>
@@ -190,6 +198,18 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\src\Box.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Camera.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Color.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Game.h"
 				>
 			</File>
@@ -198,7 +218,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\vector3D.h"
+				RelativePath="..\src\Vector3D.h"
 				>
 			</File>
 		</Filter>

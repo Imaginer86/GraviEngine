@@ -1,29 +1,13 @@
 #pragma once
-#include "vector3D.h"
-struct Color4f{
-	float r;
-	float g;
-	float b;
-	float a;
-};
+#include "Vector3D.h"
+#include "Color.h"
 class Mass
 {
 public:	
-	virtual ~Mass(void);
+	Mass(){}
+	virtual ~Mass(void){};
 
-	double m;
-	double r;
-	Color4f color;
-	Vector3D pos;
-	Vector3D vel;
-	Vector3D force;
-	
-
-	Mass()
-	{
-	}
-
-	Mass(double m, double r, Vector3D p, Vector3D v)								// Constructor
+	Mass(float m, float r, Vector3D p, Vector3D v)								// Constructor
 	{
 		this->m = m;
 		this->r = r;
@@ -37,7 +21,7 @@ public:
 	}
 
 
-	void Set(double m, double r, Vector3D p, Vector3D v, Color4f color)								// Constructor
+	void Set(float m, float r, Vector3D p, Vector3D v, Color4f color)								// Constructor
 	{
 		this->m = m;
 		this->r = r;
@@ -59,12 +43,32 @@ public:
 		force.z = 0;
 	}
 
-	void simulate(double dt)
+	void simulateForce(float dt)
 	{
 		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
 		// The change is proportinal with the acceleration (force / m) and change in time
 
-		pos += vel * dt;						// Change in position is added to the position.
+		//pos += vel * dt;						// Change in position is added to the position.
 		// Change in position is velocity times the change in time
 	}
+
+	void simuleteAcc(Vector3D acc, float dt)
+	{
+		this->vel += acc * dt;
+		
+	}
+
+	void update(float dt)
+	{
+		this->pos += this->vel * dt;
+	}
+
+
+//private:
+	float m;
+	float r;
+	Color4f color;
+	Vector3D pos;
+	Vector3D vel;
+	Vector3D force;
 };

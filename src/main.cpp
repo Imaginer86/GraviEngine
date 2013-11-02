@@ -2,11 +2,16 @@
 
 #include <gl\GL.h>
 #include <gl\GLU.h>
-#include <gl\glaux.h>
+//#include <gl\glaux.h>
 
 #include "Game.h"
+#include "Camera.h"
 
 #include <fstream>
+
+#define  _USE_MATH_DEFINES
+#include <math.h>
+
 
 HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
 HDC		hDC  = NULL;              // Приватный контекст устройства GDI
@@ -15,20 +20,112 @@ HINSTANCE  hInstance;              // Здесь будет хранится дескриптор приложения
 
 bool  keys[256];                // Массив, используемый для операций с клавиатурой
 bool  active = true;                // Флаг активности окна, установленный в true по умолчанию
-bool  fullscreen = true;              // Флаг режима окна, установленный в полноэкранный по умолчанию
+bool  fullscreen = false;              // Флаг режима окна, установленный в полноэкранный по умолчанию
+bool  pause = true;
 
-bool light;      // Свет ВКЛ / ВЫКЛ
-bool lp;         // L нажата?
+bool light = true;      // Свет ВКЛ / ВЫКЛ
+bool lp = false;         // L нажата?
+
+bool showDebugInfo = true;
+bool ld = false;
 
 Game mGame;
+Camera mCamera;
 
-GLUquadricObj *quadratic;
+float timeScale = 1.0f;
 
-GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f }; // Значения фонового света
+//mCamera.pos.z = -10;
+//mCamera.pos.x = -10;
+
+
+
+GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 0.0f }; // Значения фонового света
 GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 GLfloat LightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
 
+
+float fps = 0.0f;
+float ups = 0.0f;
+
+GLYPHMETRICSFLOAT gmf[256];	// Storage For Information About Our Outline Font Characters
+GLuint	base;				// Base Display List For The Font Set
+
+GLvoid BuildFont(GLvoid)								// Build Our Bitmap Font
+{
+	HFONT	font;										// Windows Font ID
+
+	base = glGenLists(256);								// Storage For 256 Characters
+
+	font = CreateFont(	
+		-20,							// Height Of Font
+		0,								// Width Of Font
+		0,								// Angle Of Escapement
+		0,								// Orientation Angle
+		FW_BOLD,						// Font Weight
+		TRUE,							// Italic
+		TRUE,							// Underline
+		TRUE,							// Strikeout
+		//SYMBOL_CHARSET,					// Character Set Identifier
+		ANSI_CHARSET,					// Character Set Identifier
+		OUT_TT_PRECIS,					// Output Precision
+		CLIP_DEFAULT_PRECIS,			// Clipping Precision
+		ANTIALIASED_QUALITY,			// Output Quality
+		FF_DONTCARE|DEFAULT_PITCH,		// Family And Pitch
+		//"Comic Sans MS"				// Font Name
+		"Arial"							// Font Name
+		);				
+
+	SelectObject(hDC, font);							// Selects The Font We Created
+
+	wglUseFontOutlines(	hDC,							// Select The Current DC
+		0,								// Starting Character
+		255,							// Number Of Display Lists To Build
+		base,							// Starting Display Lists
+		0.0f,							// Deviation From The True Outlines
+		0.1f,							// Font Thickness In The Z Direction
+		WGL_FONT_POLYGONS,			// Use Polygons, Not Lines
+		//WGL_FONT_LINES,					// Use Polygons, Not Lines
+		gmf);							// Address Of Buffer To Recieve Data
+}
+
+GLvoid KillFont(GLvoid)									// Delete The Font
+{
+	glDeleteLists(base, 256);								// Delete All 256 Characters
+}
+
+GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
+{
+	float		length=0;								// Used To Find The Length Of The Text
+	char		text[256];								// Holds Our String
+	va_list		ap;										// Pointer To List Of Arguments
+
+	if (fmt == NULL)									// If There's No Text
+		return;											// Do Nothing
+
+	va_start(ap, fmt);									// Parses The String For Variables
+	vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+	va_end(ap);											// Results Are Stored In Text
+
+	for (unsigned int loop=0;loop<(strlen(text));loop++)	// Loop To Find Text Length
+	{
+		length+=gmf[text[loop]].gmfCellIncX;			// Increase Length By Each Characters Width
+	}
+
+	glTranslatef(-length/2,0.0f,0.0f);					// Center Our Text On The Screen
+
+	glPushAttrib(GL_LIST_BIT);							// Pushes The Display List Bits
+	glListBase(base);									// Sets The Base Character to 0
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
+	glPopAttrib();										// Pops The Display List Bits
+}
+
+
 LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
+
+float ToDegree(float radian)
+{
+	return 180*radian/float(M_PI);
+}
 
 GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер и инициализировать окно GL
 {
@@ -43,13 +140,15 @@ GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер 
 	glLoadIdentity();              // Сброс матрицы проекции
 
 	// Вычисление соотношения геометрических размеров для окна
-	//gluPerspective( 45.0f, (GLfloat)width/(GLfloat)height, 0.1f, 100.0f );
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 10.0, 400.0);
 
-	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
-
-	glTranslatef(0.0f, 0.0f, -60.0f);
-	//glLoadIdentity();              // Сброс матрицы вида модели
+// 	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
+// 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
+// 		mCamera.pos.x, mCamera.pos.y, mCamera.pos.z + 50, 
+// 		0, 100, 0);
+// 
+// 	//glTranslatef(0.0f, 0.0f, -60.0f);
+// 	glLoadIdentity();              // Сброс матрицы вида модели
 }
 
 int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
@@ -60,26 +159,49 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	glEnable( GL_DEPTH_TEST );            // Разрешить тест глубины
 	glDepthFunc( GL_LEQUAL );            // Тип теста глубины
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // Улучшение в вычислении перспективы
-	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);    // Установка Фонового Света
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);    // Установка Диффузного Света
-	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);   // Позиция света
-	glEnable(GL_LIGHT1); // Разрешение источника света номер один
+	glEnable(GL_COLOR_MATERIAL);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);    // Установка Фонового Света
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);    // Установка Диффузного Света
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);   // Позиция света
+	if (light)
+		glEnable(GL_LIGHTING);
+
+	glEnable(GL_LIGHT0); // Разрешение источника света номер один
+
+	BuildFont();										// Build The Font
+
 	return true;                // Инициализация прошла успешно
 }
 
-int DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисовка
+
+float temp_angle = 0.0f;
+
+bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисовка
 {
-	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // Очистить экран и буфер глубины
-	//glLoadIdentity();              // Сбросить текущую матрицу
-	//return true;                // Прорисовка прошла успешно
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLUquadricObj *quadratic;
+	quadratic = gluNewQuadric();
+	//gluQuadricDrawStyle(quadratic, GLU_LINE);
+	gluQuadricDrawStyle(quadratic, GLU_FILL);
+	gluQuadricNormals(quadratic, GLU_SMOOTH);			// Create Smooth Normals (NEW)
 
-	// Reset the modelview matrix
-	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
 
-	GLenum light = GL_LIGHT0;
-	for(int i = 0; i < mGame.numOfMasses; i++) {
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // Очистить экран и буфер глубины	
+	glMatrixMode(GL_MODELVIEW);								// Выбор матрицы вида модели
+	glLoadIdentity();              // Сбросить текущую матрицу
+
+ 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
+ 		mCamera.pos.x, mCamera.pos.y, mCamera.pos.z + 50, 
+ 		0, 1, 0);
+	
+	
+	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
+	//glRotatef(mCamera.angle.x, 1, 0, 0);
+	//glRotatef(mCamera.angle.y, 0, 1, 0);
+	//glRotatef(mCamera.angle.z, 0, 0, 1);
+	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
+
+	//GLenum light = GL_LIGHT0;
+	for(int i = 0; i < mGame.numMasses; i++) {
 		glPushMatrix();
 		glTranslatef(mGame.masses[i].pos.x, mGame.masses[i].pos.y, mGame.masses[i].pos.z);
 
@@ -94,11 +216,145 @@ int DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисов
 // 		}              
 
 		glColor3f(mGame.masses[i].color.r, mGame.masses[i].color.g, mGame.masses[i].color.b);
-		gluSphere(quadratic, mGame.masses[i].r, 32,32);
+		gluSphere(quadratic, mGame.masses[i].r, 32, 32);
 
 // 		if (mGame.masses[i].isLight)
 // 			glEnable(GL_LIGHTING);
 
+		glPopMatrix();
+	}
+
+
+	
+	for(int i = 0; i < mGame.numBoxs; i++) {
+		glPushMatrix();
+		Vector3D pos = mGame.boxes[i].pos;
+		Vector3D size = mGame.boxes[i].size;
+		Vector3D angle = mGame.boxes[i].angle;
+		Color4f color = mGame.boxes[i].color;
+
+		glTranslatef(pos.x, pos.y, pos.z);
+		glRotatef(angle.x, 1, 0, 0);
+		glRotatef(angle.y, 0, 1, 0);
+		glRotatef(angle.z, 0, 0, 1);
+
+		glColor3f(color.r, color.g, color.b);
+
+		glBegin(GL_QUADS);       // Начало рисования четырехугольников
+		// Передняя грань
+		//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 1 (Перед)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Перед)
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Перед)
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Перед)
+		// Задняя грань
+		//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Зад)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Зад)
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 3 (Зад)
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Зад)
+		// Верхняя грань
+// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
+// 		glVertex3f(-1.0f,  1.0f, -1.0f); // Точка 1 (Верх)
+// 		glVertex3f(-1.0f,  1.0f,  1.0f); // Точка 2 (Верх)
+// 		glVertex3f( 1.0f,  1.0f,  1.0f); // Точка 3 (Верх)
+// 		glVertex3f( 1.0f,  1.0f, -1.0f); // Точка 4 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
+
+		// Нижняя грань
+		//glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
+		// Правая грань
+		//glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
+		// Левая грань
+		//glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
+		glEnd();
+
+		glPopMatrix();
+	}
+
+// 	for (int i = 0; i < mGame.numLines; i++)
+// 	{
+// 		glPushMatrix();
+// 		Vector3D h = mGame.lines[i].pos2 - mGame.lines[i].pos1;
+// 		Vector3D h_u = h.unit();
+// 		//glTranslatef(mGame.lines[i].pos1.x, mGame.lines[i].pos1.y, mGame.lines[i].pos1.z);
+// 
+// 		float angle_x = atan2(h.y, h.z);
+// 		angle_x = ToDegree(angle_x);
+// 
+// 		float angle_y = atan2(h.x, h.z);
+// 		angle_y = ToDegree(angle_y);
+// 
+// 		float angle_z = atan2(h.x, h.y);
+// 		angle_z = ToDegree(angle_z);
+// 
+// 		//glRotatef(-45, 1, 0, 0);
+// 		//glRotatef(45, 0, 1, 0);		
+// 		//glRotatef(45, 0, 0, 1);
+// 
+// 		glRotatef(temp_angle, 1, 1, 0);
+// 		//glTranslatef(10, 0, 0);
+// 		//glRotatef(temp_angle, 1, 1, 0);
+// 		
+// 		//glRotatef(90, 0, 1, 0);
+// 		temp_angle += 0.5;
+// 
+// 		glColor3f(mGame.lines[i].color.r, mGame.lines[i].color.g, mGame.lines[i].color.b );
+// 		gluCylinder(quadratic, mGame.lines[i].r, mGame.lines[i].r, h.length(), 32, 32);
+// 		//gluDisk(quadratic, 0, mGame.lines[i].r, 32, 32);
+// 
+// 		glBegin(GL_LINES);
+// 		glColor3f(1, 0, 0);
+// 		glVertex3f(0, 0, 0);
+// 		glVertex3f(0, 0, h.length());
+// 		glEnd();
+// 
+// 		glColor3f(0, 1, 0);
+// 		glTranslatef(0, 0, h.length());
+// 		gluSphere(quadratic, mGame.lines[i].r , 32, 32);
+// 
+// 		
+// 		glPopMatrix();		
+// 	}
+
+	gluDeleteQuadric(quadratic);
+
+
+	if (showDebugInfo)
+	{
+		glColor3f(1, 1, 1);
+		glPushMatrix();
+			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.5f, mCamera.pos.z+10);
+			glRotatef(180, 0, 1, 0);
+			glScalef(0.2f, 0.2f, 0.2f);
+			glPrint("FPS: %2.2f", fps);						// Print GL Text To The Screen
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.3f, mCamera.pos.z+10);
+			glRotatef(180, 0, 1, 0);
+			glScalef(0.2f, 0.2f, 0.2f);
+			glPrint("UPS: %2.2f", ups);						// Print GL Text To The Screen
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.1f, mCamera.pos.z+10);
+			glRotatef(180, 0, 1, 0);
+			glScalef(0.2f, 0.2f, 0.2f);
+			glPrint("Time Scale: %2.2f", timeScale);						// Print GL Text To The Screen
 		glPopMatrix();
 	}
 
@@ -139,6 +395,8 @@ GLvoid KillGLWindow( GLvoid )              // Корректное разрушение окна
 		MessageBox( NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		hInstance = NULL;                // Установить hInstance в NULL
 	}
+	
+	KillFont();
 }
 
 BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscreenflag )
@@ -308,22 +566,37 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 
 BOOL LoadData() {
 
+	
+
 	std::ifstream dataFile("data.dat", std::ios::in);	
 	if ( !dataFile )
 		return FALSE;
 
 	float timeScale = 0.0f, distanceScale = 0.0f, gravi = 0.0f, radiusEarth = 0.0f;
+
+	Vector3D cameraPos, cameraAngle;
+
+	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
+		>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
+	mCamera.pos = cameraPos;
+	mCamera.angle = cameraAngle;
+
+	Vector3D graviAcc;
+
+	dataFile >> graviAcc.x >> graviAcc.y >> graviAcc.z;
+	mGame.SetGraviAcc(graviAcc);
+
 	int numMass = 0;
 
 	dataFile >>  numMass;
 
-	mGame.SetSize(numMass);
+	mGame.SetNumMasses(numMass);
 
-	for (int i = 0; i < numMass; i++) {
-		float m = 0.0f, r =0.0f,
-			posx = 0.0f, posy = 0.0f, posz = 0.0f, 
-			velx = 0.0f, vely = 0.0f, velz = 0.0f;
-		bool isLight = false;
+	for(int i = 0; i < numMass; i++) {
+		float m = 0.0f, r = 0.0f,
+		posx = 0.0f, posy = 0.0f, posz = 0.0f, 
+		velx = 0.0f, vely = 0.0f, velz = 0.0f;
+		//bool isLight = false;
 		Color4f color = {0.0f, 0.0f, 0.0f, 0.0f};
 		dataFile >> m >> r 
 			>> posx >> posy >> posz 
@@ -331,6 +604,36 @@ BOOL LoadData() {
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
 		mGame.SetMass(i, m, r, Vector3D(posx, posy, posz), Vector3D(velx, vely, velz), /*isLight,*/ color);        
+	}
+
+	int numBoxs = 0;
+	dataFile >> numBoxs;
+
+	mGame.SetNumBoxes(numBoxs);
+	for(int i = 0; i < numBoxs; i++) {
+		float m = 0.0;
+		Vector3D pos, size, angle;
+		Color4f color;
+		dataFile >> m 
+			>> pos.x >> pos.y >> pos.z
+			>> size.x >> size.y >> size.z
+			>> angle.x >> angle.y >> angle.z
+			>> color.r >> color.g >> color.b >> color.a;
+		mGame.SetBox(i, m, pos, size, angle, color);
+	}
+
+	int numLines = 0;
+	dataFile >> numLines;
+	mGame.SetNumLines(numLines);
+	for(int i = 0; i < numLines; i++) {
+		float m = 0.0f, r = 0.0f;
+		Vector3D pos1, pos2;
+		Color4f color;
+		dataFile >> m >> r
+			>> pos1.x >> pos1.y >> pos1.z
+			>> pos2.x >> pos2.y >> pos2.z
+			>> color.r >> color.g >> color.b >> color.a;
+		mGame.SetLine(i, m, r, pos1, pos2, color);
 	}
 
 	dataFile.close();
@@ -398,16 +701,16 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 				   int    nCmdShow )        // Состояние отображения окна
 {
 	MSG  msg;              // Структура для хранения сообщения Windows
-	BOOL  done = false;            // Логическая переменная для выхода из цикла
+	bool  done = false;            // Логическая переменная для выхода из цикла
 
 	DWORD tickCount = 0;
 	DWORD lastTickCount = 0;
 
 	// Спрашивает пользователя, какой режим экрана он предпочитает
-	if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
-	{
-		fullscreen = false;          // Оконный режим
-	}
+	//if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
+	//{
+		//fullscreen = false;          // Оконный режим
+	//
 	// Создать наше OpenGL окно
 	if( !CreateGLWindow( "NeHe OpenGL окно", 1024, 768, 32, fullscreen ) )
 	{
@@ -419,11 +722,10 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 		return 0;													// Return False (Failure)
 	}
 
-	quadratic = gluNewQuadric();
-	gluQuadricNormals(quadratic, GLU_SMOOTH);			// Create Smooth Normals (NEW)
-
 
 	lastTickCount = GetTickCount ();							// Get Tick Count
+	static float framesPerSecond = 0.0f	;
+	static float lastTime = 0.0f;
 
 	while( !done )                // Цикл продолжается, пока done не равно true
 	{
@@ -450,14 +752,29 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 				}
 				else            // Не время для выхода, обновим экран.
 				{
-					tickCount = GetTickCount();				// Get The Tick Count						
-					mGame.Update(float (tickCount - lastTickCount)/1000.0f );
+					if (keys[VK_SPACE]) {
+						pause = !pause;
+						keys[VK_SPACE] = false;
+					}
+					tickCount = GetTickCount();				// Get The Tick Count
+					if (!pause) {						
+						mGame.Update(timeScale*float(tickCount - lastTickCount)/1000.0f );
+					}
+					
+					framesPerSecond++;
+					float currentTime = tickCount*0.001f;
+					if ((currentTime - lastTime) > 1.0f)
+					{
+						lastTime = currentTime;
+						fps = framesPerSecond;
+						framesPerSecond = 0.0f;
+					}
 					lastTickCount = tickCount;			// Set Last Count To Current Count
 					DrawGLScene();        // Рисуем сцену
 					SwapBuffers( hDC );    // Меняем буфер (двойная буферизация)
 					if (keys['L'] && !lp) // Клавиша 'L' нажата и не удерживается?
 					{
-						lp=TRUE;      // lp присвоили TRUE
+						lp=true;      // lp присвоили TRUE
 						light=!light; // Переключение света TRUE/FALSE
 						if (!light)               // Если не свет
 						{
@@ -470,7 +787,7 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 					}
 					if (!keys['L']) // Клавиша 'L' Отжата?
 					{
-						lp=FALSE;      // Если так, то lp равно FALSE
+						lp=false;      // Если так, то lp равно FALSE
 					}
 
 				}
@@ -485,9 +802,72 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 				{
 					return 0;        // Выходим, если это невозможно
 				}
+			} 
+			if( keys[VK_RIGHT]) {
+				if (keys[VK_SHIFT])
+					mCamera.angle.y += 1.0f;
+				else
+					mCamera.angle.y += 0.1f;				
 			}
+			if( keys[VK_LEFT]) {
+				if (keys[VK_SHIFT])
+					mCamera.angle.y -= 1.0f;
+				else
+					mCamera.angle.y -= 0.1f;
+			}
+			if( keys[VK_UP]) {
+				if (keys[VK_SHIFT])
+					mCamera.angle.x += 1.0f;
+				else
+					mCamera.angle.x += 0.1f;
+			}
+			if( keys[VK_DOWN]) {
+				if (keys[VK_SHIFT])
+					mCamera.angle.x -= 1.0f;
+				else
+					mCamera.angle.x -= 0.1f;
+			}
+			if( keys['W']) {
+				if (keys[VK_SHIFT])
+					mCamera.pos.z += 1.0f;
+				else
+					mCamera.pos.z += 0.1f;
+			}
+			if( keys['S']) {
+				if (keys[VK_SHIFT])
+					mCamera.pos.z -= 1.0f;
+				else
+					mCamera.pos.z -= 0.1f;
+			}
+			if( keys['A']) {
+				if (keys[VK_SHIFT])
+					mCamera.pos.x += 1.0f;
+				else
+					mCamera.pos.x += 0.1f;
+			}
+			if( keys['D']) {
+				if (keys[VK_SHIFT])
+					mCamera.pos.x -= 1.0f;
+
+				else
+					mCamera.pos.x -= 0.1f;
+			}
+			if (keys[VK_TAB] && !ld)
+			{
+				ld = true;
+				showDebugInfo = !showDebugInfo;
+			}
+			if (!keys[VK_TAB])
+				ld = false;
+			if (keys[VK_ADD])
+				timeScale += 0.01f;
+			if (keys[VK_SUBTRACT])
+				timeScale -= 0.01f;
+			if (keys['0'])
+				timeScale = 1.0f;
 		}
 	}
+
 	// Shutdown
 	KillGLWindow();                // Разрушаем окно
 	return ( msg.wParam );              // Выходим из программы

@@ -121,7 +121,6 @@ GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 
 
 LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
-
 float ToDegree(float radian)
 {
 	return 180*radian/float(M_PI);
@@ -171,6 +170,210 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	BuildFont();										// Build The Font
 
 	return true;                // Инициализация прошла успешно
+}
+
+
+GLvoid KillGLWindow( GLvoid )              // Корректное разрушение окна
+{
+	if( fullscreen )              // Мы в полноэкранном режиме?
+	{
+		ChangeDisplaySettings( NULL, 0 );        // Если да, то переключаемся обратно в оконный режим
+		ShowCursor( true );            // Показать курсор мышки
+	}
+	if( hRC )                // Существует ли Контекст Рендеринга?
+	{
+		if( !wglMakeCurrent( NULL, NULL ) )        // Возможно ли освободить RC и DC?
+		{
+			MessageBox( NULL, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
+		}
+		if( !wglDeleteContext( hRC ) )        // Возможно ли удалить RC?
+		{
+			MessageBox( NULL, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
+		}
+		hRC = NULL;              // Установить RC в NULL
+	}
+	if( hDC && !ReleaseDC( hWnd, hDC ) )          // Возможно ли уничтожить DC?
+	{
+		MessageBox( NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
+		hDC=NULL;                // Установить DC в NULL
+	}
+	if(hWnd && !DestroyWindow(hWnd))            // Возможно ли уничтожить окно?
+	{
+		MessageBox( NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
+		hWnd = NULL;                // Установить hWnd в NULL
+	}
+	if( !UnregisterClass( "OpenGL", hInstance ) )        // Возможно ли разрегистрировать класс
+	{
+		MessageBox( NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+		hInstance = NULL;                // Установить hInstance в NULL
+	}
+
+	KillFont();
+}
+
+BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscreenflag )
+{
+	GLuint    PixelFormat;              // Хранит результат после поиска
+	WNDCLASS  wc;                // Структура класса окна
+	DWORD    dwExStyle;              // Расширенный стиль окна
+	DWORD    dwStyle;              // Обычный стиль окна
+
+	RECT WindowRect;                // Grabs Rectangle Upper Left / Lower Right Values
+	WindowRect.left=(long)0;              // Установить левую составляющую в 0
+	WindowRect.right=(long)width;              // Установить правую составляющую в Width
+	WindowRect.top=(long)0;                // Установить верхнюю составляющую в 0
+	WindowRect.bottom=(long)height;              // Установить нижнюю составляющую в Height
+
+	fullscreen=fullscreenflag;              // Устанавливаем значение глобальной переменной fullscreen
+
+	hInstance    = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
+	wc.style    = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
+	wc.lpfnWndProc    = (WNDPROC) WndProc;          // Процедура обработки сообщений
+	wc.cbClsExtra    = 0;              // Нет дополнительной информации для окна
+	wc.cbWndExtra    = 0;              // Нет дополнительной информации для окна
+	wc.hInstance    = hInstance;            // Устанавливаем дескриптор
+	wc.hIcon    = LoadIcon(NULL, IDI_WINLOGO);        // Загружаем иконку по умолчанию
+	wc.hCursor    = LoadCursor(NULL, IDC_ARROW);        // Загружаем указатель мышки
+	wc.hbrBackground  = NULL;              // Фон не требуется для GL
+	wc.lpszMenuName    = NULL;              // Меню в окне не будет
+	wc.lpszClassName  = "OpenGL";            // Устанавливаем имя классу
+
+	if( !RegisterClass( &wc ) )              // Пытаемся зарегистрировать класс окна
+	{
+		MessageBox( NULL, "Failed To Register The Window Class.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Выход и возвращение функцией значения false
+	}
+
+	if( fullscreen )                // Полноэкранный режим?
+	{
+		DEVMODE dmScreenSettings;            // Режим устройства
+		memset( &dmScreenSettings, 0, sizeof( dmScreenSettings ) );    // Очистка для хранения установок
+		dmScreenSettings.dmSize=sizeof( dmScreenSettings );      // Размер структуры Devmode
+		dmScreenSettings.dmPelsWidth  =   width;        // Ширина экрана
+		dmScreenSettings.dmPelsHeight  =   height;        // Высота экрана
+		dmScreenSettings.dmBitsPerPel  =   bits;        // Глубина цвета
+		dmScreenSettings.dmFields= DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;// Режим Пикселя
+
+		// Пытаемся установить выбранный режим и получить результат.  Примечание: CDS_FULLSCREEN убирает панель управления.
+		if( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
+		{
+			// Если переключение в полноэкранный режим невозможно, будет предложено два варианта: оконный режим или выход.
+			if( MessageBox( NULL, "The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?",
+				"NeHe GL", MB_YESNO | MB_ICONEXCLAMATION) == IDYES )
+			{
+				fullscreen = false;          // Выбор оконного режима (fullscreen = false)
+			}
+			else
+			{
+				// Выскакивающее окно, сообщающее пользователю о закрытие окна.
+				MessageBox( NULL, "Program Will Now Close.", "ERROR", MB_OK | MB_ICONSTOP );
+				return false;            // Выход и возвращение функцией false
+			}
+		}
+	}
+	if(fullscreen)                  // Мы остались в полноэкранном режиме?
+	{
+		dwExStyle  =   WS_EX_APPWINDOW;          // Расширенный стиль окна
+		dwStyle    =   WS_POPUP;            // Обычный стиль окна
+		ShowCursor( false );              // Скрыть указатель мышки
+	}
+	else
+	{
+		dwExStyle  =   WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;      // Расширенный стиль окна
+		dwStyle    =   WS_OVERLAPPEDWINDOW;        // Обычный стиль окна
+	}
+
+	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );      // Подбирает окну подходящие размеры
+
+	if( !( hWnd = CreateWindowEx(  dwExStyle,          // Расширенный стиль для окна
+		("OpenGL"),          // Имя класса
+		title,            // Заголовок окна
+		WS_CLIPSIBLINGS |        // Требуемый стиль для окна
+		WS_CLIPCHILDREN |        // Требуемый стиль для окна
+		dwStyle,          // Выбираемые стили для окна
+		0, 0,            // Позиция окна
+		WindowRect.right-WindowRect.left,    // Вычисление подходящей ширины
+		WindowRect.bottom-WindowRect.top,    // Вычисление подходящей высоты
+		NULL,            // Нет родительского
+		NULL,            // Нет меню
+		hInstance,          // Дескриптор приложения
+		NULL ) ) )          // Не передаём ничего до WM_CREATE (???)
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	static  PIXELFORMATDESCRIPTOR pfd=            // pfd сообщает Windows каким будет вывод на экран каждого пикселя
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),            // Размер дескриптора данного формата пикселей
+		1,                  // Номер версии
+		PFD_DRAW_TO_WINDOW |              // Формат для Окна
+		PFD_SUPPORT_OPENGL |              // Формат для OpenGL
+		PFD_DOUBLEBUFFER,              // Формат для двойного буфера
+		PFD_TYPE_RGBA,                // Требуется RGBA формат
+		bits,                  // Выбирается бит глубины цвета
+		0, 0, 0, 0, 0, 0,              // Игнорирование цветовых битов
+		0,                  // Нет буфера прозрачности
+		0,                  // Сдвиговый бит игнорируется
+		0,                  // Нет буфера накопления
+		0, 0, 0, 0,                // Биты накопления игнорируются
+		32,                  // 32 битный Z-буфер (буфер глубины)
+		0,                  // Нет буфера трафарета
+		0,                  // Нет вспомогательных буферов
+		PFD_MAIN_PLANE,                // Главный слой рисования
+		0,                  // Зарезервировано
+		0, 0, 0                  // Маски слоя игнорируются
+	};
+
+	if( !( hDC = GetDC( hWnd ) ) )              // Можем ли мы получить Контекст Устройства?
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Can't Create A GL Device Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	if( !( PixelFormat = ChoosePixelFormat( hDC, &pfd ) ) )        // Найден ли подходящий формат пикселя?
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	if( !SetPixelFormat( hDC, PixelFormat, &pfd ) )          // Возможно ли установить Формат Пикселя?
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	if( !( hRC = wglCreateContext( hDC ) ) )          // Возможно ли установить Контекст Рендеринга?
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		return false;                // Вернуть false
+	}
+
+	if( !wglMakeCurrent( hDC, hRC ) )            // Попробовать активировать Контекст Рендеринга
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	ShowWindow( hWnd, SW_SHOW );              // Показать окно
+	SetForegroundWindow( hWnd );              // Слегка повысим приоритет
+	SetFocus( hWnd );                // Установить фокус клавиатуры на наше окно
+	ReSizeGLScene( width, height );              // Настроим перспективу для нашего OpenGL экрана.
+
+	if( !InitGL() )                  // Инициализация только что созданного окна
+	{
+		KillGLWindow();                // Восстановить экран
+		MessageBox( NULL, ("Initialization Failed."), ("ERROR"), MB_OK | MB_ICONEXCLAMATION );
+		return false;                // Вернуть false
+	}
+
+	return true;                  // Всё в порядке!
 }
 
 
@@ -361,209 +564,6 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 	return true;
 }
 
-GLvoid KillGLWindow( GLvoid )              // Корректное разрушение окна
-{
-	if( fullscreen )              // Мы в полноэкранном режиме?
-	{
-		ChangeDisplaySettings( NULL, 0 );        // Если да, то переключаемся обратно в оконный режим
-		ShowCursor( true );            // Показать курсор мышки
-	}
-	if( hRC )                // Существует ли Контекст Рендеринга?
-	{
-		if( !wglMakeCurrent( NULL, NULL ) )        // Возможно ли освободить RC и DC?
-		{
-			MessageBox( NULL, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		}
-		if( !wglDeleteContext( hRC ) )        // Возможно ли удалить RC?
-		{
-			MessageBox( NULL, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		}
-		hRC = NULL;              // Установить RC в NULL
-	}
-	if( hDC && !ReleaseDC( hWnd, hDC ) )          // Возможно ли уничтожить DC?
-	{
-		MessageBox( NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		hDC=NULL;                // Установить DC в NULL
-	}
-	if(hWnd && !DestroyWindow(hWnd))            // Возможно ли уничтожить окно?
-	{
-		MessageBox( NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		hWnd = NULL;                // Установить hWnd в NULL
-	}
-	if( !UnregisterClass( "OpenGL", hInstance ) )        // Возможно ли разрегистрировать класс
-	{
-		MessageBox( NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		hInstance = NULL;                // Установить hInstance в NULL
-	}
-	
-	KillFont();
-}
-
-BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscreenflag )
-{
-	GLuint    PixelFormat;              // Хранит результат после поиска
-	WNDCLASS  wc;                // Структура класса окна
-	DWORD    dwExStyle;              // Расширенный стиль окна
-	DWORD    dwStyle;              // Обычный стиль окна
-
-	RECT WindowRect;                // Grabs Rectangle Upper Left / Lower Right Values
-	WindowRect.left=(long)0;              // Установить левую составляющую в 0
-	WindowRect.right=(long)width;              // Установить правую составляющую в Width
-	WindowRect.top=(long)0;                // Установить верхнюю составляющую в 0
-	WindowRect.bottom=(long)height;              // Установить нижнюю составляющую в Height
-
-	fullscreen=fullscreenflag;              // Устанавливаем значение глобальной переменной fullscreen
-
-	hInstance    = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
-	wc.style    = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
-	wc.lpfnWndProc    = (WNDPROC) WndProc;          // Процедура обработки сообщений
-	wc.cbClsExtra    = 0;              // Нет дополнительной информации для окна
-	wc.cbWndExtra    = 0;              // Нет дополнительной информации для окна
-	wc.hInstance    = hInstance;            // Устанавливаем дескриптор
-	wc.hIcon    = LoadIcon(NULL, IDI_WINLOGO);        // Загружаем иконку по умолчанию
-	wc.hCursor    = LoadCursor(NULL, IDC_ARROW);        // Загружаем указатель мышки
-	wc.hbrBackground  = NULL;              // Фон не требуется для GL
-	wc.lpszMenuName    = NULL;              // Меню в окне не будет
-	wc.lpszClassName  = "OpenGL";            // Устанавливаем имя классу
-
-	if( !RegisterClass( &wc ) )              // Пытаемся зарегистрировать класс окна
-	{
-		MessageBox( NULL, "Failed To Register The Window Class.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Выход и возвращение функцией значения false
-	}
-
-	if( fullscreen )                // Полноэкранный режим?
-	{
-		DEVMODE dmScreenSettings;            // Режим устройства
-		memset( &dmScreenSettings, 0, sizeof( dmScreenSettings ) );    // Очистка для хранения установок
-		dmScreenSettings.dmSize=sizeof( dmScreenSettings );      // Размер структуры Devmode
-		dmScreenSettings.dmPelsWidth  =   width;        // Ширина экрана
-		dmScreenSettings.dmPelsHeight  =   height;        // Высота экрана
-		dmScreenSettings.dmBitsPerPel  =   bits;        // Глубина цвета
-		dmScreenSettings.dmFields= DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;// Режим Пикселя
-
-		// Пытаемся установить выбранный режим и получить результат.  Примечание: CDS_FULLSCREEN убирает панель управления.
-		if( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
-		{
-			// Если переключение в полноэкранный режим невозможно, будет предложено два варианта: оконный режим или выход.
-			if( MessageBox( NULL, "The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?",
-				"NeHe GL", MB_YESNO | MB_ICONEXCLAMATION) == IDYES )
-			{
-				fullscreen = false;          // Выбор оконного режима (fullscreen = false)
-			}
-			else
-			{
-				// Выскакивающее окно, сообщающее пользователю о закрытие окна.
-				MessageBox( NULL, "Program Will Now Close.", "ERROR", MB_OK | MB_ICONSTOP );
-				return false;            // Выход и возвращение функцией false
-			}
-		}
-	}
-	if(fullscreen)                  // Мы остались в полноэкранном режиме?
-	{
-		dwExStyle  =   WS_EX_APPWINDOW;          // Расширенный стиль окна
-		dwStyle    =   WS_POPUP;            // Обычный стиль окна
-		ShowCursor( false );              // Скрыть указатель мышки
-	}
-	else
-	{
-		dwExStyle  =   WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;      // Расширенный стиль окна
-		dwStyle    =   WS_OVERLAPPEDWINDOW;        // Обычный стиль окна
-	}
-
-	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );      // Подбирает окну подходящие размеры
-
-	if( !( hWnd = CreateWindowEx(  dwExStyle,          // Расширенный стиль для окна
-		("OpenGL"),          // Имя класса
-		title,            // Заголовок окна
-		WS_CLIPSIBLINGS |        // Требуемый стиль для окна
-		WS_CLIPCHILDREN |        // Требуемый стиль для окна
-		dwStyle,          // Выбираемые стили для окна
-		0, 0,            // Позиция окна
-		WindowRect.right-WindowRect.left,    // Вычисление подходящей ширины
-		WindowRect.bottom-WindowRect.top,    // Вычисление подходящей высоты
-		NULL,            // Нет родительского
-		NULL,            // Нет меню
-		hInstance,          // Дескриптор приложения
-		NULL ) ) )          // Не передаём ничего до WM_CREATE (???)
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	static  PIXELFORMATDESCRIPTOR pfd=            // pfd сообщает Windows каким будет вывод на экран каждого пикселя
-	{
-		sizeof(PIXELFORMATDESCRIPTOR),            // Размер дескриптора данного формата пикселей
-		1,                  // Номер версии
-		PFD_DRAW_TO_WINDOW |              // Формат для Окна
-		PFD_SUPPORT_OPENGL |              // Формат для OpenGL
-		PFD_DOUBLEBUFFER,              // Формат для двойного буфера
-		PFD_TYPE_RGBA,                // Требуется RGBA формат
-		bits,                  // Выбирается бит глубины цвета
-		0, 0, 0, 0, 0, 0,              // Игнорирование цветовых битов
-		0,                  // Нет буфера прозрачности
-		0,                  // Сдвиговый бит игнорируется
-		0,                  // Нет буфера накопления
-		0, 0, 0, 0,                // Биты накопления игнорируются
-		32,                  // 32 битный Z-буфер (буфер глубины)
-		0,                  // Нет буфера трафарета
-		0,                  // Нет вспомогательных буферов
-		PFD_MAIN_PLANE,                // Главный слой рисования
-		0,                  // Зарезервировано
-		0, 0, 0                  // Маски слоя игнорируются
-	};
-
-	if( !( hDC = GetDC( hWnd ) ) )              // Можем ли мы получить Контекст Устройства?
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Can't Create A GL Device Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	if( !( PixelFormat = ChoosePixelFormat( hDC, &pfd ) ) )        // Найден ли подходящий формат пикселя?
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	if( !SetPixelFormat( hDC, PixelFormat, &pfd ) )          // Возможно ли установить Формат Пикселя?
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	if( !( hRC = wglCreateContext( hDC ) ) )          // Возможно ли установить Контекст Рендеринга?
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		return false;                // Вернуть false
-	}
-
-	if( !wglMakeCurrent( hDC, hRC ) )            // Попробовать активировать Контекст Рендеринга
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	ShowWindow( hWnd, SW_SHOW );              // Показать окно
-	SetForegroundWindow( hWnd );              // Слегка повысим приоритет
-	SetFocus( hWnd );                // Установить фокус клавиатуры на наше окно
-	ReSizeGLScene( width, height );              // Настроим перспективу для нашего OpenGL экрана.
-
-	if( !InitGL() )                  // Инициализация только что созданного окна
-	{
-		KillGLWindow();                // Восстановить экран
-		MessageBox( NULL, ("Initialization Failed."), ("ERROR"), MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
-	}
-
-	return true;                  // Всё в порядке!
-}
-
 BOOL LoadData() {
 
 	
@@ -695,6 +695,112 @@ LRESULT CALLBACK WndProc(  HWND  hWnd,            // Дескриптор нужного окна
 	// пересылаем все необработанные сообщения DefWindowProc
 	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }
+
+void UpdateKeys()
+{
+	if (keys[VK_SPACE]) {
+		pause = !pause;
+		keys[VK_SPACE] = false;
+	}
+	if (keys['L'] && !lp) // Клавиша 'L' нажата и не удерживается?
+	{
+		lp=true;      // lp присвоили TRUE
+		light=!light; // Переключение света TRUE/FALSE
+		if (!light)               // Если не свет
+		{
+			glDisable(GL_LIGHTING);  // Запрет освещения
+		}
+		else                      // В противном случае
+		{
+			glEnable(GL_LIGHTING);   // Разрешить освещение
+		}
+	}
+	if (!keys['L']) // Клавиша 'L' Отжата?
+	{
+		lp=false;      // Если так, то lp равно FALSE
+	}
+
+	if( keys[VK_F1] )          // Была ли нажата F1?
+	{
+		keys[VK_F1] = false;        // Если так, меняем значение ячейки массива на false
+		KillGLWindow();          // Разрушаем текущее окно
+		fullscreen = !fullscreen;      // Переключаем режим
+		// Пересоздаём наше OpenGL окно
+		if( !CreateGLWindow( ("NeHe OpenGL структура"), 1024, 768, 32, fullscreen ) )
+		{
+			//return 0;        // Выходим, если это невозможно
+		}
+	} 
+	if( keys[VK_F5])
+	{
+		keys[VK_F5] = false;
+		mGame.release();
+		LoadData();
+	}
+	if( keys[VK_RIGHT]) {
+		if (keys[VK_SHIFT])
+			mCamera.angle.y += 1.0f;
+		else
+			mCamera.angle.y += 0.1f;				
+	}
+	if( keys[VK_LEFT]) {
+		if (keys[VK_SHIFT])
+			mCamera.angle.y -= 1.0f;
+		else
+			mCamera.angle.y -= 0.1f;
+	}
+	if( keys[VK_UP]) {
+		if (keys[VK_SHIFT])
+			mCamera.angle.x += 1.0f;
+		else
+			mCamera.angle.x += 0.1f;
+	}
+	if( keys[VK_DOWN]) {
+		if (keys[VK_SHIFT])
+			mCamera.angle.x -= 1.0f;
+		else
+			mCamera.angle.x -= 0.1f;
+	}
+	if( keys['W']) {
+		if (keys[VK_SHIFT])
+			mCamera.pos.z += 1.0f;
+		else
+			mCamera.pos.z += 0.1f;
+	}
+	if( keys['S']) {
+		if (keys[VK_SHIFT])
+			mCamera.pos.z -= 1.0f;
+		else
+			mCamera.pos.z -= 0.1f;
+	}
+	if( keys['A']) {
+		if (keys[VK_SHIFT])
+			mCamera.pos.x += 1.0f;
+		else
+			mCamera.pos.x += 0.1f;
+	}
+	if( keys['D']) {
+		if (keys[VK_SHIFT])
+			mCamera.pos.x -= 1.0f;
+
+		else
+			mCamera.pos.x -= 0.1f;
+	}
+	if (keys[VK_TAB] && !ld)
+	{
+		ld = true;
+		showDebugInfo = !showDebugInfo;
+	}
+	if (!keys[VK_TAB])
+		ld = false;
+	if (keys[VK_ADD])
+		timeScale += 0.01f;
+	if (keys[VK_SUBTRACT])
+		timeScale -= 0.01f;
+	if (keys['0'])
+		timeScale = 1.0f;
+}
+
 int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 				   HINSTANCE  hPrevInstance,        // Дескриптор родительского приложения
 				   LPSTR    lpCmdLine,        // Параметры командной строки
@@ -746,125 +852,34 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 			// Прорисовываем сцену.
 			if( active )          // Активна ли программа?
 			{
-				if(keys[VK_ESCAPE])        // Было ли нажата клавиша ESC?
+				//else            // Не время для выхода, обновим экран.
 				{
-					done = true;      // ESC говорит об останове выполнения программы
-				}
-				else            // Не время для выхода, обновим экран.
-				{
-					if (keys[VK_SPACE]) {
-						pause = !pause;
-						keys[VK_SPACE] = false;
-					}
-					tickCount = GetTickCount();				// Get The Tick Count
-					if (!pause) {						
-						mGame.Update(timeScale*float(tickCount - lastTickCount)/1000.0f );
-					}
-					
-					framesPerSecond++;
-					float currentTime = tickCount*0.001f;
-					if ((currentTime - lastTime) > 1.0f)
+					//--------------------------------
 					{
-						lastTime = currentTime;
-						fps = framesPerSecond;
-						framesPerSecond = 0.0f;
-					}
-					lastTickCount = tickCount;			// Set Last Count To Current Count
-					DrawGLScene();        // Рисуем сцену
-					SwapBuffers( hDC );    // Меняем буфер (двойная буферизация)
-					if (keys['L'] && !lp) // Клавиша 'L' нажата и не удерживается?
-					{
-						lp=true;      // lp присвоили TRUE
-						light=!light; // Переключение света TRUE/FALSE
-						if (!light)               // Если не свет
+						tickCount = GetTickCount();				// Get The Tick Count
+						if (!pause) {						
+							mGame.Update(timeScale*float(tickCount - lastTickCount)/1000.0f );
+						} 					
+						framesPerSecond++;
+						float currentTime = tickCount*0.001f;
+						if ((currentTime - lastTime) > 1.0f)
 						{
-							glDisable(GL_LIGHTING);  // Запрет освещения
+							lastTime = currentTime;
+							fps = framesPerSecond;
+							framesPerSecond = 0.0f;
 						}
-						else                      // В противном случае
-						{
-							glEnable(GL_LIGHTING);   // Разрешить освещение
-						}
-					}
-					if (!keys['L']) // Клавиша 'L' Отжата?
-					{
-						lp=false;      // Если так, то lp равно FALSE
+						lastTickCount = tickCount;			// Set Last Count To Current Count
+						DrawGLScene();        // Рисуем сцену
+						SwapBuffers( hDC );    // Меняем буфер (двойная буферизация)
 					}
 
+					if(keys[VK_ESCAPE])        // Было ли нажата клавиша ESC?
+					{
+						done = true;      // ESC говорит об останове выполнения программы
+					}
+					UpdateKeys();
 				}
 			}
-			if( keys[VK_F1] )          // Была ли нажата F1?
-			{
-				keys[VK_F1] = false;        // Если так, меняем значение ячейки массива на false
-				KillGLWindow();          // Разрушаем текущее окно
-				fullscreen = !fullscreen;      // Переключаем режим
-				// Пересоздаём наше OpenGL окно
-				if( !CreateGLWindow( ("NeHe OpenGL структура"), 1024, 768, 32, fullscreen ) )
-				{
-					return 0;        // Выходим, если это невозможно
-				}
-			} 
-			if( keys[VK_RIGHT]) {
-				if (keys[VK_SHIFT])
-					mCamera.angle.y += 1.0f;
-				else
-					mCamera.angle.y += 0.1f;				
-			}
-			if( keys[VK_LEFT]) {
-				if (keys[VK_SHIFT])
-					mCamera.angle.y -= 1.0f;
-				else
-					mCamera.angle.y -= 0.1f;
-			}
-			if( keys[VK_UP]) {
-				if (keys[VK_SHIFT])
-					mCamera.angle.x += 1.0f;
-				else
-					mCamera.angle.x += 0.1f;
-			}
-			if( keys[VK_DOWN]) {
-				if (keys[VK_SHIFT])
-					mCamera.angle.x -= 1.0f;
-				else
-					mCamera.angle.x -= 0.1f;
-			}
-			if( keys['W']) {
-				if (keys[VK_SHIFT])
-					mCamera.pos.z += 1.0f;
-				else
-					mCamera.pos.z += 0.1f;
-			}
-			if( keys['S']) {
-				if (keys[VK_SHIFT])
-					mCamera.pos.z -= 1.0f;
-				else
-					mCamera.pos.z -= 0.1f;
-			}
-			if( keys['A']) {
-				if (keys[VK_SHIFT])
-					mCamera.pos.x += 1.0f;
-				else
-					mCamera.pos.x += 0.1f;
-			}
-			if( keys['D']) {
-				if (keys[VK_SHIFT])
-					mCamera.pos.x -= 1.0f;
-
-				else
-					mCamera.pos.x -= 0.1f;
-			}
-			if (keys[VK_TAB] && !ld)
-			{
-				ld = true;
-				showDebugInfo = !showDebugInfo;
-			}
-			if (!keys[VK_TAB])
-				ld = false;
-			if (keys[VK_ADD])
-				timeScale += 0.01f;
-			if (keys[VK_SUBTRACT])
-				timeScale -= 0.01f;
-			if (keys['0'])
-				timeScale = 1.0f;
 		}
 	}
 

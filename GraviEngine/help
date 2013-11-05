@@ -1,3 +1,11 @@
+CameraPos
+CameraAngle
+
+LightAmbient
+LightDiffuse
+LightPosition
+
+GraveAcc
 numMas
 
 m

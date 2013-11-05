@@ -4,14 +4,12 @@
 #include <gl\GLU.h>
 //#include <gl\glaux.h>
 
-#include "Game.h"
-#include "Camera.h"
-
 #include <fstream>
-
 #define  _USE_MATH_DEFINES
 #include <math.h>
 
+#include "Game.h"
+#include "Camera.h"	
 
 HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
 HDC		hDC  = NULL;              // Приватный контекст устройства GDI
@@ -34,12 +32,7 @@ Camera mCamera;
 
 float timeScale = 1.0f;
 
-//mCamera.pos.z = -10;
-//mCamera.pos.x = -10;
-
-
-
-GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 0.0f }; // Значения фонового света
+GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f }; // Значения фонового света
 GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 GLfloat LightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
 
@@ -150,6 +143,15 @@ GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер 
 // 	glLoadIdentity();              // Сброс матрицы вида модели
 }
 
+void SetLight()
+{
+	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);    // Установка Фонового Света
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);    // Установка Диффузного Света
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);   // Позиция света
+	glEnable(GL_LIGHT0); // Разрешение источника света номер один
+	if (light)
+		glEnable(GL_LIGHTING);
+}
 int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
 {
 	glShadeModel( GL_SMOOTH );            // Разрешить плавное цветовое сглаживание
@@ -159,13 +161,10 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	glDepthFunc( GL_LEQUAL );            // Тип теста глубины
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // Улучшение в вычислении перспективы
 	glEnable(GL_COLOR_MATERIAL);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);    // Установка Фонового Света
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);    // Установка Диффузного Света
-	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);   // Позиция света
-	if (light)
-		glEnable(GL_LIGHTING);
 
-	glEnable(GL_LIGHT0); // Разрешение источника света номер один
+	SetLight();
+
+	
 
 	BuildFont();										// Build The Font
 
@@ -572,7 +571,6 @@ BOOL LoadData() {
 	if ( !dataFile )
 		return FALSE;
 
-	float timeScale = 0.0f, distanceScale = 0.0f, gravi = 0.0f, radiusEarth = 0.0f;
 
 	Vector3D cameraPos, cameraAngle;
 
@@ -580,6 +578,10 @@ BOOL LoadData() {
 		>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
 	mCamera.pos = cameraPos;
 	mCamera.angle = cameraAngle;
+
+	dataFile >> LightAmbient[0] >> LightAmbient[1] >> LightAmbient[2] >> LightAmbient[3];
+	dataFile >> LightDiffuse[0] >> LightDiffuse[1] >> LightDiffuse[2] >> LightDiffuse[3];
+	dataFile >> LightPosition[0] >> LightPosition[1] >> LightPosition[2] >> LightPosition[3];
 
 	Vector3D graviAcc;
 
@@ -680,6 +682,7 @@ void UpdateKeys()
 		keys[VK_F5] = false;
 		mGame.release();
 		LoadData();
+		SetLight();
 	}
 	if( keys[VK_RIGHT]) {
 		if (keys[VK_SHIFT])
@@ -818,16 +821,19 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 	//{
 		//fullscreen = false;          // Оконный режим
 	//
+
+	if (!LoadData()) {
+		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
+		return 0;													// Return False (Failure)
+	}
+
 	// Создать наше OpenGL окно
 	if( !CreateGLWindow( "NeHe OpenGL окно", 1024, 768, 32, fullscreen ) )
 	{
 		return 0;              // Выйти, если окно не может быть создано
 	}
 
-	if (!LoadData()) {
-		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
-		return 0;													// Return False (Failure)
-	}
+
 
 
 	lastTickCount = GetTickCount ();							// Get Tick Count

@@ -2,7 +2,7 @@
 
 #include <gl\GL.h>
 #include <gl\GLU.h>
-//#include <gl\glaux.h>
+#include "gl\glaux.h"
 
 #include <fstream>
 #define  _USE_MATH_DEFINES

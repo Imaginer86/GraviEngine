@@ -66,10 +66,13 @@ void Game::SetGraviAcc(Vector3D graviAcc)
 
 void Game::Update( float dt )
 {
-	//this->operate(dt);
+	this->operate(dt);
 
 
-	
+		
+	//return;
+
+
 	for(int i = 0; i < numMasses; i++)
 	{
 		//this->masses[i].init();
@@ -155,34 +158,34 @@ Vector3D Game::GraviForce( int a, int b )
 
 
 
-// void Game::init() /* this method will call the init() method of every mass */
-// {
-// 	for (int a = 0; a < numMasses; ++a)		// We will init() every mass
-// 		masses[a].init();						// call init() method of the mass
-// }
-// 
-// void Game::solve() /* no implementation because no forces are wanted in this basic container */
-// {
-// 	for(int a = 0; a < numMasses; a++)
-// 		for(int b = 0; b < numMasses; b++)
-// 		{
-// 			if(a!=b) masses[a].applyForce(GraviForce(a,b));
-// 		}
-// 		// in advanced containers, this method will be overrided and some forces will act on masses
-// }
-// 
-// void Game::simulate( float dt ) /* Iterate the masses by the change in time */
-// {
-// 	for (int a = 0; a < numMasses; ++a)		// We will iterate every mass
-// 		masses[a].simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
-// }
-// 
-// void Game::operate( float dt ) /* The complete procedure of simulation */
-// {
-// 	init();										// Step 1: reset forces to zero
-// 	solve();									// Step 2: apply forces
-// 	simulate(dt);								// Step 3: iterate the masses by the change in time
-// }
+void Game::init() /* this method will call the init() method of every mass */
+{
+for (int a = 0; a < numMasses; ++a)		// We will init() every mass
+masses[a].init();						// call init() method of the mass
+}
+
+void Game::solve() /* no implementation because no forces are wanted in this basic container */
+{
+for(int a = 0; a < numMasses; a++)
+for(int b = 0; b < numMasses; b++)
+{
+if(a!=b) masses[a].applyForce(GraviForce(a,b));
+}
+// in advanced containers, this method will be overrided and some forces will act on masses
+}
+
+void Game::simulate( float dt ) /* Iterate the masses by the change in time */
+{
+for (int a = 0; a < numMasses; ++a)		// We will iterate every mass
+masses[a].simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
+}
+
+void Game::operate( float dt ) /* The complete procedure of simulation */
+{
+	init();										// Step 1: reset forces to zero
+	solve();									// Step 2: apply forces
+	simulate(dt);								// Step 3: iterate the masses by the change in time
+}
 
 
 

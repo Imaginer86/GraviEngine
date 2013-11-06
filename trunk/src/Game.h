@@ -32,10 +32,10 @@ public:
 	Vector3D GraviForce(int a, int b);
 	virtual void release();							// delete the masses created;
 
-// 	virtual void init();								// this method will call the init() method of every mass;
-// 	virtual void solve();							// no implementation because no forces are wanted in this basic container;
-// 	virtual void simulate(float dt);					// Iterate the masses by the change in time;
-// 	virtual void operate(float dt);				// The complete procedure of simulation;
+ 	virtual void init();								// this method will call the init() method of every mass;
+ 	virtual void solve();							// no implementation because no forces are wanted in this basic container;
+ 	virtual void simulate(float dt);					// Iterate the masses by the change in time;
+ 	virtual void operate(float dt);				// The complete procedure of simulation;
 
 
 //private:

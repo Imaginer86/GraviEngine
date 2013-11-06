@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="GraviEngine"
 	ProjectGUID="{D725BC2B-CB4D-4655-9F7A-0F1DA9DB360F}"
 	RootNamespace="GraviEngine"
@@ -62,6 +62,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="OpenGL32.lib GLu32.lib GLaux.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="D:\Work\Lab\GraviEngine\src\gl"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -191,6 +192,10 @@
 				RelativePath="..\src\Mass.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\VectorField.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -219,6 +224,10 @@
 			</File>
 			<File
 				RelativePath="..\src\Vector3D.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VectorField.h"
 				>
 			</File>
 		</Filter>

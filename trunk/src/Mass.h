@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3D.h"
+#include "Quaternion.h"
 #include "Color.h"
 class Mass
 {

@@ -173,27 +173,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\src\Box.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Camera.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\Game.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\src\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Mass.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\VectorField.cpp"
 				>
 			</File>
 		</Filter>
@@ -223,11 +207,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\Quaternion.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Vector3D.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VectorField.h"
+				RelativePath="..\src\VectorField.h"
 				>
 			</File>
 		</Filter>

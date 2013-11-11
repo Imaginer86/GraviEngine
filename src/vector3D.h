@@ -6,10 +6,6 @@
 class Vector3D
 {
 public:
-    float x;									// the x value of this Vector3D
-    float y;									// the y value of this Vector3D
-    float z;									// the z value of this Vector3D
-
     Vector3D()									// Constructor to set x = y = z = 0
     {
         x = 0;
@@ -23,6 +19,13 @@ public:
         this->y = y;
         this->z = z;
     }
+
+//	Vector3D(Vector3D vec)
+//	{
+//		this->x = vec.x;
+//		this->y = vec.y;
+//		this->z = vec.z;
+//	}
 
     void Set(float x, float y, float z)
     {
@@ -124,6 +127,10 @@ public:
         return Vector3D(x / length, y / length, z / length);
     }
 
+//private:
+    float x;									// the x value of this Vector3D
+    float y;									// the y value of this Vector3D
+    float z;									// the z value of this Vector3D
 };
 
 // float DistanceV3(Vector3D v1, Vector3D v2)

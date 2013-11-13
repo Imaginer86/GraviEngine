@@ -21,7 +21,7 @@ void Game::SetNumMasses( int num )
 	this->numMasses = num;
 }
 
-void Game::SetMass( int index, float m, float r, Vector3D pos, Vector3D vel, Color4f light )
+void Game::SetMass( int index, float m, float r, Vector3 pos, Vector3 vel, Color4f light )
 {
 	masses[index].Set(m, r, pos, vel, light);
 }
@@ -34,7 +34,7 @@ void Game::SetNumBoxes( int num )
 }
 
 
-void Game::SetBox( int index, float m, Vector3D pos, Vector3D size, Vector3D angle, Color4f color )
+void Game::SetBox( int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color )
 {
 	this->boxes[index].m = m;
 	this->boxes[index].pos = pos;
@@ -50,7 +50,7 @@ void Game::SetNumLines( int num )
 	this->lines = new Line[num];
 }
 
-void Game::SetLine(int index, float m, float r, Vector3D pos1, Vector3D pos2, Color4f color)
+void Game::SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color)
 {
 	this->lines[index].m = m;
 	this->lines[index].r = r;
@@ -59,7 +59,7 @@ void Game::SetLine(int index, float m, float r, Vector3D pos1, Vector3D pos2, Co
 	this->lines[index].color = color;
 }
 
-void Game::SetGraviAcc(Vector3D graviAcc)
+void Game::SetGraviAcc(Vector3 graviAcc)
 {
 	this->graviAcc = graviAcc;
 }
@@ -87,16 +87,16 @@ void Game::Update( float dt )
 		for(int j = 0; j < numMasses; j++)
 			if (i != j)
 			{
-				Vector3D pos1 = this->masses[i].pos;
-				Vector3D pos2 = this->masses[j].pos;
+				Vector3 pos1 = this->masses[i].pos;
+				Vector3 pos2 = this->masses[j].pos;
 				float distance = (pos1 - pos2).length();
 				float rx = this->masses[i].r + this->masses[j].r;
 				if (distance < rx)
 				{
-					Vector3D vel1 = this->masses[i].vel;
-					Vector3D vel2 = this->masses[j].vel;
-					Vector3D pos10 = pos1 + vel1*(-dt);
-					Vector3D pos20 = pos2 + vel2*(-dt);
+					Vector3 vel1 = this->masses[i].vel;
+					Vector3 vel2 = this->masses[j].vel;
+					Vector3 pos10 = pos1 + vel1*(-dt);
+					Vector3 pos20 = pos2 + vel2*(-dt);
 					float distance0 = (pos10 - pos20).length();
 					float t = (distance0 - rx)/(vel1.length() + vel2.length());
 					float mt = dt - t;
@@ -113,9 +113,9 @@ void Game::Draw()
 }
 
 
-Vector3D Game::GraviForce( int a, int b )
+Vector3 Game::GraviForce( int a, int b )
 {
-	Vector3D f;
+	Vector3 f;
 	float gforce;
 	float x;
 	float y;

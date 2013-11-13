@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3D.h"
+#include "Vector3.h"
 #include "Quaternion.h"
 #include "Color.h"
 class Mass
@@ -8,7 +8,7 @@ public:
 	Mass(){}
 	virtual ~Mass(void){};
 
-	Mass(float m, float r, Vector3D p, Vector3D v)								// Constructor
+	Mass(float m, float r, Vector3 p, Vector3 v)								// Constructor
 	{
 		this->m = m;
 		this->r = r;
@@ -22,7 +22,7 @@ public:
 	}
 
 
-	void Set(float m, float r, Vector3D p, Vector3D v, Color4f color)								// Constructor
+	void Set(float m, float r, Vector3 p, Vector3 v, Color4f color)								// Constructor
 	{
 		this->m = m;
 		this->r = r;
@@ -32,7 +32,7 @@ public:
 		this->color = color;
 	}
 
-	void applyForce(Vector3D force)
+	void applyForce(Vector3 force)
 	{
 		this->force += force;					// The external force is added to the force of the mass
 	}
@@ -53,7 +53,7 @@ public:
 		// Change in position is velocity times the change in time
 	}
 
-	void simuleteAcc(Vector3D acc, float dt)
+	void simuleteAcc(Vector3 acc, float dt)
 	{
 		this->vel += acc * dt;
 		
@@ -69,7 +69,7 @@ public:
 	float m;
 	float r;
 	Color4f color;
-	Vector3D pos;
-	Vector3D vel;
-	Vector3D force;
+	Vector3 pos;
+	Vector3 vel;
+	Vector3 force;
 };

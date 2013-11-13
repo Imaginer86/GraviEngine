@@ -430,9 +430,9 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 	
 	for(int i = 0; i < mGame.numBoxs; i++) {
 		glPushMatrix();
-		Vector3D pos = mGame.boxes[i].pos;
-		Vector3D size = mGame.boxes[i].size;
-		Vector3D angle = mGame.boxes[i].angle;
+		Vector3 pos = mGame.boxes[i].pos;
+		Vector3 size = mGame.boxes[i].size;
+		Vector3 angle = mGame.boxes[i].angle;
 		Color4f color = mGame.boxes[i].color;
 
 		glTranslatef(pos.x, pos.y, pos.z);
@@ -492,8 +492,8 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 // 	for (int i = 0; i < mGame.numLines; i++)
 // 	{
 // 		glPushMatrix();
-// 		Vector3D h = mGame.lines[i].pos2 - mGame.lines[i].pos1;
-// 		Vector3D h_u = h.unit();
+// 		Vector3 h = mGame.lines[i].pos2 - mGame.lines[i].pos1;
+// 		Vector3 h_u = h.unit();
 // 		//glTranslatef(mGame.lines[i].pos1.x, mGame.lines[i].pos1.y, mGame.lines[i].pos1.z);
 // 
 // 		float angle_x = atan2(h.y, h.z);
@@ -572,7 +572,7 @@ BOOL LoadData() {
 		return FALSE;
 
 
-	Vector3D cameraPos, cameraAngle;
+	Vector3 cameraPos, cameraAngle;
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
 		>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
@@ -583,7 +583,7 @@ BOOL LoadData() {
 	dataFile >> LightDiffuse[0] >> LightDiffuse[1] >> LightDiffuse[2] >> LightDiffuse[3];
 	dataFile >> LightPosition[0] >> LightPosition[1] >> LightPosition[2] >> LightPosition[3];
 
-	Vector3D graviAcc;
+	Vector3 graviAcc;
 
 	dataFile >> graviAcc.x >> graviAcc.y >> graviAcc.z;
 	mGame.SetGraviAcc(graviAcc);
@@ -605,7 +605,7 @@ BOOL LoadData() {
 			>> velx >> vely >> velz
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetMass(i, m, r, Vector3D(posx, posy, posz), Vector3D(velx, vely, velz), /*isLight,*/ color);        
+		mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
 	}
 
 	int numBoxs = 0;
@@ -614,7 +614,7 @@ BOOL LoadData() {
 	mGame.SetNumBoxes(numBoxs);
 	for(int i = 0; i < numBoxs; i++) {
 		float m = 0.0;
-		Vector3D pos, size, angle;
+		Vector3 pos, size, angle;
 		Color4f color;
 		dataFile >> m 
 			>> pos.x >> pos.y >> pos.z
@@ -629,7 +629,7 @@ BOOL LoadData() {
 	mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
 		float m = 0.0f, r = 0.0f;
-		Vector3D pos1, pos2;
+		Vector3 pos1, pos2;
 		Color4f color;
 		dataFile >> m >> r
 			>> pos1.x >> pos1.y >> pos1.z

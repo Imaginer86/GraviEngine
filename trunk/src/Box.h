@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3D.h"
+#include "Vector3.h"
 #include "Color.h"
 
 class Box
@@ -15,8 +15,8 @@ public:
 	virtual ~Box(void){};
 //private:	
 	float m;
-	Vector3D pos;
-	Vector3D size;
-	Vector3D angle;
+	Vector3 pos;
+	Vector3 size;
+	Vector3 angle;
 	Color4f color;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3D.h"
+#include "Vector3.h"
 #include "Color.h"
 
 class Line
@@ -16,8 +16,8 @@ public:
 
 //private:
 	float m;
-	Vector3D pos1;
-	Vector3D pos2;
+	Vector3 pos1;
+	Vector3 pos2;
 	float r;
 	Color4f color;
 };

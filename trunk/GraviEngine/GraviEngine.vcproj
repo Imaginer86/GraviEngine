@@ -207,6 +207,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\Matrix4.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Quaternion.h"
 				>
 			</File>

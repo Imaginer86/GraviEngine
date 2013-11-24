@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "Camera.h"	
 
+#include "Color.h"
+
 HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
 HDC		hDC  = NULL;              // Приватный контекст устройства GDI
 HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
@@ -96,7 +98,7 @@ GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 		return;											// Do Nothing
 
 	va_start(ap, fmt);									// Parses The String For Variables
-	vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+	vsprintf_s(text, fmt, ap);						// And Converts Symbols To Actual Numbers
 	va_end(ap);											// Results Are Stored In Text
 
 	for (unsigned int loop=0;loop<(strlen(text));loop++)	// Loop To Find Text Length
@@ -403,9 +405,9 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 
 	//GLenum light = GL_LIGHT0;
-	for(int i = 0; i < mGame.numMasses; i++) {
-		glPushMatrix();
-		glTranslatef(mGame.masses[i].pos.x, mGame.masses[i].pos.y, mGame.masses[i].pos.z);
+	//for(int i = 0; i < mGame.numMasses; i++) {
+		//glPushMatrix();
+		//glTranslatef(mGame.masses[i].GetPos().x, mGame.masses[i].GetPos().y, mGame.masses[i].GetPos().z);
 
 // 		if (mGame.masses[i].isLight) {
 // 			glDisable(GL_LIGHTING);
@@ -417,77 +419,77 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 // 			light++;
 // 		}              
 
-		glColor3f(mGame.masses[i].color.r, mGame.masses[i].color.g, mGame.masses[i].color.b);
-		gluSphere(quadratic, mGame.masses[i].r, 32, 32);
+		//glColor3f(mGame.masses[i].GetColor().r, mGame.masses[i].GetColor().g, mGame.masses[i].GetColor().b);
+		//gluSphere(quadratic, mGame.masses[i].GetR(), 32, 32);
 
 // 		if (mGame.masses[i].isLight)
 // 			glEnable(GL_LIGHTING);
 
-		glPopMatrix();
-	}
+		//glPopMatrix();
+	//}
 
 
 	
-	for(int i = 0; i < mGame.numBoxs; i++) {
-		glPushMatrix();
-		Vector3 pos = mGame.boxes[i].pos;
-		Vector3 size = mGame.boxes[i].size;
-		Vector3 angle = mGame.boxes[i].angle;
-		Color4f color = mGame.boxes[i].color;
+	//for(int i = 0; i < mGame.numBoxs; i++) {
+		//glPushMatrix();
+		//Vector3 pos = mGame.boxes[i].GetPos();
+		//Vector3 size = mGame.boxes[i].GetSize();
+		//Vector3 angle = mGame.boxes[i].GetAngle();
+		//Color4f color = mGame.boxes[i].GetColor();
 
-		glTranslatef(pos.x, pos.y, pos.z);
-		glRotatef(angle.x, 1, 0, 0);
-		glRotatef(angle.y, 0, 1, 0);
-		glRotatef(angle.z, 0, 0, 1);
+		//glTranslatef(pos.x, pos.y, pos.z);
+		//glRotatef(angle.x, 1, 0, 0);
+		//glRotatef(angle.y, 0, 1, 0);
+		//glRotatef(angle.z, 0, 0, 1);
 
-		glColor3f(color.r, color.g, color.b);
+		//glColor3f(color.r, color.g, color.b);
 
-		glBegin(GL_QUADS);       // Начало рисования четырехугольников
+		//glBegin(GL_QUADS);       // Начало рисования четырехугольников
 		// Передняя грань
 		//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 1 (Перед)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Перед)
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Перед)
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Перед)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 1 (Перед)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Перед)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Перед)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Перед)
 		// Задняя грань
 		//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Зад)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Зад)
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 3 (Зад)
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Зад)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Зад)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Зад)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 3 (Зад)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Зад)
 		// Верхняя грань
 // 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
 // 		glVertex3f(-1.0f,  1.0f, -1.0f); // Точка 1 (Верх)
 // 		glVertex3f(-1.0f,  1.0f,  1.0f); // Точка 2 (Верх)
 // 		glVertex3f( 1.0f,  1.0f,  1.0f); // Точка 3 (Верх)
 // 		glVertex3f( 1.0f,  1.0f, -1.0f); // Точка 4 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
 
 		// Нижняя грань
 		//glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
 		// Правая грань
 		//glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
 		// Левая грань
 		//glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
-		glEnd();
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
+		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
+		//glEnd();
 
-		glPopMatrix();
-	}
+		//glPopMatrix();
+	//}
 
 // 	for (int i = 0; i < mGame.numLines; i++)
 // 	{
@@ -564,13 +566,9 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 }
 
 BOOL LoadData() {
-
-	
-
 	std::ifstream dataFile("data.dat", std::ios::in);	
 	if ( !dataFile )
 		return FALSE;
-
 
 	Vector3 cameraPos, cameraAngle;
 
@@ -592,7 +590,7 @@ BOOL LoadData() {
 
 	dataFile >>  numMass;
 
-	mGame.SetNumMasses(numMass);
+	//mGame.SetNumMasses(numMass);
 
 	for(int i = 0; i < numMass; i++) {
 		float m = 0.0f, r = 0.0f,
@@ -605,13 +603,13 @@ BOOL LoadData() {
 			>> velx >> vely >> velz
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
+		//mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
 	}
 
 	int numBoxs = 0;
 	dataFile >> numBoxs;
 
-	mGame.SetNumBoxes(numBoxs);
+	//mGame.SetNumBoxes(numBoxs);
 	for(int i = 0; i < numBoxs; i++) {
 		float m = 0.0;
 		Vector3 pos, size, angle;
@@ -621,12 +619,12 @@ BOOL LoadData() {
 			>> size.x >> size.y >> size.z
 			>> angle.x >> angle.y >> angle.z
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetBox(i, m, pos, size, angle, color);
+		//mGame.SetBox(i, m, pos, size, angle, color);
 	}
 
 	int numLines = 0;
 	dataFile >> numLines;
-	mGame.SetNumLines(numLines);
+	//mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
 		float m = 0.0f, r = 0.0f;
 		Vector3 pos1, pos2;
@@ -635,7 +633,7 @@ BOOL LoadData() {
 			>> pos1.x >> pos1.y >> pos1.z
 			>> pos2.x >> pos2.y >> pos2.z
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetLine(i, m, r, pos1, pos2, color);
+		//mGame.SetLine(i, m, r, pos1, pos2, color);
 	}
 
 	dataFile.close();

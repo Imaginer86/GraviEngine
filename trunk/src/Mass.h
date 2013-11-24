@@ -1,8 +1,9 @@
 #pragma once
+#include "Entity.h"
 #include "Vector3.h"
 #include "Quaternion.h"
 #include "Color.h"
-class Mass
+class Mass: public Entity
 {
 public:	
 	Mass(){}
@@ -64,12 +65,22 @@ public:
 		this->pos += this->vel * dt;
 	}
 
+	float GetR()
+	{
+		return r;
+	}
 
-//private:
-	float m;
+	Color4f GetColor()
+	{
+		return color;
+	}
+
+
+private:
+	//float m;
 	float r;
 	Color4f color;
-	Vector3 pos;
-	Vector3 vel;
+	//Vector3 pos;
+	//Vector3 vel;
 	Vector3 force;
 };

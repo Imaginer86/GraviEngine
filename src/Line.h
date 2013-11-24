@@ -1,11 +1,12 @@
 #pragma once
+#include "Entity.h"
 #include "Vector3.h"
 #include "Color.h"
 
-class Line
+class Line: public Entity
 {
 public:
-	Line():m(1.0f), pos1(0, 0, 0), pos2(1, 1, 1), r(1)
+	Line():Entity(), pos2(1, 1, 1), r(1)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
@@ -14,9 +15,39 @@ public:
 	}
 	virtual ~Line(void){};
 
-//private:
-	float m;
-	Vector3 pos1;
+	float GetR()
+	{
+		return r;
+	}
+
+	void SetR(float r)
+	{
+		this->r = r;
+	}
+
+	Vector3 GetPos2()
+	{
+		return pos2;
+	}
+
+	void SetPos2(Vector3 pos2)
+	{
+		this->pos2 = pos2;
+	}
+
+	Color4f GetColor()
+	{
+		return color;
+	}
+
+	void SetColor(Color4f color)
+	{
+		this->color = color;
+	}
+
+private:
+	//float m;
+	//Vector3 pos1;
 	Vector3 pos2;
 	float r;
 	Color4f color;

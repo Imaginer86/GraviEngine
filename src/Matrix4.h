@@ -6,6 +6,11 @@
 // Multiplies Vector3s to the left of the matrix.
 //-----------------------------------------------------------------------------
 
+//#define  _USE_MATH_DEFINES
+//#include <math.h>
+
+#include "Math.h"
+
 class Matrix4
 {
 	friend Vector3 operator*(const Vector3 &lhs, const Matrix4 &rhs);

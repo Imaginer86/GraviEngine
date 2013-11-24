@@ -1,7 +1,8 @@
 #pragma once
-#include "Mass.h"
-#include "Box.h"
-#include "Line.h"
+#include "Entity.h"
+//#include "Mass.h"
+//#include "Box.h"
+//#include "Line.h"
 //#include <vector>
 
 const float G = 0.01f;
@@ -14,14 +15,14 @@ public:
 	Game(void);
 	~Game(void);
 
-	void SetNumMasses(int num);
-    void SetMass(int index, float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
+	//void SetNumMasses(int num);
+    //void SetMass(int index, float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
 
-	void SetNumBoxes(int num);
-	void SetBox(int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color);
+	//void SetNumBoxes(int num);
+	//void SetBox(int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color);
 
-	void SetNumLines(int num);
-	void SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color);
+	//void SetNumLines(int num);
+	//void SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
 
@@ -39,14 +40,14 @@ public:
 
 
 //private:
-	int numMasses;								// number of masses in this container	
-	Mass *masses;									// masses are held by pointer to pointer. (Here Mass** represents a 1 dimensional array)
+	//int numMasses;								// number of masses in this container	
+	//Mass *masses;									// masses are held by pointer to pointer. (Here Mass** represents a 1 dimensional array)
 
-	int numBoxs;
-	Box *boxes;
+	//int numBoxs;
+	//Box *boxes;
 
-	int numLines;
-	Line *lines;
+	//int numLines;
+	//Line *lines;
 
 	//vector<Vector3> globalForces;
 	Vector3 graviAcc;

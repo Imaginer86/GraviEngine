@@ -396,20 +396,24 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
  	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
  		mCamera.pos.x, mCamera.pos.y, mCamera.pos.z + 50, 
  		0, 1, 0);
+
+	//glColor3f(0, 1, 0);
+	//gluSphere(quadratic, 10, 32, 32);
+
 	
 	
-	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
-	//glRotatef(mCamera.angle.x, 1, 0, 0);
-	//glRotatef(mCamera.angle.y, 0, 1, 0);
-	//glRotatef(mCamera.angle.z, 0, 0, 1);
-	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
+// 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
+// 	glRotatef(mCamera.angle.x, 1, 0, 0);
+// 	glRotatef(mCamera.angle.y, 0, 1, 0);
+// 	glRotatef(mCamera.angle.z, 0, 0, 1);
+// 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 
 	GLenum light = GL_LIGHT0;
 
 
 	for(int i = 0; i < mGame.GetNumEntities(); i++) {
 		glPushMatrix();
-		glTranslatef(mGame.GetEntity(i).GetPos().x, mGame.GetEntity(i).GetPos().y, mGame.GetEntity(i).GetPos().z);
+		glTranslatef(mGame.GetEntity(i)->GetPos().x, mGame.GetEntity(i)->GetPos().y, mGame.GetEntity(i)->GetPos().z);
 
 // 		if (mGame.Entities[i].isLight) {
 // 			glDisable(GL_LIGHTING);
@@ -423,11 +427,11 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 
 
 
-		glColor3f(mGame.GetEntity(i).GetColor().r, mGame.GetEntity(i).GetColor().g, mGame.GetEntity(i).GetColor().b);
-		gluSphere(quadratic, mGame.GetEntity(i).GetR(), 32, 32);
+		glColor3f(mGame.GetEntity(i)->GetColor().r, mGame.GetEntity(i)->GetColor().g, mGame.GetEntity(i)->GetColor().b);
+		gluSphere(quadratic, mGame.GetEntity(i)->GetR(), 32, 32);
 
-//  		if (mGame.Entities[i].isLight)
-//  			glEnable(GL_LIGHTING);
+//   		if (mGame.Entities[i].isLight)
+//   			glEnable(GL_LIGHTING);
 
 		glPopMatrix();
 	}

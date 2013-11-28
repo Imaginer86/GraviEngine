@@ -50,8 +50,8 @@ public:
 		return numEntitys;
 	}
 
-	Entity GetEntity(int i)
-	{
+	Entity *GetEntity(int i)
+ 	{
 		return Entities[i];
 	}
 
@@ -64,11 +64,8 @@ public:
 private:
 
 	//vector<Vector3> globalForces;
-
 	int numEntitys;
+	vector<Entity*> Entities;
 	//list<Entity> Entities;
-	vector<Entity> Entities;
-
-
 	Vector3 graviAcc;
 };

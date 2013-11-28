@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Color.h"
 
 class Entity
 {
@@ -8,32 +9,55 @@ public:
 	{
 
 	}
-	Vector3 GetPos()
+
+	virtual ~Entity(){}
+
+	virtual Vector3 GetPos()
 	{
 		return pos;
 	}
 
-	void SetPos(Vector3 pos)
+	virtual void SetPos(Vector3 pos)
 	{
 		this->pos = pos;
 	}
 
-	Vector3 GetVel()
+	virtual Vector3 GetVel()
 	{
 		return vel;
 	}
 
-	float GetMass()
+	virtual void SetVel(Vector3 vel)
+	{
+		this->vel = vel;
+	}
+
+	virtual float GetMass()
 	{
 		return m;
 	}
 
-	void SetMass(float mass)
+	virtual void SetMass(float mass)
 	{
 		this->m = mass;
 	}
+
+	virtual Color4f GetColor()
+	{
+		return color;
+	}
+
+	virtual float GetR(){ return 0.0f; }
+
+	virtual void applyForce(Vector3 force){}
+
+	virtual void simulateForce(float dt){}
+
+	virtual void init(){};
+
 protected:
 	Vector3 pos;
 	Vector3 vel;
 	float m;
+	Color4f color;
 };

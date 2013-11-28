@@ -1,63 +1,58 @@
 #include "Game.h"
 
-Game::Game(void)
-//: numMasses(0)
-//, numBoxs(0)
-//, numLines(0)
-: graviAcc(0, 0, 0)
-{
+#include "Mass.h"
+#include "Box.h"
+#include "Line.h"
+
+ 
+void Game::SetNumMasses( int num )
+{	
+	this->numEntitys += num;
 }
 
-Game::~Game(void)
-{
-	//delete[] masses;
-	//delete[] boxes;
-	//delete[] lines;
+
+void Game::SetMass( int index, float m, float r, Vector3 pos, Vector3 vel, Color4f light )
+{	
+	Mass mass;
+	mass.Set(m, r, pos, vel, light);
+	Entities.push_back(mass);
 }
-// 
-// void Game::SetNumMasses( int num )
-// {
-// 	masses = new Mass[num];
-// 	this->numMasses = num;
-// }
-// 
-// void Game::SetMass( int index, float m, float r, Vector3 pos, Vector3 vel, Color4f light )
-// {
-// 	masses[index].Set(m, r, pos, vel, light);
-// }
-// 
-// 
-// void Game::SetNumBoxes( int num )
-// {
-// 	this->boxes = new Box[num];
-// 	this->numBoxs = num;
-// }
-// 
-// 
-// void Game::SetBox( int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color )
-// {
-// 	this->boxes[index].SetMass(m);
-// 	this->boxes[index].SetPos(pos);
-// 	this->boxes[index].SetSize(size);
-// 	this->boxes[index].SetAngle(angle);
-// 	this->boxes[index].SetColor(color);
-// }
-// 
-// 
-// void Game::SetNumLines( int num )
-// {
-// 	this->numLines = num;
-// 	this->lines = new Line[num];
-// }
-// 
-// void Game::SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color)
-// {
-// 	this->lines[index].SetMass(m);
-// 	this->lines[index].SetR(r);
-// 	this->lines[index].SetPos(pos1);
-// 	this->lines[index].SetPos2(pos2);
-// 	this->lines[index].SetColor(color);
-// }
+
+
+void Game::SetNumBoxes( int num )
+{
+	this->numEntitys += num;
+}
+
+
+void Game::SetBox( int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color )
+{
+
+	Box box;
+	box.SetMass(m);
+	box.SetPos(pos);
+	box.SetSize(size);
+	box.SetAngle(angle);
+	box.SetColor(color);
+	Entities.push_back(box);
+}
+
+
+void Game::SetNumLines( int num )
+{
+	this->numEntitys += num;	
+}
+
+void Game::SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color)
+{
+	Line line;
+	line.SetMass(m);
+	line.SetR(r);
+	line.SetPos(pos1);
+	line.SetPos2(pos2);
+	line.SetColor(color);
+	Entities.push_back(line);
+}
 
 void Game::SetGraviAcc(Vector3 graviAcc)
 {
@@ -66,44 +61,40 @@ void Game::SetGraviAcc(Vector3 graviAcc)
 
 void Game::Update( float dt )
 {
-	this->operate(dt);
-
-
-		
+	this->operate(dt);		
 	//return;
 
-
-// 	for(int i = 0; i < numMasses; i++)
-// 	{
-// 		//this->masses[i].init();
-// 		//this->masses[i].applyForce(this->graviForce);
-// 		//this->masses[i].simulateForce(dt);
-// 		this->masses[i].simuleteAcc(this->graviAcc, dt);
-// 
-// 		this->masses[i].update(dt);
+// 	for(vector<Entity>::iterator iter = Entities.begin(); iter != Entities.end(); iter++)
+//  	{
+//  		iter->init();
+//  		iter->applyForce(this->graviForce);
+//  		iter->simulateForce(dt);
+//  		iter->simuleteAcc(this->graviAcc, dt);
+//   
+//  		iter->update(dt);
 // 	}
-// 
-// 	for (int i = 0; i < numMasses; i++)
-// 		for(int j = 0; j < numMasses; j++)
-// 			if (i != j)
-// 			{
-// 				Vector3 pos1 = this->masses[i].GetPos();
-// 				Vector3 pos2 = this->masses[j].GetPos();
-// 				float distance = (pos1 - pos2).length();
-// 				float rx = this->masses[i].GetR() + this->masses[j].GetR();
-// 				if (distance < rx)
-// 				{
-// 					Vector3 vel1 = this->masses[i].GetVel();
-// 					Vector3 vel2 = this->masses[j].GetVel();
-// 					Vector3 pos10 = pos1 + vel1*(-dt);
-// 					Vector3 pos20 = pos2 + vel2*(-dt);
-// 					float distance0 = (pos10 - pos20).length();
-// 					float t = (distance0 - rx)/(vel1.length() + vel2.length());
-// 					float mt = dt - t;
-// 					if(t > dt)
-// 						int a = 0;
-// 				}
-// 			}
+ 
+ 	for(vector<Entity>::iterator iter1 = Entities.begin(); iter1 != Entities.end(); iter1++)
+ 		for(vector<Entity>::iterator iter2 = Entities.begin(); iter2 != Entities.end(); iter2++)
+ 			if (iter1 != iter2)
+ 			{
+ 				Vector3 pos1 = iter1->GetPos();
+ 				Vector3 pos2 = iter2->GetPos();
+ 				float distance = (pos1 - pos2).length();
+ 				float rx = iter1->GetR() + iter2->GetR();
+ 				if (distance < rx)
+ 				{
+ 					Vector3 vel1 = iter1->GetVel();
+ 					Vector3 vel2 = iter2->GetVel();
+ 					Vector3 pos10 = pos1 + vel1*(-dt);
+ 					Vector3 pos20 = pos2 + vel2*(-dt);
+ 					float distance0 = (pos10 - pos20).length();
+ 					float t = (distance0 - rx)/(vel1.length() + vel2.length());
+					float mt = dt - t;
+ 					if(t > dt)
+ 						int a = 0;
+				}
+ 			}
 	
 }
 
@@ -121,36 +112,35 @@ Vector3 Game::GraviForce( int a, int b )
 	float y;
 	float z;
 	float r;
-// 	x = masses[a].GetPos().x-masses[b].GetPos().x;
-// 	y = masses[a].GetPos().y-masses[b].GetPos().y;
-// 	z = masses[a].GetPos().z-masses[b].GetPos().z;
-// 	r= sqrt(x*x + y*y + z*z);
-// 
-// 	f = masses[b].GetPos() - masses[a].GetPos();
-// 
-// 	gforce = G * masses[a].GetMass() * masses[b].GetMass()/(r * r);
+	vector<Entity>::iterator itera = Entities.begin();
+	for(int i = 0; i < a; i++)
+		itera++;
+	vector<Entity>::iterator iterb = Entities.begin();
+	for(int i = 0; i < b; i++)
+		iterb++;
+
+ 	x = itera->GetPos().x - iterb->GetPos().x;
+ 	y = itera->GetPos().y - iterb->GetPos().y;
+ 	z = itera->GetPos().z - iterb->GetPos().z;
+ 	r= sqrt(x*x + y*y + z*z);
+ 
+ 	f = iterb->GetPos() - itera->GetPos();
+ 
+ 	gforce = G * itera->GetMass() * iterb->GetMass()/(r * r);
 
 	if (r < 0.1)
 	{
 		gforce = 0;
-		/*
-		masses[a].vel.x = 0;
-		masses[a].vel.y = 0;
-		masses[a].vel.z = 0;
-		masses[b].vel.x = 0;
-		masses[b].vel.y = 0;
-		masses[b].vel.z = 0;
-		*/
-
+		
+		itera->SetVel(Vector3(0.0f, 0.0f ,0.0f));
+		iterb->SetVel(Vector3(0.0f, 0.0f ,0.0f));
+		
 		f.x = 0;
 		f.y = 0;
 		f.z = 0;
 	}
 
-
 	f *= gforce;
-
-
 
 	return f;
 }
@@ -160,24 +150,28 @@ Vector3 Game::GraviForce( int a, int b )
 
 void Game::init() /* this method will call the init() method of every mass */
 {
-	//for (int a = 0; a < numMasses; ++a)		// We will init() every mass
-	//masses[a].init();						// call init() method of the mass
+	for(vector<Entity>::iterator iter = Entities.begin(); iter != Entities.end(); iter++)		// We will init() every mass
+		iter->init();						// call init() method of the mass
 }
 
 void Game::solve() /* no implementation because no forces are wanted in this basic container */
 {
-	//for(int a = 0; a < numMasses; a++)
-	//for(int b = 0; b < numMasses; b++)
-	//{
-		//if(a!=b) masses[a].applyForce(GraviForce(a,b));
-	//}
+	int a = 0;
+	for(vector<Entity>::iterator itera = Entities.begin(); itera != Entities.end(); itera++, a++)
+	{
+		int b = 0;
+		for(vector<Entity>::iterator iterb = Entities.begin(); iterb != Entities.end(); iterb++, b++)
+		{
+			if(itera != iterb) itera->applyForce(GraviForce(a,b));
+		}
+	}
 	// in advanced containers, this method will be overrided and some forces will act on masses
 }
 
 void Game::simulate( float dt ) /* Iterate the masses by the change in time */
 {
-	//for (int a = 0; a < numMasses; ++a)		// We will iterate every mass
-	//masses[a].simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
+	for(vector<Entity>::iterator itera = Entities.begin(); itera != Entities.end(); itera++)		// We will iterate every mass
+		itera->simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
 }
 
 void Game::operate( float dt ) /* The complete procedure of simulation */
@@ -192,13 +186,7 @@ void Game::operate( float dt ) /* The complete procedure of simulation */
 
 void Game::release() /* delete the masses created */
 {
-	//numMasses = 0;
-	//delete [] masses;
-
-	//numBoxs = 0;
-	//delete [] boxes;
-
-	//numLines = 0;
-	//delete [] lines;
+	numEntitys = 0;
+	Entities.clear();
 }
 

@@ -404,29 +404,33 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 	//glRotatef(mCamera.angle.z, 0, 0, 1);
 	//glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 
-	//GLenum light = GL_LIGHT0;
-	//for(int i = 0; i < mGame.numMasses; i++) {
-		//glPushMatrix();
-		//glTranslatef(mGame.masses[i].GetPos().x, mGame.masses[i].GetPos().y, mGame.masses[i].GetPos().z);
+	GLenum light = GL_LIGHT0;
 
-// 		if (mGame.masses[i].isLight) {
+
+	for(int i = 0; i < mGame.GetNumEntities(); i++) {
+		glPushMatrix();
+		glTranslatef(mGame.GetEntity(i).GetPos().x, mGame.GetEntity(i).GetPos().y, mGame.GetEntity(i).GetPos().z);
+
+// 		if (mGame.Entities[i].isLight) {
 // 			glDisable(GL_LIGHTING);
-// 			GLfloat massLight[] = {mGame.masses[i].color.r, mGame.masses[i].color.g,mGame.masses[i].color.b,mGame.masses[i].color.a,};
-// 			GLfloat massPos[] = {mGame.masses[i].pos.x, mGame.masses[i].pos.y, mGame.masses[i].pos.z, 1.0f};
+// 			GLfloat massLight[] = {mGame.Entities[i].color.r, mGame.Entities[i].color.g,mGame.Entities[i].color.b,mGame.Entities[i].color.a,};
+// 			GLfloat massPos[] = {mGame.Entities[i].pos.x, mGame.Entities[i].pos.y, mGame.Entities[i].pos.z, 1.0f};
 // 			glLightfv(light ,GL_DIFFUSE, massLight);
 // 			glLightfv(light ,GL_POSITION, massPos);            
 // 			glEnable(light);
 // 			light++;
 // 		}              
 
-		//glColor3f(mGame.masses[i].GetColor().r, mGame.masses[i].GetColor().g, mGame.masses[i].GetColor().b);
-		//gluSphere(quadratic, mGame.masses[i].GetR(), 32, 32);
 
-// 		if (mGame.masses[i].isLight)
-// 			glEnable(GL_LIGHTING);
 
-		//glPopMatrix();
-	//}
+		glColor3f(mGame.GetEntity(i).GetColor().r, mGame.GetEntity(i).GetColor().g, mGame.GetEntity(i).GetColor().b);
+		gluSphere(quadratic, mGame.GetEntity(i).GetR(), 32, 32);
+
+//  		if (mGame.Entities[i].isLight)
+//  			glEnable(GL_LIGHTING);
+
+		glPopMatrix();
+	}
 
 
 	
@@ -590,7 +594,7 @@ BOOL LoadData() {
 
 	dataFile >>  numMass;
 
-	//mGame.SetNumMasses(numMass);
+	mGame.SetNumMasses(numMass);
 
 	for(int i = 0; i < numMass; i++) {
 		float m = 0.0f, r = 0.0f,
@@ -603,13 +607,13 @@ BOOL LoadData() {
 			>> velx >> vely >> velz
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		//mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
+		mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
 	}
 
 	int numBoxs = 0;
 	dataFile >> numBoxs;
 
-	//mGame.SetNumBoxes(numBoxs);
+	mGame.SetNumBoxes(numBoxs);
 	for(int i = 0; i < numBoxs; i++) {
 		float m = 0.0;
 		Vector3 pos, size, angle;
@@ -619,12 +623,12 @@ BOOL LoadData() {
 			>> size.x >> size.y >> size.z
 			>> angle.x >> angle.y >> angle.z
 			>> color.r >> color.g >> color.b >> color.a;
-		//mGame.SetBox(i, m, pos, size, angle, color);
+		mGame.SetBox(i, m, pos, size, angle, color);
 	}
 
 	int numLines = 0;
 	dataFile >> numLines;
-	//mGame.SetNumLines(numLines);
+	mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
 		float m = 0.0f, r = 0.0f;
 		Vector3 pos1, pos2;
@@ -633,7 +637,7 @@ BOOL LoadData() {
 			>> pos1.x >> pos1.y >> pos1.z
 			>> pos2.x >> pos2.y >> pos2.z
 			>> color.r >> color.g >> color.b >> color.a;
-		//mGame.SetLine(i, m, r, pos1, pos2, color);
+		mGame.SetLine(i, m, r, pos1, pos2, color);
 	}
 
 	dataFile.close();

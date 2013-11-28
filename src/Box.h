@@ -6,14 +6,17 @@
 class Box: public Entity
 {
 public:
-	Box():Entity(), size(1.0, 1.0, 1.0), angle(0.0, 0.0, 0.0)
+	Box()
+	: Entity()
+	, size(1.0, 1.0, 1.0)
+	, angle(0.0, 0.0, 0.0)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
 		this->color.b = 1.0f;
 		this->color.a = 1.0f;
 	}
-	virtual ~Box(void){};
+	virtual ~Box(){};
 
 	Vector3 GetSize()
 	{
@@ -44,10 +47,32 @@ public:
 	{
 		this->color = color;
 	}
+
+	virtual float GetR()
+	{
+		return 0.0f;
+	}
+
+	virtual void applyForce(Vector3 force)
+	{
+		return;
+	}
+
+	virtual void simulateForce(float dt)
+	{
+		return;
+	}
+
+	virtual void init()
+	{
+		return;
+	}
+
+
 private:	
 	//float m;
 	//Vector3 pos;
 	Vector3 size;
 	Vector3 angle;
-	Color4f color;
+	//Color4f color;
 };

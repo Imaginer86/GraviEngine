@@ -6,19 +6,17 @@
 class Line: public Entity
 {
 public:
-	Line():Entity(), pos2(1, 1, 1), r(1)
+	Line()
+	: Entity()
+	, pos2(1, 1, 1)
+	, r(1)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
 		this->color.b = 1.0f;
 		this->color.a = 1.0f;
 	}
-	virtual ~Line(void){};
-
-	float GetR()
-	{
-		return r;
-	}
+	virtual ~Line(){};
 
 	void SetR(float r)
 	{
@@ -45,11 +43,31 @@ public:
 		this->color = color;
 	}
 
+	virtual float GetR()
+	{
+		return r;
+	}
+
+	virtual void applyForce(Vector3 force)
+	{
+		return;
+	}
+
+	virtual void simulateForce(float dt)
+	{
+		return;
+	}
+
+	virtual void init()
+	{
+		return;
+	}
+
 private:
 	//float m;
 	//Vector3 pos1;
 	Vector3 pos2;
 	float r;
-	Color4f color;
+	//Color4f color;
 };
 

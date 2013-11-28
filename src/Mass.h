@@ -6,10 +6,16 @@
 class Mass: public Entity
 {
 public:	
-	Mass(){}
-	virtual ~Mass(void){};
+	Mass()
+	: Entity()
+	{
+	
+	}
+
+	virtual ~Mass(){};
 
 	Mass(float m, float r, Vector3 p, Vector3 v)								// Constructor
+	: Entity()
 	{
 		this->m = m;
 		this->r = r;
@@ -33,27 +39,6 @@ public:
 		this->color = color;
 	}
 
-	void applyForce(Vector3 force)
-	{
-		this->force += force;					// The external force is added to the force of the mass
-	}
-
-	void init()
-	{
-		force.x = 0;
-		force.y = 0;
-		force.z = 0;
-	}
-
-	void simulateForce(float dt)
-	{
-		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
-		// The change is proportinal with the acceleration (force / m) and change in time
-
-		pos += vel * dt;						// Change in position is added to the position.
-		// Change in position is velocity times the change in time
-	}
-
 	void simuleteAcc(Vector3 acc, float dt)
 	{
 		this->vel += acc * dt;
@@ -65,21 +50,41 @@ public:
 		this->pos += this->vel * dt;
 	}
 
-	float GetR()
-	{
-		return r;
-	}
-
 	Color4f GetColor()
 	{
 		return color;
 	}
 
+	virtual float GetR()
+	{
+		return r;
+	}
+
+	virtual void applyForce(Vector3 force)
+	{
+		this->force += force;					// The external force is added to the force of the mass
+	}
+
+	virtual void simulateForce(float dt)
+	{
+		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
+		// The change is proportinal with the acceleration (force / m) and change in time
+
+		pos += vel * dt;						// Change in position is added to the position.
+		// Change in position is velocity times the change in time
+	}
+
+	virtual void init()
+	{
+		force.x = 0;
+		force.y = 0;
+		force.z = 0;
+	}
 
 private:
 	//float m;
 	float r;
-	Color4f color;
+	//Color4f color;
 	//Vector3 pos;
 	//Vector3 vel;
 	Vector3 force;

@@ -82,10 +82,6 @@ public:
 	}
 
 private:
-	//float m;
 	float r;
-	//Color4f color;
-	//Vector3 pos;
-	//Vector3 vel;
 	Vector3 force;
 };

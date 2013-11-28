@@ -64,10 +64,7 @@ public:
 	}
 
 private:
-	//float m;
-	//Vector3 pos1;
 	Vector3 pos2;
 	float r;
-	//Color4f color;
 };
 

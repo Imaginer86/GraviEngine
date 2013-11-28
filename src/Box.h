@@ -70,9 +70,6 @@ public:
 
 
 private:	
-	//float m;
-	//Vector3 pos;
 	Vector3 size;
 	Vector3 angle;
-	//Color4f color;
 };

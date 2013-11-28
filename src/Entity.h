@@ -47,7 +47,7 @@ public:
 		return color;
 	}
 
-	virtual float GetR(){ return 0.0f; }
+	virtual float GetR() = 0;
 
 	virtual void applyForce(Vector3 force){}
 

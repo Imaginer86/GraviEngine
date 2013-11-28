@@ -413,6 +413,9 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 
 	for(int i = 0; i < mGame.GetNumEntities(); i++) {
 		glPushMatrix();
+
+
+
 		glTranslatef(mGame.GetEntity(i)->GetPos().x, mGame.GetEntity(i)->GetPos().y, mGame.GetEntity(i)->GetPos().z);
 
 // 		if (mGame.Entities[i].isLight) {

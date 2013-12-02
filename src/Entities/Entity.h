@@ -1,6 +1,6 @@
 #pragma once
-#include "Vector3.h"
-#include "Color.h"
+#include "../Math/Vector3.h"
+#include "../Color.h"
 
 class Entity
 {
@@ -49,11 +49,13 @@ public:
 
 	virtual float GetR() = 0;
 
-	virtual void applyForce(Vector3 force){}
+	virtual void applyForce(Vector3 force) = 0;
 
-	virtual void simulateForce(float dt){}
+	virtual void simulateForce(float dt) = 0;
 
-	virtual void init(){};
+	virtual void init() = 0;
+
+	virtual void Draw() = 0;
 
 protected:
 	Vector3 pos;

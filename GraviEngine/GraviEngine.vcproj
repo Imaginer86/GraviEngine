@@ -187,10 +187,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\Box.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\Camera.h"
 				>
 			</File>
@@ -199,39 +195,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\Entity.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\Game.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Line.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Mass.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Math.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Matrix4.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Quaternion.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Vector3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\VectorField.h"
 				>
 			</File>
 		</Filter>
@@ -240,6 +204,70 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="gl"
+			>
+			<File
+				RelativePath="..\src\gl\glaux.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Entities"
+			>
+			<File
+				RelativePath="..\src\Entities\Box.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Box.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Entity.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Line.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Line.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Mass.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Entities\Mass.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Math"
+			>
+			<File
+				RelativePath="..\src\Math\Math.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Math\Matrix4.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Math\Quaternion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Math\Vector3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Math\VectorField.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#include "Entity.h"
+#include "Entities\Entity.h"
 //#include "Mass.h"
 //#include "Box.h"
 //#include "Line.h"

@@ -1,8 +1,8 @@
 #pragma once
+
 #include "Entity.h"
-#include "Vector3.h"
-#include "Quaternion.h"
-#include "Color.h"
+#include "../Math/Quaternion.h"
+
 class Mass: public Entity
 {
 public:	
@@ -80,6 +80,8 @@ public:
 		force.y = 0;
 		force.z = 0;
 	}
+
+	virtual void Draw();
 
 private:
 	float r;

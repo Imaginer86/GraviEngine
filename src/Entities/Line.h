@@ -1,41 +1,36 @@
 #pragma once
 #include "Entity.h"
-#include "Vector3.h"
-#include "Color.h"
+#include "../Math/Vector3.h"
+#include "../Color.h"
 
-class Box: public Entity
+class Line: public Entity
 {
 public:
-	Box()
+	Line()
 	: Entity()
-	, size(1.0, 1.0, 1.0)
-	, angle(0.0, 0.0, 0.0)
+	, pos2(1, 1, 1)
+	, r(1)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
 		this->color.b = 1.0f;
 		this->color.a = 1.0f;
 	}
-	virtual ~Box(){};
+	virtual ~Line(){};
 
-	Vector3 GetSize()
+	void SetR(float r)
 	{
-		return size;
+		this->r = r;
 	}
 
-	void SetSize(Vector3 size)
+	Vector3 GetPos2()
 	{
-		this->size = size;
+		return pos2;
 	}
 
-	Vector3 GetAngle()
+	void SetPos2(Vector3 pos2)
 	{
-		return angle;
-	}
-
-	void SetAngle(Vector3 angle)
-	{
-		this->angle = angle;
+		this->pos2 = pos2;
 	}
 
 	Color4f GetColor()
@@ -50,7 +45,7 @@ public:
 
 	virtual float GetR()
 	{
-		return 0.0f;
+		return r;
 	}
 
 	virtual void applyForce(Vector3 force)
@@ -68,8 +63,10 @@ public:
 		return;
 	}
 
+	virtual void Draw();
 
-private:	
-	Vector3 size;
-	Vector3 angle;
+private:
+	Vector3 pos2;
+	float r;
 };
+

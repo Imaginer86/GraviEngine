@@ -3,29 +3,29 @@
 #include <cmath>
 
 // class Vector3		---> An object to represent a 3D vector or a 3D point in space
-class Vector3
+struct Vector3
 {
 public:
     Vector3()									// Constructor to set x = y = z = 0
+	: x(0.0f)
+	, y(0.0f)
+	, z(0.0f)
     {
-        x = 0;
-        y = 0;
-        z = 0;
     }
 
     Vector3(float x, float y, float z)			// Constructor that initializes this Vector3 to the intended values of x, y and z
+	: x(x)
+	, y(y)
+	, z(z)
     {
-        this->x = x;
-        this->y = y;
-        this->z = z;
     }
 
-//	Vector3(Vector3 vec)
-//	{
-//		this->x = vec.x;
-//		this->y = vec.y;
-//		this->z = vec.z;
-//	}
+// 	Vector3(Vector3 vec)
+// 	: x(vec.x)
+// 	, y(vec.y)
+// 	, z(vec.z)
+// 	{
+// 	}
 
     void Set(float x, float y, float z)
     {

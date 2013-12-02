@@ -1,8 +1,8 @@
 #include "Game.h"
 
-#include "Mass.h"
-#include "Box.h"
-#include "Line.h"
+#include "Entities\Mass.h"
+#include "Entities\Box.h"
+#include "Entities\Line.h"
 
  
 void Game::SetNumMasses( int num )
@@ -100,6 +100,9 @@ void Game::Update( float dt )
 
 void Game::Draw()
 {
+	for(int i = 0; i < GetNumEntities(); i++) {
+		Entities[i]->Draw();
+	}
 
 }
 

@@ -1,4 +1,8 @@
 #pragma once
+
+#define  _USE_MATH_DEFINES
+#include <math.h>
+
 class Math
 {
 public:
@@ -22,5 +26,9 @@ public:
 	static float radiansToDegrees(float radians)
 	{
 		return (radians * 180.0f) / PI;
+	}
+	static float ToDegree(float radian)
+	{
+		return 180*radian/float(M_PI);
 	}
 };

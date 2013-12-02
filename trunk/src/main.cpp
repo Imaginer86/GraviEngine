@@ -1,16 +1,15 @@
 #include <Windows.h>
 
-#include <gl\GL.h>
-#include <gl\GLU.h>
+//#include <gl\GL.h>
+//#include <gl\GLU.h>
 #include "gl\glaux.h"
 
 #include <fstream>
-#define  _USE_MATH_DEFINES
-#include <math.h>
+
+
 
 #include "Game.h"
-#include "Camera.h"	
-
+#include "Camera.h"
 #include "Color.h"
 
 HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
@@ -37,7 +36,6 @@ float timeScale = 1.0f;
 GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f }; // Значения фонового света
 GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 GLfloat LightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
-
 
 float fps = 0.0f;
 float ups = 0.0f;
@@ -116,10 +114,7 @@ GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 
 
 LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
-float ToDegree(float radian)
-{
-	return 180*radian/float(M_PI);
-}
+
 
 GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер и инициализировать окно GL
 {
@@ -380,44 +375,50 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 
 float temp_angle = 0.0f;
 
-bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисовка
-{
-	GLUquadricObj *quadratic;
-	quadratic = gluNewQuadric();
-	//gluQuadricDrawStyle(quadratic, GLU_LINE);
-	gluQuadricDrawStyle(quadratic, GLU_FILL);
-	gluQuadricNormals(quadratic, GLU_SMOOTH);			// Create Smooth Normals (NEW)
-
-
+bool DrawGLScene()                // Здесь будет происходить вся прорисовка
+{	  
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // Очистить экран и буфер глубины	
 	glMatrixMode(GL_MODELVIEW);								// Выбор матрицы вида модели
 	glLoadIdentity();              // Сбросить текущую матрицу
 
- 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
- 		mCamera.pos.x, mCamera.pos.y, mCamera.pos.z + 50, 
- 		0, 1, 0);
+	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
+		mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z + 50, 
+		0, 1, 0);	
 
-	//glColor3f(0, 1, 0);
-	//gluSphere(quadratic, 10, 32, 32);
+	mGame.Draw();
 
+	if (showDebugInfo)
+	{
+		glColor3f(1, 1, 1);
+		glPushMatrix();
+		glTranslatef(mCamera.GetPos().x+4.5f, mCamera.GetPos().y+3.5f, mCamera.GetPos().z+10);
+		glRotatef(180, 0, 1, 0);
+		glScalef(0.2f, 0.2f, 0.2f);
+		glPrint("FPS: %2.2f", fps);						// Print GL Text To The Screen
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(mCamera.GetPos().x+4.5f, mCamera.GetPos().y+3.3f, mCamera.GetPos().z+10);
+		glRotatef(180, 0, 1, 0);
+		glScalef(0.2f, 0.2f, 0.2f);
+		glPrint("UPS: %2.2f", ups);						// Print GL Text To The Screen
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(mCamera.GetPos().x+4.5f, mCamera.GetPos().y+3.1f, mCamera.GetPos().z+10);
+		glRotatef(180, 0, 1, 0);
+		glScalef(0.2f, 0.2f, 0.2f);
+		glPrint("Time Scale: %2.2f", timeScale);						// Print GL Text To The Screen
+		glPopMatrix();
+	}  
 	
-	
+	return true;
+
 // 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 // 	glRotatef(mCamera.angle.x, 1, 0, 0);
 // 	glRotatef(mCamera.angle.y, 0, 1, 0);
 // 	glRotatef(mCamera.angle.z, 0, 0, 1);
 // 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 
-	GLenum light = GL_LIGHT0;
-
-
-	for(int i = 0; i < mGame.GetNumEntities(); i++) {
-		glPushMatrix();
-
-
-
-		glTranslatef(mGame.GetEntity(i)->GetPos().x, mGame.GetEntity(i)->GetPos().y, mGame.GetEntity(i)->GetPos().z);
-
+//		GLenum light = GL_LIGHT0;
 // 		if (mGame.Entities[i].isLight) {
 // 			glDisable(GL_LIGHTING);
 // 			GLfloat massLight[] = {mGame.Entities[i].color.r, mGame.Entities[i].color.g,mGame.Entities[i].color.b,mGame.Entities[i].color.a,};
@@ -426,154 +427,7 @@ bool DrawGLScene( GLvoid )                // Здесь будет происходить вся прорисо
 // 			glLightfv(light ,GL_POSITION, massPos);            
 // 			glEnable(light);
 // 			light++;
-// 		}              
-
-
-
-		glColor3f(mGame.GetEntity(i)->GetColor().r, mGame.GetEntity(i)->GetColor().g, mGame.GetEntity(i)->GetColor().b);
-		gluSphere(quadratic, mGame.GetEntity(i)->GetR(), 32, 32);
-
-//   		if (mGame.Entities[i].isLight)
-//   			glEnable(GL_LIGHTING);
-
-		glPopMatrix();
-	}
-
-
-	
-	//for(int i = 0; i < mGame.numBoxs; i++) {
-		//glPushMatrix();
-		//Vector3 pos = mGame.boxes[i].GetPos();
-		//Vector3 size = mGame.boxes[i].GetSize();
-		//Vector3 angle = mGame.boxes[i].GetAngle();
-		//Color4f color = mGame.boxes[i].GetColor();
-
-		//glTranslatef(pos.x, pos.y, pos.z);
-		//glRotatef(angle.x, 1, 0, 0);
-		//glRotatef(angle.y, 0, 1, 0);
-		//glRotatef(angle.z, 0, 0, 1);
-
-		//glColor3f(color.r, color.g, color.b);
-
-		//glBegin(GL_QUADS);       // Начало рисования четырехугольников
-		// Передняя грань
-		//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 1 (Перед)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Перед)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Перед)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Перед)
-		// Задняя грань
-		//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Зад)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Зад)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 3 (Зад)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Зад)
-		// Верхняя грань
-// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
-// 		glVertex3f(-1.0f,  1.0f, -1.0f); // Точка 1 (Верх)
-// 		glVertex3f(-1.0f,  1.0f,  1.0f); // Точка 2 (Верх)
-// 		glVertex3f( 1.0f,  1.0f,  1.0f); // Точка 3 (Верх)
-// 		glVertex3f( 1.0f,  1.0f, -1.0f); // Точка 4 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
-
-		// Нижняя грань
-		//glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
-		// Правая грань
-		//glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		//glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
-		// Левая грань
-		//glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-		//glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
-		//glEnd();
-
-		//glPopMatrix();
-	//}
-
-// 	for (int i = 0; i < mGame.numLines; i++)
-// 	{
-// 		glPushMatrix();
-// 		Vector3 h = mGame.lines[i].pos2 - mGame.lines[i].pos1;
-// 		Vector3 h_u = h.unit();
-// 		//glTranslatef(mGame.lines[i].pos1.x, mGame.lines[i].pos1.y, mGame.lines[i].pos1.z);
-// 
-// 		float angle_x = atan2(h.y, h.z);
-// 		angle_x = ToDegree(angle_x);
-// 
-// 		float angle_y = atan2(h.x, h.z);
-// 		angle_y = ToDegree(angle_y);
-// 
-// 		float angle_z = atan2(h.x, h.y);
-// 		angle_z = ToDegree(angle_z);
-// 
-// 		//glRotatef(-45, 1, 0, 0);
-// 		//glRotatef(45, 0, 1, 0);		
-// 		//glRotatef(45, 0, 0, 1);
-// 
-// 		glRotatef(temp_angle, 1, 1, 0);
-// 		//glTranslatef(10, 0, 0);
-// 		//glRotatef(temp_angle, 1, 1, 0);
-// 		
-// 		//glRotatef(90, 0, 1, 0);
-// 		temp_angle += 0.5;
-// 
-// 		glColor3f(mGame.lines[i].color.r, mGame.lines[i].color.g, mGame.lines[i].color.b );
-// 		gluCylinder(quadratic, mGame.lines[i].r, mGame.lines[i].r, h.length(), 32, 32);
-// 		//gluDisk(quadratic, 0, mGame.lines[i].r, 32, 32);
-// 
-// 		glBegin(GL_LINES);
-// 		glColor3f(1, 0, 0);
-// 		glVertex3f(0, 0, 0);
-// 		glVertex3f(0, 0, h.length());
-// 		glEnd();
-// 
-// 		glColor3f(0, 1, 0);
-// 		glTranslatef(0, 0, h.length());
-// 		gluSphere(quadratic, mGame.lines[i].r , 32, 32);
-// 
-// 		
-// 		glPopMatrix();		
-// 	}
-
-	gluDeleteQuadric(quadratic);
-
-
-	if (showDebugInfo)
-	{
-		glColor3f(1, 1, 1);
-		glPushMatrix();
-			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.5f, mCamera.pos.z+10);
-			glRotatef(180, 0, 1, 0);
-			glScalef(0.2f, 0.2f, 0.2f);
-			glPrint("FPS: %2.2f", fps);						// Print GL Text To The Screen
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.3f, mCamera.pos.z+10);
-			glRotatef(180, 0, 1, 0);
-			glScalef(0.2f, 0.2f, 0.2f);
-			glPrint("UPS: %2.2f", ups);						// Print GL Text To The Screen
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(mCamera.pos.x+4.5f, mCamera.pos.y+3.1f, mCamera.pos.z+10);
-			glRotatef(180, 0, 1, 0);
-			glScalef(0.2f, 0.2f, 0.2f);
-			glPrint("Time Scale: %2.2f", timeScale);						// Print GL Text To The Screen
-		glPopMatrix();
-	}
-
-	return true;
+// 		}
 }
 
 BOOL LoadData() {
@@ -585,8 +439,8 @@ BOOL LoadData() {
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
 		>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
-	mCamera.pos = cameraPos;
-	mCamera.angle = cameraAngle;
+	mCamera.SetPos(cameraPos);
+	mCamera.SetAngle(cameraAngle);
 
 	dataFile >> LightAmbient[0] >> LightAmbient[1] >> LightAmbient[2] >> LightAmbient[3];
 	dataFile >> LightDiffuse[0] >> LightDiffuse[1] >> LightDiffuse[2] >> LightDiffuse[3];
@@ -695,52 +549,51 @@ void UpdateKeys()
 	}
 	if( keys[VK_RIGHT]) {
 		if (keys[VK_SHIFT])
-			mCamera.angle.y += 1.0f;
+			mCamera.AddAngleX(1.0f);
 		else
-			mCamera.angle.y += 0.1f;				
+			mCamera.AddAngleX(0.1f);				
 	}
 	if( keys[VK_LEFT]) {
 		if (keys[VK_SHIFT])
-			mCamera.angle.y -= 1.0f;
+			mCamera.AddAngleX(-1.0f);
 		else
-			mCamera.angle.y -= 0.1f;
+			mCamera.AddAngleX(-0.1f);
 	}
 	if( keys[VK_UP]) {
 		if (keys[VK_SHIFT])
-			mCamera.angle.x += 1.0f;
+			mCamera.AddAngleY(1.0f);
 		else
-			mCamera.angle.x += 0.1f;
+			mCamera.AddAngleY(0.1f);
 	}
 	if( keys[VK_DOWN]) {
 		if (keys[VK_SHIFT])
-			mCamera.angle.x -= 1.0f;
+			mCamera.AddAngleY(-1.0f);
 		else
-			mCamera.angle.x -= 0.1f;
+			mCamera.AddAngleY(-0.1f);
 	}
 	if( keys['W']) {
 		if (keys[VK_SHIFT])
-			mCamera.pos.z += 1.0f;
+			mCamera.AddPosZ(1.0f);
 		else
-			mCamera.pos.z += 0.1f;
+			mCamera.AddPosZ(0.1f);
 	}
 	if( keys['S']) {
 		if (keys[VK_SHIFT])
-			mCamera.pos.z -= 1.0f;
+			mCamera.AddPosZ(-1.0f);
 		else
-			mCamera.pos.z -= 0.1f;
+			mCamera.AddPosZ(-0.1f);
 	}
 	if( keys['A']) {
 		if (keys[VK_SHIFT])
-			mCamera.pos.x += 1.0f;
+			mCamera.AddPosX(1.0f);
 		else
-			mCamera.pos.x += 0.1f;
+			mCamera.AddPosX(0.1f);
 	}
 	if( keys['D']) {
 		if (keys[VK_SHIFT])
-			mCamera.pos.x -= 1.0f;
-
+			mCamera.AddPosX(-1.0f);
 		else
-			mCamera.pos.x -= 0.1f;
+			mCamera.AddPosX(-0.1f);
 	}
 	if (keys[VK_TAB] && !ld)
 	{

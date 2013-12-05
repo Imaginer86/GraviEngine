@@ -26,9 +26,15 @@ public:
 	static float radiansToDegrees(float radians)
 	{
 		return (radians * 180.0f) / PI;
-	}
+	}							  
+
 	static float ToDegree(float radian)
 	{
 		return 180*radian/float(M_PI);
 	}
 };
+
+
+// Math::PI = M_PI;
+// Math::HALF_PI = M_PI / 2.0f;
+// Math::EPSILON = 0.00000000001f;

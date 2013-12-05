@@ -6,8 +6,6 @@
 
 #include <fstream>
 
-
-
 #include "Game.h"
 #include "Camera.h"
 #include "Color.h"
@@ -372,8 +370,6 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 	return true;                  // Всё в порядке!
 }
 
-
-float temp_angle = 0.0f;
 
 bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 {	  

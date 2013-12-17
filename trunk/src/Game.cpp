@@ -43,13 +43,14 @@ void Game::SetNumLines( int num )
 	this->numEntitys += num;	
 }
 
-void Game::SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color)
+void Game::SetLine(int index, float m, float r, float h, Vector3 pos1, Color4f color)
 {
 	Line *line = new Line;
 	line->SetMass(m);
 	line->SetR(r);
+	line->SetH(h);
 	line->SetPos(pos1);
-	line->SetPos2(pos2);
+	//line->SetPos2(pos2);
 	line->SetColor(color);
 	Entities.push_back(line);
 }

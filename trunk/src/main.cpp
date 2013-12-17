@@ -487,14 +487,13 @@ BOOL LoadData() {
 	dataFile >> numLines;
 	mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
-		float m = 0.0f, r = 0.0f;
-		Vector3 pos1, pos2;
+		float m = 0.0f, r = 0.0f, h = 0.0f;
+		Vector3 pos;
 		Color4f color;
-		dataFile >> m >> r
-			>> pos1.x >> pos1.y >> pos1.z
-			>> pos2.x >> pos2.y >> pos2.z
+		dataFile >> m >> r >> h
+			>> pos.x >> pos.y >> pos.z			
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetLine(i, m, r, pos1, pos2, color);
+		mGame.SetLine(i, m, r, h, pos, color);
 	}
 
 	dataFile.close();

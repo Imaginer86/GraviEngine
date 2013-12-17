@@ -30,7 +30,7 @@ public:
 	void SetBox(int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color);
 
 	void SetNumLines(int num);
-	void SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color);
+	void SetLine(int index, float m, float r, float h, Vector3 pos1, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
 

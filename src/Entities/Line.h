@@ -8,8 +8,8 @@ class Line: public Entity
 public:
 	Line()
 	: Entity()
-	, pos2(1, 1, 1)
-	, r(1)
+	, r(1.0f)
+	, h(1.0f)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
@@ -23,15 +23,30 @@ public:
 		this->r = r;
 	}
 
-	Vector3 GetPos2()
+	virtual float GetR()
 	{
-		return pos2;
+		return r;
 	}
 
-	void SetPos2(Vector3 pos2)
+	void SetH(float h)
 	{
-		this->pos2 = pos2;
+		this->h = h;
 	}
+
+	virtual float GetH()
+	{
+		return h;
+	}
+
+// 	Vector3 GetPos2()
+// 	{
+// 		return pos2;
+// 	}
+// 
+// 	void SetPos2(Vector3 pos2)
+// 	{
+// 		this->pos2 = pos2;
+// 	}
 
 	Color4f GetColor()
 	{
@@ -41,11 +56,6 @@ public:
 	void SetColor(Color4f color)
 	{
 		this->color = color;
-	}
-
-	virtual float GetR()
-	{
-		return r;
 	}
 
 	virtual void applyForce(Vector3 force)
@@ -66,7 +76,8 @@ public:
 	virtual void Draw();
 
 private:
-	Vector3 pos2;
+	//Vector3 pos2;
+	float h;
 	float r;
 };
 

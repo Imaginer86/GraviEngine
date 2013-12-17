@@ -9,10 +9,7 @@ using namespace std;
 //#include "Box.h"
 //#include "Line.h"
 
-
 const float G = 0.01f;
-
-
 
 class Game
 {
@@ -24,8 +21,7 @@ public:
 	{				
 	}
 
-	~Game(void){}
-	
+	~Game(void){}	
 
 	void SetNumMasses(int num);
     void SetMass(int index, float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
@@ -37,7 +33,6 @@ public:
 	void SetLine(int index, float m, float r, Vector3 pos1, Vector3 pos2, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
-
 
 	void Update(float dt);
 	void Draw();
@@ -60,9 +55,7 @@ public:
  	virtual void simulate(float dt);					// Iterate the masses by the change in time;
  	virtual void operate(float dt);				// The complete procedure of simulation;
 
-
 private:
-
 	//vector<Vector3> globalForces;
 	int numEntitys;
 	vector<Entity*> Entities;

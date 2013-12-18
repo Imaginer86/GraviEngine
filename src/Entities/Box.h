@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "../Math/Vector3.h"
+#include "../Math/Quaternion.h"
 #include "../Color.h"
 
 class Box: public Entity

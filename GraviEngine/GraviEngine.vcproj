@@ -249,6 +249,10 @@
 			Name="Math"
 			>
 			<File
+				RelativePath="..\src\Math\Math.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Math\Math.h"
 				>
 			</File>

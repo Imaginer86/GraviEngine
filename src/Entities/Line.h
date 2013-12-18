@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "../Math/Vector3.h"
+#include "../Math/Quaternion.h"
 #include "../Color.h"
 
 class Line: public Entity
@@ -10,6 +11,7 @@ public:
 	: Entity()
 	, r(1.0f)
 	, h(1.0f)
+	, q(0.0f, 0.0f, 0.0f, 0.0f)
 	{
 		this->color.r = 1.0f;
 		this->color.g = 1.0f;
@@ -48,6 +50,16 @@ public:
 // 		this->pos2 = pos2;
 // 	}
 
+	void SetQuaternion(Quaternion q)
+	{
+		this->q = q;
+	}
+
+	Quaternion GetQuaternion()
+	{
+		return q;
+	}
+
 	Color4f GetColor()
 	{
 		return color;
@@ -79,5 +91,6 @@ private:
 	//Vector3 pos2;
 	float h;
 	float r;
+	Quaternion q;
 };
 

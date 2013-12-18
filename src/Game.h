@@ -5,10 +5,7 @@
 using namespace std;
 
 #include "Entities\Entity.h"
-//#include "Mass.h"
-//#include "Box.h"
-//#include "Line.h"
-
+#include "Math\Quaternion.h"
 const float G = 0.01f;
 
 class Game
@@ -30,7 +27,7 @@ public:
 	void SetBox(int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color);
 
 	void SetNumLines(int num);
-	void SetLine(int index, float m, float r, float h, Vector3 pos1, Color4f color);
+	void SetLine(int index, float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
 

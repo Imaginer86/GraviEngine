@@ -6,9 +6,14 @@
 class Math
 {
 public:
-	static const float PI;
-	static const float HALF_PI;
-	static const float EPSILON;
+// 	static const float PI;
+// 	static const float HALF_PI;
+// 	static const float EPSILON;
+
+	static float PI;
+	static float HALF_PI;
+	static float EPSILON;
+
 
 	static bool closeEnough(float f1, float f2)
 	{
@@ -35,6 +40,6 @@ public:
 };
 
 
-// Math::PI = M_PI;
-// Math::HALF_PI = M_PI / 2.0f;
-// Math::EPSILON = 0.00000000001f;
+
+
+

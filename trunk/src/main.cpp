@@ -1,10 +1,8 @@
-#include <Windows.h>
-
+//#include <Windows.h>
+#include <fstream>
 //#include <gl\GL.h>
 //#include <gl\GLU.h>
 #include "gl\glaux.h"
-
-#include <fstream>
 
 #include "Game.h"
 #include "Camera.h"
@@ -20,7 +18,7 @@ bool  active = true;                // Флаг активности окна, установленный в tru
 bool  fullscreen = false;              // Флаг режима окна, установленный в полноэкранный по умолчанию
 bool  pause = true;
 
-bool light = true;      // Свет ВКЛ / ВЫКЛ
+bool LightOn = true;      // Свет ВКЛ / ВЫКЛ
 bool lp = false;         // L нажата?
 
 bool showDebugInfo = true;
@@ -144,7 +142,7 @@ void SetLight()
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);    // Установка Диффузного Света
 	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);   // Позиция света
 	glEnable(GL_LIGHT0); // Разрешение источника света номер один
-	if (light)
+	if (LightOn)
 		glEnable(GL_LIGHTING);
 }
 int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
@@ -157,7 +155,7 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // Улучшение в вычислении перспективы
 	glEnable(GL_COLOR_MATERIAL);
 
-	SetLight();
+//	SetLight();
 
 	
 
@@ -379,7 +377,9 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 
 	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
 		mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z + 50, 
-		0, 1, 0);	
+		0, 1, 0);
+
+	SetLight();
 
 	mGame.Draw();
 
@@ -490,10 +490,15 @@ BOOL LoadData() {
 		float m = 0.0f, r = 0.0f, h = 0.0f;
 		Vector3 pos;
 		Color4f color;
+		Quaternion q;
+		Vector3 u;
+		float w = 0.0f;
 		dataFile >> m >> r >> h
-			>> pos.x >> pos.y >> pos.z			
+			>> pos.x >> pos.y >> pos.z
+			>> u.x >> u.y >> u.z >> w
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetLine(i, m, r, h, pos, color);
+		q.fromAxisAngle(u, w);
+		mGame.SetLine(i, m, r, h, pos, q, color);
 	}
 
 	dataFile.close();
@@ -509,8 +514,8 @@ void UpdateKeys()
 	if (keys['L'] && !lp) // Клавиша 'L' нажата и не удерживается?
 	{
 		lp=true;      // lp присвоили TRUE
-		light=!light; // Переключение света TRUE/FALSE
-		if (!light)               // Если не свет
+		LightOn=!LightOn; // Переключение света TRUE/FALSE
+		if (!LightOn)               // Если не свет
 		{
 			glDisable(GL_LIGHTING);  // Запрет освещения
 		}
@@ -751,4 +756,3 @@ int WINAPI WinMain(  HINSTANCE  hInstance,        // Дескриптор приложения
 	KillGLWindow();                // Разрушаем окно
 	return ( msg.wParam );              // Выходим из программы
 }
-

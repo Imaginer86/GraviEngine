@@ -18,6 +18,16 @@ public:
 		this->pos = pos;
 	}
 
+	Vector3 GetPos2()
+	{
+		return pos2;
+	}
+
+	void SetPos2(Vector3 pos2)
+	{
+		this->pos2 = pos2;
+	}
+
 	void AddPosX(float x)
 	{
 		this->pos.x += x;
@@ -59,5 +69,6 @@ public:
 	}
 private:
 	Vector3 pos;
+	Vector3 pos2;
 	Vector3 angle;
 };

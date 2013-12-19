@@ -376,7 +376,7 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 	glLoadIdentity();              // Сбросить текущую матрицу
 
 	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
-		mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z + 50, 
+		mCamera.GetPos2().x, mCamera.GetPos2().y, mCamera.GetPos2().z, 
 		0, 1, 0);
 
 	SetLight();
@@ -385,6 +385,7 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 
 	if (showDebugInfo)
 	{
+		//glLoadIdentity();
 		glColor3f(1, 1, 1);
 		glPushMatrix();
 		glTranslatef(mCamera.GetPos().x+4.5f, mCamera.GetPos().y+3.5f, mCamera.GetPos().z+10);
@@ -431,12 +432,14 @@ BOOL LoadData() {
 	if ( !dataFile )
 		return FALSE;
 
-	Vector3 cameraPos, cameraAngle;
+	Vector3 cameraPos, cameraPos2, cameraAngle;
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
-		>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
+			>> cameraPos2.x >> cameraPos2.y >> cameraPos2.z;
+		//>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
 	mCamera.SetPos(cameraPos);
-	mCamera.SetAngle(cameraAngle);
+	mCamera.SetPos2(cameraPos2);
+	//mCamera.SetAngle(cameraAngle);
 
 	dataFile >> LightAmbient[0] >> LightAmbient[1] >> LightAmbient[2] >> LightAmbient[3];
 	dataFile >> LightDiffuse[0] >> LightDiffuse[1] >> LightDiffuse[2] >> LightDiffuse[3];

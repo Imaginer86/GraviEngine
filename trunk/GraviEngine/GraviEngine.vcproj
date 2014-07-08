@@ -206,10 +206,10 @@
 			>
 		</Filter>
 		<Filter
-			Name="gl"
+			Name="GL"
 			>
 			<File
-				RelativePath="..\src\gl\glaux.h"
+				RelativePath="..\src\GL\glaux.h"
 				>
 			</File>
 		</Filter>

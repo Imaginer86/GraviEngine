@@ -1,3 +1,18 @@
+keys:
+space	: pause
+L		: light
+F1		: info
+F5		: reload
+right	: rotate right
+left	: rotate left
+W		: move forward
+S		: move back
+A		: move left
+D		: move right
+
+
+data.dat:
+
 CameraPos
 CameraAngle
 

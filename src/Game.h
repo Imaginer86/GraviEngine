@@ -1,8 +1,10 @@
 #pragma once
 //#include <list>
 #include <vector>
+#include "Math/Math.h"
 
 using namespace std;
+using namespace Math;
 
 #include "Entities\Entity.h"
 #include "Math\Quaternion.h"

@@ -2,9 +2,11 @@
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
 #include "Math/Quaternion.h"
-class Camera{
+
+class Camera
+{
 public:
-	Camera():pos(0,0,0), angle(0,0,0)
+	Camera():pos(0,0,0), view(0,0,0), Up(0,1,0)//, angle(0,0,0)
 	{}
 	virtual  ~Camera() {};
 
@@ -18,57 +20,99 @@ public:
 		this->pos = pos;
 	}
 
-	Vector3 GetPos2()
+	Vector3 GetView()
 	{
-		return pos2;
+		return view;
 	}
 
-	void SetPos2(Vector3 pos2)
+	void SetView(Vector3 pos2)
 	{
-		this->pos2 = pos2;
+		this->view = pos2;
 	}
 
 	void AddPosX(float x)
 	{
 		this->pos.x += x;
+		this->view.x += x;
 	}
 
 	void AddPosY(float y)
 	{
 		this->pos.y += y;
+		this->view.y += y;
 	}
 
 	void AddPosZ(float z)
 	{
 		this->pos.z += z;
+		this->view.z += z;
 	}
 
-	Vector3 GetAngle()
+	void RotateView(float angle)
 	{
-		return angle;
+		Vector3 v;
+		v = view - pos;
+		view.z = pos.z + sin(angle) * v.x + cos(angle) * v.z;
+		view.x = pos.x + cos(angle) * v.x - sin(angle) * v.z;
 	}
 
-	void SetAngle(Vector3 angle)
+	void MoveCamera(float speed)
 	{
-		this->angle = angle;
+		Vector3 v;
+		v = view - pos;
+
+		v.y = 0;
+		v.unitize();
+
+		pos += v*speed;
+		view += v*speed;
 	}
 
-	void AddAngleX(float x)
+	void MoveLRCamera(float speed)
 	{
-		this->angle.x += x;
-	}
+		Vector3 v;
+		v = view - pos;
 
-	void AddAngleY(float y)
-	{
-		this->angle.y += y;
-	}
+		v = v*Up;
 
-	void AddAngleZ(float z)
-	{
-		this->angle.z += z;
+		v.y = 0;
+		v.unitize();
+
+		pos += v*speed;
+		view += v*speed;
 	}
+// 
+// 	Vector3 GetAngle()
+// 	{
+// 		return angle;
+// 	}
+// 
+// 	void SetAngle(Vector3 angle)
+// 	{
+// 		this->angle = angle;
+// 	}
+// 
+// 	void AddAngleX(float x)
+// 	{
+// 		this->angle.x += x;
+// 		//Quaternion qadd;
+// 		//qadd.fromAxisAngle(Vector3(1,0,0), x);
+// 		//q += qadd;
+// 	}
+// 
+// 	void AddAngleY(float y)
+// 	{
+// 		this->angle.y += y;
+// 	}
+// 
+// 	void AddAngleZ(float z)
+// 	{
+// 		this->angle.z += z;
+// 	}
 private:
 	Vector3 pos;
-	Vector3 pos2;
+	Vector3 view;
 	Vector3 angle;
+	Vector3 Up;
+	//Quaternion q;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#include <math.h>
 
 // class Vector3		---> An object to represent a 3D vector or a 3D point in space
 struct Vector3

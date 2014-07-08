@@ -1,19 +1,16 @@
 #pragma once
+#include <vector>
 
 #define  _USE_MATH_DEFINES
 #include <math.h>
 
-class Math
+
+
+namespace Math
 {
-public:
-// 	static const float PI;
-// 	static const float HALF_PI;
-// 	static const float EPSILON;
-
-	static float PI;
-	static float HALF_PI;
-	static float EPSILON;
-
+	static const float PI = float(M_PI);
+	static const float HALF_PI = float(M_PI)/2.0f;
+	static float EPSILON  = 0.00000000001f;;
 
 	static bool closeEnough(float f1, float f2)
 	{
@@ -35,11 +32,6 @@ public:
 
 	static float ToDegree(float radian)
 	{
-		return 180*radian/float(M_PI);
+		return 180*radian/PI;
 	}
-};
-
-
-
-
-
+}

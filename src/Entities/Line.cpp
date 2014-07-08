@@ -34,9 +34,11 @@ void Line::Draw()
 	//temp_angle += 0.5;
 
 	glTranslatef(pos.x, pos.y, pos.z - h/2.0f);
-	glRotatef(q.x, 1, 0, 0);
-	glRotatef(q.y, 0, 1, 0);
-	glRotatef(q.z, 0, 0, 1);
+	float headDegrees = 0.0f, pitchDegrees = 0.0f, rollDegrees = 0.0f;
+	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
+	glRotatef(headDegrees, 1, 0, 0);
+	glRotatef(pitchDegrees, 0, 1, 0);
+	glRotatef(rollDegrees, 0, 0, 1);
 	//q.y += 1;				  
 	glColor3f(color.r, color.g, color.b );
 	gluCylinder(quadratic, r, r, h, 32, 32);

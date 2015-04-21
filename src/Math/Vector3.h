@@ -120,16 +120,17 @@ public:
         return sqrt(x*x + y*y + z*z);
     };			   		
 
-    void unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
+    float unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
     {
         float length = this->length();
 
         if (length == 0)
-            return;
+            return 0.0f;
 
         x /= length;
         y /= length;
         z /= length;
+		return length;
     }
 
     Vector3 unit()								// unit() returns a new Vector3. The returned value is a unitized version of this Vector3.

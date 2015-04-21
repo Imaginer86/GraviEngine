@@ -5,15 +5,19 @@
 void Box::Draw()
 {
 	glPushMatrix();
-	Vector3 pos = GetPos();
+	Vector3 posr = GetPos();
+	Vector3 pos;
 	Vector3 size = GetSize();
 	Vector3 angle = GetAngle();
 	Color4f color = GetColor();
 
-	glTranslatef(pos.x, pos.y, pos.z);
-	glRotatef(angle.x, 1, 0, 0);
-	glRotatef(angle.y, 0, 1, 0);
-	glRotatef(angle.z, 0, 0, 1);
+	glTranslatef(posr.x, posr.y, posr.z);
+	//glRotatef(angle.x, 1, 0, 0);
+	//glRotatef(angle.y, 0, 1, 0);
+	//glRotatef(angle.z, 0, 0, 1);
+
+	float anglef = 360.0f*acosf(q.w)/Math::PI;
+	glRotatef(anglef, q.x, q.y, q.z);
 
 	glColor3f(color.r, color.g, color.b);
 

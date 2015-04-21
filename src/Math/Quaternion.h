@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.h"
+#include "Vector3.h"
 #include "Matrix4.h"
 
 // namespace Math
@@ -22,7 +23,7 @@
 
 		Quaternion &operator+=(const Quaternion &rhs);
 		Quaternion &operator-=(const Quaternion &rhs);
-		Quaternion &operator*=(const Quaternion &rhs);
+		Quaternion &operator*=(const Quaternion &rhs);		
 		Quaternion &operator*=(float scalar);
 		Quaternion &operator/=(float scalar);
 
@@ -32,10 +33,13 @@
 		Quaternion operator*(float scalar) const;
 		Quaternion operator/(float scalar) const;
 
+		void rotate(Vector3 &v) const;
+
 		Quaternion conjugate() const;
 		void fromAxisAngle(const Vector3 &axis, float degrees);
 		void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
-		//void fromMatrix(const Matrix4 &m);
+		void fromAngleXYZ(const Vector3 &angle);
+		void fromMatrix(const Matrix4 &m);
 		void identity();
 		Quaternion inverse() const;
 		float magnitude() const;
@@ -147,6 +151,13 @@ inline Quaternion Quaternion::operator/(float scalar) const
     return tmp;
 }
 
+inline void Quaternion::rotate(Vector3 &v) const
+{
+	Vector3 u(x,y,z);
+	float sinHalfAlpha = u.unitize();
+	v = v*(w*w) + (u*v-v*u)*sinHalfAlpha*w-u*v*u*(sinHalfAlpha*sinHalfAlpha);
+}
+
 inline Quaternion Quaternion::conjugate() const
 {
     Quaternion tmp(w, -x, -y, -z);
@@ -160,12 +171,32 @@ inline void Quaternion::fromAxisAngle(const Vector3 &axis, float degrees)
     w = cosf(halfTheta), x = axis.x * s, y = axis.y * s, z = axis.z * s;
 }
 
-// inline void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
-// {
-//     Matrix4 m;
-//     m.fromHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
+ inline void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
+{
+     //Matrix4 m;
+     //m.fromHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
+
 //     fromMatrix(m);
-// }
+}
+
+ inline void Quaternion::fromAngleXYZ(const Vector3 &angle)
+{
+	Vector3 vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
+	Quaternion qx, qy, qz, qt;
+
+	qx.fromAxisAngle(vx, angle.x );
+	qy.fromAxisAngle(vy, angle.y );
+	qz.fromAxisAngle(vz, angle.z );
+	qt = qx*qy*qz;
+	w = qt.w;
+	x = qt.x;
+	y = qt.y;
+	z = qt.z;
+	this->normalize();
+	//quaternion_multiply( &qt, &qx, &qy );
+    //quaternion_multiply( &q,  &qt, &qz );
+}
+
 
 inline void Quaternion::identity()
 {
@@ -185,6 +216,8 @@ inline float Quaternion::magnitude() const
 
 inline void Quaternion::normalize()
 {
+	if (w==0.0f&&x==0.0f&&y==0.0f&&z==0.0f)
+		identity();
     float invMag = 1.0f / magnitude();
     w *= invMag, x *= invMag, y *= invMag, z *= invMag;
 }
@@ -204,49 +237,49 @@ inline void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees,
 
 //const Quaternion Quaternion::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f);
 
-// inline void Quaternion::fromMatrix(const Matrix4 &m)
-// {
-// 	// Creates a quaternion from a rotation matrix. 
-// 	// The algorithm used is from Allan and Mark Watt's "Advanced 
-// 	// Animation and Rendering Techniques" (ACM Press 1992).
-// 
-// 	float s = 0.0f;
-// 	float q[4] = {0.0f};
-// 	float trace = m[0][0] + m[1][1] + m[2][2];
-// 
-// 	if (trace > 0.0f)
-// 	{
-// 		s = sqrtf(trace + 1.0f);
-// 		q[3] = s * 0.5f;
-// 		s = 0.5f / s;
-// 		q[0] = (m[1][2] - m[2][1]) * s;
-// 		q[1] = (m[2][0] - m[0][2]) * s;
-// 		q[2] = (m[0][1] - m[1][0]) * s;
-// 	}
-// 	else
-// 	{
-// 		int nxt[3] = {1, 2, 0};
-// 		int i = 0, j = 0, k = 0;
-// 
-// 		if (m[1][1] > m[0][0])
-// 			i = 1;
-// 
-// 		if (m[2][2] > m[i][i])
-// 			i = 2;
-// 
-// 		j = nxt[i];
-// 		k = nxt[j];
-// 		s = sqrtf((m[i][i] - (m[j][j] + m[k][k])) + 1.0f);
-// 
-// 		q[i] = s * 0.5f;
-// 		s = 0.5f / s;
-// 		q[3] = (m[j][k] - m[k][j]) * s;
-// 		q[j] = (m[i][j] + m[j][i]) * s;
-// 		q[k] = (m[i][k] + m[k][i]) * s;
-// 	}
-// 
-// 	x = q[0], y = q[1], z = q[2], w = q[3];
-// }
+inline void Quaternion::fromMatrix(const Matrix4 &m)
+{
+ 	// Creates a quaternion from a rotation matrix. 
+ 	// The algorithm used is from Allan and Mark Watt's "Advanced 
+ 	// Animation and Rendering Techniques" (ACM Press 1992).
+ 
+ 	float s = 0.0f;
+ 	float q[4] = {0.0f};
+ 	float trace = m[0][0] + m[1][1] + m[2][2];
+ 
+ 	if (trace > 0.0f)
+ 	{
+ 		s = sqrtf(trace + 1.0f);
+ 		q[3] = s * 0.5f;
+ 		s = 0.5f / s;
+ 		q[0] = (m[1][2] - m[2][1]) * s;
+ 		q[1] = (m[2][0] - m[0][2]) * s;
+ 		q[2] = (m[0][1] - m[1][0]) * s;
+ 	}
+ 	else
+ 	{
+ 		int nxt[3] = {1, 2, 0};
+ 		int i = 0, j = 0, k = 0;
+ 
+ 		if (m[1][1] > m[0][0])
+ 			i = 1;
+ 
+ 		if (m[2][2] > m[i][i])
+ 			i = 2;
+ 
+ 		j = nxt[i];
+ 		k = nxt[j];
+ 		s = sqrtf((m[i][i] - (m[j][j] + m[k][k])) + 1.0f);
+ 
+ 		q[i] = s * 0.5f;
+ 		s = 0.5f / s;
+ 		q[3] = (m[j][k] - m[k][j]) * s;
+ 		q[j] = (m[i][j] + m[j][i]) * s;
+ 		q[k] = (m[i][k] + m[k][i]) * s;
+ 	}
+ 
+ 	x = q[0], y = q[1], z = q[2], w = q[3];
+}
 
 inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
 {
@@ -319,3 +352,4 @@ inline Matrix4 Quaternion::toMatrix4() const
 }
 
 //}
+

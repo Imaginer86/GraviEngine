@@ -3,11 +3,13 @@
 #include <vector>
 #include "Math/Math.h"
 
-using namespace std;
+#include <fstream>
+
 using namespace Math;
 
 #include "Entities\Entity.h"
 #include "Math\Quaternion.h"
+
 const float G = 0.01f;
 
 class Game
@@ -15,20 +17,35 @@ class Game
 public:
 	Game()
 	: numEntitys(0)
-	, Entities(NULL)
+	//, Entities(null)
 	, graviAcc(0, 0, 0)
-	{				
+	{
+		fileOut = std::ofstream("out.dat", std::ios::out);
 	}
 
-	~Game(void){}	
+	~Game(void)
+	{
+		fileOut.close();
+	}	
 
-	void SetNumMasses(int num);
+	void Game::SetNumMasses( int num )
+	{	
+		this->numEntitys += num;
+	}
     void SetMass(int index, float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
 
-	void SetNumBoxes(int num);
-	void SetBox(int index, float m, Vector3 pos, Vector3 size, Vector3 angle, Color4f color);
+	void Game::SetNumBoxes( int num )
+	{
+		this->numEntitys += num;
+	}
 
-	void SetNumLines(int num);
+	void SetBox( int index, float m, Vector3 pos, Vector3 vel, Vector3 size, Vector3 angle, Vector3 angleVel, Color4f color );
+
+	void Game::SetNumLines( int num )
+	{
+		this->numEntitys += num;	
+	}
+
 	void SetLine(int index, float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
@@ -39,25 +56,31 @@ public:
 	Vector3 GraviForce(int a, int b);
 	virtual void release();							// delete the masses created;
 
+	void SetNumEntities(int entities)
+	{
+		numEntitys = entities;
+	}
+
 	int GetNumEntities()
 	{
 		return numEntitys;
 	}
 
-	Entity *GetEntity(int i)
- 	{
-		return Entities[i];
-	}
+	//Entity& GetEntity(int i)
+ 	//{
+//		return Entities[i];
+//	}
 
  	virtual void init();								// this method will call the init() method of every mass;
  	virtual void solve();							// no implementation because no forces are wanted in this basic container;
  	virtual void simulate(float dt);					// Iterate the masses by the change in time;
- 	virtual void operate(float dt);				// The complete procedure of simulation;
-
+ 	
 private:
 	//vector<Vector3> globalForces;
 	int numEntitys;
-	vector<Entity*> Entities;
+	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
 	Vector3 graviAcc;
+
+	std::ofstream fileOut;
 };

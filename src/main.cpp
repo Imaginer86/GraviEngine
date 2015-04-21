@@ -1,19 +1,20 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include "GL\glaux.h"
 #include "Game.h"
 #include "Camera.h"
 #include "Color.h"
 
-bool  gFullscreen = false;              // Флаг режима окна, установленный в полноэкранный по умолчанию
-
-int gWidth = 800;
-int gHeight = 600;
-
 HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
 HDC		hDC  = NULL;              // Приватный контекст устройства GDI
 HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
 HINSTANCE  hInstance;              // Здесь будет хранится дескриптор приложения 
+
+
+
+const int gWidth = 1600;
+const int gHeight = 900;
 
 bool  gKeys[256];                // Массив, используемый для операций с клавиатурой
 bool  gActive = true;                // Флаг активности окна, установленный в true по умолчанию
@@ -26,20 +27,78 @@ bool gLightOnKey = false;         // L нажата?
 bool gShowDebugInfo = true;
 bool gShowDebugInfoKey = false;
 
-Game mGame;
-Camera mCamera;
+bool  gFullscreen = false;              // Флаг режима окна, установленный в полноэкранный по умолчанию
 
 float gTimeScale = 1.0f;
-
-GLfloat gLightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f }; // Значения фонового света
-GLfloat gLightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-GLfloat gLightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
+float gTime = 0.0f;
 
 float fps = 0.0f;
 float ups = 0.0f;
 
+Game mGame;
+Camera mCamera;
+
+GLfloat gLightAmbient[]= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
+GLfloat gLightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
+GLfloat gLightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
+
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
+GLuint		texture[4];									// 3 Textures
+
+GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
+
+	//GLfloat		xrot		=  0.0f;						// X Rotation
+	//GLfloat		yrot		=  0.0f;						// Y Rotation
+	//GLfloat		xrotspeed	=  0.01f;						// X Rotation Speed
+	//GLfloat		yrotspeed	=  0.0f;						// Y Rotation Speed
+
+
+AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
+{
+	std::ifstream File(Filename, std::ios::in);
+	if (File)											// Does The File Exist?
+	{
+		File.close();
+		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
+	}
+
+	return NULL;										// If Load Failed Return NULL
+}
+
+int LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
+{
+    int Status=FALSE;									// Status Indicator
+    AUX_RGBImageRec *TextureImage[4];					// Create Storage Space For The Textures
+    memset(TextureImage,0,sizeof(void *)*3);			// Set The Pointer To NULL
+    if ((TextureImage[0]=LoadBMP("EnvWall.bmp")) &&// Load The Floor Texture
+        (TextureImage[1]=LoadBMP("Ball.bmp")) &&	// Load the Light Texture
+        (TextureImage[2]=LoadBMP("EnvRoll.bmp")) &&	// Load the Wall Texture
+		(TextureImage[3] = LoadBMP("EarthMap_2500x1250.bmp")) )
+	{   
+		Status=TRUE;									// Set The Status To TRUE
+		glGenTextures(4, &texture[0]);					// Create The Texture
+		for (int loop=0; loop<4; loop++)				// Loop Through 5 Textures
+		{
+			glBindTexture(GL_TEXTURE_2D, texture[loop]);
+			glTexImage2D(GL_TEXTURE_2D, 0, 3, TextureImage[loop]->sizeX, TextureImage[loop]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage[loop]->data);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		}
+		for (INT loop=0; loop<4; loop++)					// Loop Through 5 Textures
+		{
+			if (TextureImage[loop])						// If Texture Exists
+			{
+				if (TextureImage[loop]->data)			// If Texture Image Exists
+				{
+					free(TextureImage[loop]->data);		// Free The Texture Image Memory
+				}
+				free(TextureImage[loop]);				// Free The Image Structure 
+			}
+		}
+	}
+	return Status;										// Return The Status
+}
 
 GLvoid BuildFont(GLvoid)								// Build Our Bitmap Font
 {
@@ -127,7 +186,7 @@ GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер 
 	glLoadIdentity();              // Сброс матрицы проекции
 
 	// Вычисление соотношения геометрических размеров для окна
-	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 10.0, 400.0);
+	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 400.0);
 
 // 	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
 // 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
@@ -151,6 +210,10 @@ void SetLight()
 
 int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
 {
+	if (!LoadGLTextures())								// If Loading The Textures Failed
+	{
+		return FALSE;									// Return False
+	}
 	glShadeModel( GL_SMOOTH );            // Разрешить плавное цветовое сглаживание
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
 	glClearDepth( 1.0f );              // Разрешить очистку буфера глубины
@@ -159,9 +222,18 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // Улучшение в вычислении перспективы
 	glEnable(GL_COLOR_MATERIAL);
 
+	glEnable(GL_TEXTURE_2D);
+
 	SetLight();	
 
 	BuildFont();				// Build The Font
+
+	q = gluNewQuadric();								// Create A New Quadratic
+	gluQuadricNormals(q, GL_SMOOTH);					// Generate Smooth Normals For The Quad
+	gluQuadricTexture(q, GL_TRUE);						// Enable Texture Coords For The Quad
+
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
 
 	return true;                // Инициализация прошла успешно
 }
@@ -385,11 +457,38 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 
 	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
 		mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
-		0, 1, 0);
+		mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
 	SetLight();
 
 	mGame.Draw();
+
+	/*	glRotatef(xrot, 1.0f, 0.0f, 0.0f);					// Rotate On The X Axis
+	glRotatef(yrot, 0.0f, 1.0f, 0.0f);					// Rotate On The Y Axis
+
+		xrot += xrotspeed;									// Update X Rotation Angle By xrotspeed
+	yrot += yrotspeed;									// Update Y Rotation Angle By yrotspeed
+
+	
+
+
+		glColor3f(1.0f, 1.0f, 1.0f);						// Set Color To White
+	//glBindTexture(GL_TEXTURE_2D, texture[1]);			// Select Texture 2 (1)
+	//gluSphere(q, 0.35f, 32, 16);						// Draw First Sphere
+
+	glBindTexture(GL_TEXTURE_2D, texture[3]);			// Select Texture 3 (2)
+	//glColor4f(1.0f, 1.0f, 1.0f, 0.4f);					// Set Color To White With 40% Alpha
+	//glEnable(GL_BLEND);									// Enable Blending
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);					// Set Blending Mode To Mix Based On SRC Alpha
+	//glEnable(GL_TEXTURE_GEN_S);							// Enable Sphere Mapping
+	//glEnable(GL_TEXTURE_GEN_T);							// Enable Sphere Mapping
+
+	gluSphere(q, 0.35f, 32, 16);						// Draw Another Sphere Using New Texture
+														// Textures Will Mix Creating A MultiTexture Effect (Reflection)
+	//glDisable(GL_TEXTURE_GEN_S);						// Disable Sphere Mapping
+	//glDisable(GL_TEXTURE_GEN_T);						// Disable Sphere Mapping
+	//glDisable(GL_BLEND);								// Disable Blending
+	*/
 
 	if (gShowDebugInfo)
 	{
@@ -402,9 +501,14 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("UPS: %2.2f", ups);
 		glTranslatef(0.0f, -1.0f, 0);
+		glPrint("Time: %2.2f", gTime);
+		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("Time Scale: %2.2f", gTimeScale);
 		
-		glPopMatrix();	}  
+		glPopMatrix();	
+	}  
+
+	glFlush();
 	
 	return true;
 
@@ -426,18 +530,20 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 // 		}
 }
 
-BOOL LoadData() {
+bool LoadData()
+{
 	std::ifstream dataFile("data.dat", std::ios::in);	
 	if ( !dataFile )
-		return FALSE;
+		return false;
 
-	Vector3 cameraPos, cameraPos2, cameraAngle;
+	Vector3 cameraPos, cameraPos2, cameraUp;
 
-	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
-			>> cameraPos2.x >> cameraPos2.y >> cameraPos2.z;
-		//>> cameraAngle.x >> cameraAngle.y >> cameraAngle.z;
+	dataFile	>> cameraPos.x >> cameraPos.y >> cameraPos.z
+				>> cameraPos2.x >> cameraPos2.y >> cameraPos2.z		
+				>> cameraUp.x >> cameraUp.y >> cameraUp.z;
 	mCamera.SetPos(cameraPos);
 	mCamera.SetView(cameraPos2);
+	mCamera.SetUp(cameraUp);
 	//mCamera.SetAngle(cameraAngle);
 
 	dataFile >> gLightAmbient[0] >> gLightAmbient[1] >> gLightAmbient[2] >> gLightAmbient[3];
@@ -447,13 +553,19 @@ BOOL LoadData() {
 	Vector3 graviAcc;
 
 	dataFile >> graviAcc.x >> graviAcc.y >> graviAcc.z;
-	mGame.SetGraviAcc(graviAcc);
+//	mGame.SetGraviAcc(graviAcc);
+
+	unsigned int numEntities = 0;
+
+	dataFile >> numEntities;
+
+	mGame.SetNumEntities(numEntities);
 
 	int numMass = 0;
 
 	dataFile >>  numMass;
 
-	mGame.SetNumMasses(numMass);
+	//mGame.SetNumMasses(numMass);
 
 	for(int i = 0; i < numMass; i++) {
 		float m = 0.0f, r = 0.0f,
@@ -472,22 +584,24 @@ BOOL LoadData() {
 	int numBoxs = 0;
 	dataFile >> numBoxs;
 
-	mGame.SetNumBoxes(numBoxs);
+	//mGame.SetNumBoxes(numBoxs);
 	for(int i = 0; i < numBoxs; i++) {
 		float m = 0.0;
-		Vector3 pos, size, angle;
+		Vector3 pos, size, vel, angle, angleVel;
 		Color4f color;
 		dataFile >> m 
 			>> pos.x >> pos.y >> pos.z
 			>> size.x >> size.y >> size.z
+			>> vel.x >> vel.y >> vel.z
 			>> angle.x >> angle.y >> angle.z
+			>> angleVel.x >> angleVel.y >> angleVel.z
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetBox(i, m, pos, size, angle, color);
+		mGame.SetBox(i, m, pos, vel, size, angle, angleVel, color);
 	}
 
 	int numLines = 0;
-	dataFile >> numLines;
-	mGame.SetNumLines(numLines);
+	//dataFile >> numLines;
+	//mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
 		float m = 0.0f, r = 0.0f, h = 0.0f;
 		Vector3 pos;
@@ -504,7 +618,7 @@ BOOL LoadData() {
 	}
 
 	dataFile.close();
-	return TRUE;
+	return true;
 }
 
 
@@ -549,6 +663,8 @@ void UpdateKeys()
 		gKeys[VK_F5] = false;
 		mGame.release();
 		LoadData();
+		gTime = 0.0f;
+		gTimeScale =1.0f;
 		SetLight();
 	}
 	if( gKeys[VK_RIGHT])
@@ -707,6 +823,7 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 					int    nCmdShow )					// Состояние отображения окна
 {
 	MSG  msg;           // Структура для хранения сообщения Windows
+	
 	bool  done = false;	// Логическая переменная для выхода из цикла
 
 	DWORD tickCount = 0;
@@ -720,18 +837,18 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 
 	if (!LoadData()) {
 		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
-		return 0;													// Return False (Failure)
+		return 1;													// Return False (Failure)
 	}
 
 	// Создать наше OpenGL окно
 	if( !CreateGLWindow( "NeHe OpenGL окно", gWidth, gHeight, 32, gFullscreen ) )
 	{
-		return 0;              // Выйти, если окно не может быть создано
+		return 1;              // Выйти, если окно не может быть создано
 	}
 
 	lastTickCount = GetTickCount ();		// Get Tick Count
-	static float framesPerSecond = 0.0f	;
-	static float lastTime = 0.0f;
+	float framesPerSecond = 0.0f	;
+	float lastTime = 0.0f;
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{
@@ -757,11 +874,14 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 					//--------------------------------
 					{
 						tickCount = GetTickCount();				// Get The Tick Count
-						if (!gPause) {						
+
+						if (!gPause)
+						{				
+							gTime += gTimeScale*float(tickCount - lastTickCount)/1000.0f;
 							mGame.Update(gTimeScale*float(tickCount - lastTickCount)/1000.0f );
 						} 					
 						framesPerSecond++;
-						float currentTime = tickCount*0.001f;
+						float currentTime = ((float)tickCount)*0.001f;
 						if ((currentTime - lastTime) > 1.0f)
 						{
 							lastTime = currentTime;

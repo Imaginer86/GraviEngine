@@ -10,7 +10,6 @@ S		: move back
 A		: move left
 D		: move right
 
-
 data.dat:
 
 CameraPos
@@ -21,6 +20,8 @@ LightDiffuse
 LightPosition
 
 GraveAcc
+
+numEntities
 
 numMas
 
@@ -35,7 +36,9 @@ numBox
 m
 pos
 size
+vel
 angle
+angleVel
 color
 
 numLine

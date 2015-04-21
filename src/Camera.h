@@ -30,6 +30,16 @@ public:
 		this->view = pos2;
 	}
 
+	Vector3 GetUp()
+	{
+		return Up;
+	}
+
+	void SetUp(Vector3 up)
+	{
+		this->Up = up;
+	}
+
 	void AddPosX(float x)
 	{
 		this->pos.x += x;

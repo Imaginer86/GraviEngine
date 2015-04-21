@@ -5,19 +5,21 @@
 class Entity
 {
 public:
-	Entity():m(1.0f), pos(0.0f, 0.0f, 0.0f), vel(0.0f, 0.0f, 0.0f)
+	Entity():m(1.0f), pos(0.0f, 0.0f, 0.0f), vel(0.0f, 0.0f, 0.0f), c(0)
 	{
 
 	}
 
 	virtual ~Entity(){}
 
-	virtual Vector3 GetPos()
+	virtual void function() = 0;
+
+	virtual Vector3& GetPos()
 	{
 		return pos;
 	}
 
-	virtual void SetPos(Vector3 pos)
+	virtual void SetPos(Vector3 Pos)
 	{
 		this->pos = pos;
 	}
@@ -27,9 +29,9 @@ public:
 		return vel;
 	}
 
-	virtual void SetVel(Vector3 vel)
+	virtual void SetVel(Vector3 Vel)
 	{
-		this->vel = vel;
+		this->vel = Vel;
 	}
 
 	virtual float GetMass()
@@ -37,9 +39,9 @@ public:
 		return m;
 	}
 
-	virtual void SetMass(float mass)
+	virtual void SetMass(float Mass)
 	{
-		this->m = mass;
+		this->m = Mass;
 	}
 
 	virtual Color4f GetColor()
@@ -47,19 +49,40 @@ public:
 		return color;
 	}
 
-	virtual float GetR() = 0;
+	virtual float GetR()
+	{
+		return 0.f;
+	}
 
-	virtual void applyForce(Vector3 force) = 0;
+	virtual void applyForce(Vector3 Force)
+	{
+	}
 
-	virtual void simulateForce(float dt) = 0;
+	virtual void simulateForce(float dt)
+	{
+	}
 
-	virtual void init() = 0;
+	virtual void init()
+	{
+	}
 
 	virtual void Draw() = 0;
 
-protected:
+	virtual void Collision(Entity& Entity)
+	{
+	}
+
+	virtual bool IsColisions(Entity& Entity)
+	{
+		return false;
+	}
+
+	virtual float ProcessColisions(Entity& Entity) = 0;	
+
+public:
 	Vector3 pos;
 	Vector3 vel;
 	float m;
 	Color4f color;
+	unsigned int c;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+//#include <vector>
 
 #define  _USE_MATH_DEFINES
 #include <math.h>
@@ -34,4 +34,5 @@ namespace Math
 	{
 		return 180*radian/PI;
 	}
+
 }

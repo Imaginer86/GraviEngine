@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 
 //#define  _USE_MATH_DEFINES
-//#include <math.h>
+#include <math.h>
 
 #include "Math.h"
 
@@ -222,37 +222,42 @@ inline void Matrix4::identity()
 	mtx[3][0] = 0.0f, mtx[3][1] = 0.0f, mtx[3][2] = 0.0f, mtx[3][3] = 1.0f;
 }
 
-inline void Matrix4::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
+inline void Matrix4::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
 {
-// 	float D = -asin( mtx[2]);
-// 	pitchDegrees = D;        /* Считаем ось Y */
-// 	float C           =  cos( pitchDegrees );
-// 	pitchDegrees    *= RADIANS;
-// 
-// 	if ( fabs( C ) > 0.005 )             /* ось зафиксирована? */
-// 	{
-// 		trx      =  mat[10] / C;           /* Нет, так что находим угол по X */
-// 		try      = -mat[6]  / C;
-// 
-// 		headDegrees  = atan2( try, trx ) * RADIANS;
-// 
-// 		trx      =  mat[0] / C;            /* находим угол по оси Z */
-// 		try      = -mat[1] / C;
-// 
-// 		rollDegrees  = atan2( try, trx ) * RADIANS;
-// 	}
-// 	else                                 /* ось все-таки зафиксирована */
-// 	{
-// 		headDegrees  = 0;                      /* Устанавливаем угол по оси X на 0 */
-// 
-// 		trx      = mat[5];                 /* И считаем ось Z */
-// 		try      = mat[4];
-// 
-// 		rollDegrees  = atan2( try, trx ) * RADIANS;
-// 	}
-// 
-// 	headDegrees = clamp( headDegrees, 0, 360 );  /* Приводим углы к диапазону */
-// 	pitchDegrees = clamp( pitchDegrees, 0, 360 );
-// 	rollDegrees = clamp( rollDegrees, 0, 360 );
 
 }
+/*
+inline void Matrix4::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
+{
+ 	float D = -asin( mtx[2]);
+ 	pitchDegrees = D;        // Считаем ось Y 
+ 	float C           =  cos( pitchDegrees );
+ 	pitchDegrees    *= RADIANS;
+ 
+ 	if ( fabs( C ) > 0.005 )             // ось зафиксирована? 
+ 	{
+ 		trx      =  mat[10] / C;           // Нет, так что находим угол по X
+ 		try      = -mat[6]  / C;
+ 
+ 		headDegrees  = atan2( try, trx ) * RADIANS;
+ 
+ 		trx      =  mat[0] / C;            // находим угол по оси Z 
+ 		try      = -mat[1] / C;
+ 
+ 		rollDegrees  = atan2( try, trx ) * RADIANS;
+ 	}
+ 	else                                 // ось все-таки зафиксирована
+ 	{
+ 		headDegrees  = 0;                      // Устанавливаем угол по оси X на 0
+ 
+ 		trx      = mat[5];                 // И считаем ось Z
+ 		try      = mat[4];
+ 
+ 		rollDegrees  = atan2( try, trx ) * RADIANS;
+ 	}
+ 
+ 	headDegrees = clamp( headDegrees, 0, 360 );  // Приводим углы к диапазону 
+ 	pitchDegrees = clamp( pitchDegrees, 0, 360 );
+ 	rollDegrees = clamp( rollDegrees, 0, 360 );
+
+}*/

@@ -7,6 +7,7 @@
 class Line: public Entity
 {
 public:
+
 	Line()
 	: Entity()
 	, r(1.0f)
@@ -18,7 +19,12 @@ public:
 		this->color.b = 1.0f;
 		this->color.a = 1.0f;
 	}
+
 	virtual ~Line(){};
+
+	virtual void function()
+	{
+	}
 
 	void SetR(float r)
 	{
@@ -86,6 +92,20 @@ public:
 	}
 
 	virtual void Draw();
+
+	virtual void Collision(Entity& Entity)
+	{
+	}
+
+	virtual bool IsColisions(Entity& Entity)
+	{
+		return false;
+	}
+
+	virtual float ProcessColisions(Entity& entity)
+	{
+		return 0.f;
+	}
 
 private:
 	//Vector3 pos2;

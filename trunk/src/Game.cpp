@@ -1,4 +1,4 @@
-#include "Game.h"
+ï»¿#include "Game.h"
 
 #include "Entities\Mass.h"
 #include "Entities\Box.h"
@@ -8,6 +8,16 @@
 //#include <fstream>
 
 using namespace std;
+
+
+Game::Game()
+: numEntitys(0)
+//, Entities(null)
+, graviAcc(0, 0, 0)
+{
+//		fileOut = std::ofstream("out.dat", std::ios::out);
+}
+
  
 
 void Game::SetMass( int index, float m, float r, Vector3 pos, Vector3 vel, Color4f light )
@@ -51,14 +61,14 @@ void Game::SetGraviAcc(Vector3 graviAcc)
 void Game::Update( float dt )
 {
 
-	static unsigned int iteration = 0;
+	//static unsigned int iteration = 0;
 	init();										// Step 1: reset forces to zero
 	solve();									// Step 2: apply forces
 	simulate(dt);								// Step 3: iterate the masses by the change in time
 
 	//int a = 0;
 
-	int cc = 2;//
+	//int cc = 2;//
 
 	
 	//while (cc > 0)
@@ -80,7 +90,7 @@ void Game::Update( float dt )
 						{
 							fileOut << "Mass!!!" << typeid(a).name() << std::endl;
 							fileOut << e.what() << std::endl;
-							fileOut << "Ýòîò îáúåêò íå ÿâëÿåòñÿ îáúåêòîì òèïà Mass" << std::endl;
+							fileOut << "Ð­Ñ‚Ð¾Ñ‚ Ð¾Ð±ÑŠÐµÐºÑ‚ Ð½Ðµ ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð¾Ð±ÑŠÐµÐºÑ‚Ð¾Ð¼ Ñ‚Ð¸Ð¿Ð° Mass" << std::endl;
 						}*/
 
 						//fileOut << typeid(**itera).name() << std::endl;
@@ -98,14 +108,20 @@ void Game::Update( float dt )
 
 								float t_colission = (*itera)->ProcessColisions(**iterb);
 
-								this->Update(-t_colission);
+								
 
 								(*itera)->c--;
 								(*iterb)->c--;
 
-								if (abs(t_colission) < 0.0025f)
+								if (abs(t_colission) < 0.f)
 								{
+
+									this->Update(-t_colission);
+
+									this->Draw();
+
 									t_colission = (*itera)->ProcessColisions(**iterb);
+
 									if (abs(t_colission) < 0.0025f)
 									{
 										int t = 0;
@@ -121,7 +137,7 @@ void Game::Update( float dt )
 
 
 								
-								fileOut << "Collision" << iteration << std::ends << std::ends << typeid(**itera).name() << std::endl;
+								//fileOut << "Collision" << iteration << std::ends << std::ends << typeid(**itera).name() << std::endl;
 							}
 						}
 				}
@@ -131,7 +147,7 @@ void Game::Update( float dt )
 	}
 
 
-	iteration++;
+	//iteration++;
 
 	return;
 }
@@ -223,6 +239,7 @@ void Game::simulate( float dt ) /* Iterate the masses by the change in time */
 void Game::release() /* delete the masses created */
 {
 	numEntitys = 0;
+	for(vector<Entity*>::iterator iter = Entities.begin(); iter != Entities.end(); iter++)
+		delete *iter;
 	Entities.clear();
 }
-

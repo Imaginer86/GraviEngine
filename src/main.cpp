@@ -1,33 +1,73 @@
-#pragma once
+п»ї#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
-#include "GL\glaux.h"
+//#include "GL\glaux.h"
+
+#include <Windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include "Game.h"
 #include "Camera.h"
 #include "Color.h"
 
-HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
-HDC		hDC  = NULL;              // Приватный контекст устройства GDI
-HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
-HINSTANCE  hInstance;              // Здесь будет хранится дескриптор приложения 
+/*
+** RGB Image Structure
+*/
+
+typedef struct _AUX_RGBImageRec {
+    GLint sizeX, sizeY;
+    unsigned char *data;
+} AUX_RGBImageRec;
+
+
+
+#define auxDIBImageLoad auxDIBImageLoadA
+
+//AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
+
+
+/*
+#define auxDIBImageLoad auxDIBImageLoadA
+
+AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
+AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+HGLRC	hRC	 = NULL;              // РџРѕСЃС‚РѕСЏРЅРЅС‹Р№ РєРѕРЅС‚РµРєСЃС‚ СЂРµРЅРґРµСЂРёРЅРіР°
+HDC		hDC  = NULL;              // РџСЂРёРІР°С‚РЅС‹Р№ РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР° GDI
+HWND	hWnd = NULL;              // Р—РґРµСЃСЊ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЃСЏ РґРµСЃРєСЂРёРїС‚РѕСЂ РѕРєРЅР°
+HINSTANCE  hInstance;              // Р—РґРµСЃСЊ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЃСЏ РґРµСЃРєСЂРёРїС‚РѕСЂ РїСЂРёР»РѕР¶РµРЅРёСЏ 
 
 
 
 const int gWidth = 1600;
 const int gHeight = 900;
 
-bool  gKeys[256];                // Массив, используемый для операций с клавиатурой
-bool  gActive = true;                // Флаг активности окна, установленный в true по умолчанию
+bool  gKeys[256];                // РњР°СЃСЃРёРІ, РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ РґР»СЏ РѕРїРµСЂР°С†РёР№ СЃ РєР»Р°РІРёР°С‚СѓСЂРѕР№
+bool  gActive = true;                // Р¤Р»Р°Рі Р°РєС‚РёРІРЅРѕСЃС‚Рё РѕРєРЅР°, СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Р№ РІ true РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 
 bool  gPause = true;
 
-bool gLightOn = true;      // Свет ВКЛ / ВЫКЛ
-bool gLightOnKey = false;         // L нажата?
+bool gLightOn = true;      // РЎРІРµС‚ Р’РљР› / Р’Р«РљР›
+bool gLightOnKey = false;         // L РЅР°Р¶Р°С‚Р°?
 
 bool gShowDebugInfo = true;
 bool gShowDebugInfoKey = false;
 
-bool  gFullscreen = false;              // Флаг режима окна, установленный в полноэкранный по умолчанию
+bool  gFullscreen = false;              // Р¤Р»Р°Рі СЂРµР¶РёРјР° РѕРєРЅР°, СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Р№ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅС‹Р№ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 
 float gTimeScale = 1.0f;
 float gTime = 0.0f;
@@ -38,9 +78,9 @@ float ups = 0.0f;
 Game mGame;
 Camera mCamera;
 
-GLfloat gLightAmbient[]= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-GLfloat gLightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-GLfloat gLightPosition[]= { 0.0f, 0.0f, 2.0f, 1.0f };     // Позиция света
+GLfloat gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Р—РЅР°С‡РµРЅРёСЏ С„РѕРЅРѕРІРѕРіРѕ СЃРІРµС‚Р°
+GLfloat gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Р—РЅР°С‡РµРЅРёСЏ РґРёС„С„СѓР·РЅРѕРіРѕ СЃРІРµС‚Р°
+GLfloat gLightPosition[4];//= { 3.0f, 3.0f, 4.0f, 1.0f };     // РџРѕР·РёС†РёСЏ СЃРІРµС‚Р°
 
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
@@ -48,27 +88,33 @@ GLuint		texture[4];									// 3 Textures
 
 GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 
+
+
 	//GLfloat		xrot		=  0.0f;						// X Rotation
 	//GLfloat		yrot		=  0.0f;						// Y Rotation
 	//GLfloat		xrotspeed	=  0.01f;						// X Rotation Speed
 	//GLfloat		yrotspeed	=  0.0f;						// Y Rotation Speed
 
 
-AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
-{
-	std::ifstream File(Filename, std::ios::in);
-	if (File)											// Does The File Exist?
-	{
-		File.close();
-		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
-	}
+//AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
+//{
+//	std::ifstream File(Filename, std::ios::in);
+//	if (File)											// Does The File Exist?
+//	{
+//		File.close();
+//		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
+//	}
 
-	return NULL;										// If Load Failed Return NULL
-}
+//	return NULL;										// If Load Failed Return NULL
+//}
 
 int LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
 {
     int Status=FALSE;									// Status Indicator
+
+	return Status;	
+
+/*
     AUX_RGBImageRec *TextureImage[4];					// Create Storage Space For The Textures
     memset(TextureImage,0,sizeof(void *)*3);			// Set The Pointer To NULL
     if ((TextureImage[0]=LoadBMP("EnvWall.bmp")) &&// Load The Floor Texture
@@ -98,6 +144,7 @@ int LoadGLTextures()                                    // Load Bitmaps And Conv
 		}
 	}
 	return Status;										// Return The Status
+*/
 }
 
 GLvoid BuildFont(GLvoid)								// Build Our Bitmap Font
@@ -163,68 +210,68 @@ GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 
 	glPushMatrix();
 	//glTranslatef(-length/2,0.0f,0.0f);					// Center Our Text On The Screen
-	glPushAttrib(GL_LIST_BIT);							// Pushes The Display List Bits
+	//glPushAttrib(GL_ALL_ATTRIB_BITS);							// Pushes The Display List Bits
 	glListBase(gFontBase);									// Sets The Base Character to 0
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
 	glPopAttrib();										// Pops The Display List Bits
 	glPopMatrix();
 }
 
-LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
+LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // РџСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё WndProc
 
 
-GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // Изменить размер и инициализировать окно GL
+GLvoid ReSizeGLScene( GLsizei width, GLsizei height )        // РР·РјРµРЅРёС‚СЊ СЂР°Р·РјРµСЂ Рё РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ РѕРєРЅРѕ GL
 {
-	if( height == 0 )              // Предотвращение деления на ноль
+	if( height == 0 )              // РџСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёРµ РґРµР»РµРЅРёСЏ РЅР° РЅРѕР»СЊ
 	{
 		height = 1;
 	}
 
-	glViewport( 0, 0, width, height );          // Сброс текущей области вывода
+	glViewport( 0, 0, width, height );          // РЎР±СЂРѕСЃ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІС‹РІРѕРґР°
 
-	glMatrixMode( GL_PROJECTION );            // Выбор матрицы проекций
-	glLoadIdentity();              // Сброс матрицы проекции
+	glMatrixMode( GL_PROJECTION );            // Р’С‹Р±РѕСЂ РјР°С‚СЂРёС†С‹ РїСЂРѕРµРєС†РёР№
+	glLoadIdentity();              // РЎР±СЂРѕСЃ РјР°С‚СЂРёС†С‹ РїСЂРѕРµРєС†РёРё
 
-	// Вычисление соотношения геометрических размеров для окна
+	// Р’С‹С‡РёСЃР»РµРЅРёРµ СЃРѕРѕС‚РЅРѕС€РµРЅРёСЏ РіРµРѕРјРµС‚СЂРёС‡РµСЃРєРёС… СЂР°Р·РјРµСЂРѕРІ РґР»СЏ РѕРєРЅР°
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 400.0);
 
-// 	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
+// 	glMatrixMode( GL_MODELVIEW );            // Р’С‹Р±РѕСЂ РјР°С‚СЂРёС†С‹ РІРёРґР° РјРѕРґРµР»Рё
 // 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
 // 		mCamera.pos.x, mCamera.pos.y, mCamera.pos.z + 50, 
 // 		0, 100, 0);
 // 
 // 	//glTranslatef(0.0f, 0.0f, -60.0f);
-// 	glLoadIdentity();              // Сброс матрицы вида модели
+// 	glLoadIdentity();              // РЎР±СЂРѕСЃ РјР°С‚СЂРёС†С‹ РІРёРґР° РјРѕРґРµР»Рё
 }
 
-void SetLight()
+void SetGLLight()
 {
-	glLightfv(GL_LIGHT0, GL_AMBIENT, gLightAmbient);    // Установка Фонового Света
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, gLightDiffuse);    // Установка Диффузного Света
-	glLightfv(GL_LIGHT0, GL_POSITION, gLightPosition);   // Позиция света
-	glEnable(GL_LIGHT0); // Разрешение источника света номер один
+	glLightfv(GL_LIGHT0, GL_AMBIENT, gLightAmbient);    // РЈСЃС‚Р°РЅРѕРІРєР° Р¤РѕРЅРѕРІРѕРіРѕ РЎРІРµС‚Р°
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, gLightDiffuse);    // РЈСЃС‚Р°РЅРѕРІРєР° Р”РёС„С„СѓР·РЅРѕРіРѕ РЎРІРµС‚Р°
+	glLightfv(GL_LIGHT0, GL_POSITION, gLightPosition);   // РџРѕР·РёС†РёСЏ СЃРІРµС‚Р°
+	glEnable(GL_LIGHT0); // Р Р°Р·СЂРµС€РµРЅРёРµ РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р° РЅРѕРјРµСЂ РѕРґРёРЅ
 	if (gLightOn)
 		glEnable(GL_LIGHTING);
 }
 
 
-int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
+int InitGL( GLvoid )                // Р’СЃРµ СѓСЃС‚Р°РЅРѕРІРєРё РєР°СЃР°РµРјРѕ OpenGL РїСЂРѕРёСЃС…РѕРґСЏС‚ Р·РґРµСЃСЊ
 {
-	if (!LoadGLTextures())								// If Loading The Textures Failed
-	{
-		return FALSE;									// Return False
-	}
-	glShadeModel( GL_SMOOTH );            // Разрешить плавное цветовое сглаживание
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
-	glClearDepth( 1.0f );              // Разрешить очистку буфера глубины
-	glEnable( GL_DEPTH_TEST );            // Разрешить тест глубины
-	glDepthFunc( GL_LEQUAL );            // Тип теста глубины
-	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // Улучшение в вычислении перспективы
+	//if (!LoadGLTextures())								// If Loading The Textures Failed
+//	{
+//		return FALSE;									// Return False
+//	}
+	glShadeModel( GL_SMOOTH );            // Р Р°Р·СЂРµС€РёС‚СЊ РїР»Р°РІРЅРѕРµ С†РІРµС‚РѕРІРѕРµ СЃРіР»Р°Р¶РёРІР°РЅРёРµ
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // РћС‡РёСЃС‚РєР° СЌРєСЂР°РЅР° РІ С‡РµСЂРЅС‹Р№ С†РІРµС‚
+	glClearDepth( 1.0f );              // Р Р°Р·СЂРµС€РёС‚СЊ РѕС‡РёСЃС‚РєСѓ Р±СѓС„РµСЂР° РіР»СѓР±РёРЅС‹
+	glEnable( GL_DEPTH_TEST );            // Р Р°Р·СЂРµС€РёС‚СЊ С‚РµСЃС‚ РіР»СѓР±РёРЅС‹
+	glDepthFunc( GL_LEQUAL );            // РўРёРї С‚РµСЃС‚Р° РіР»СѓР±РёРЅС‹
+	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );      // РЈР»СѓС‡С€РµРЅРёРµ РІ РІС‹С‡РёСЃР»РµРЅРёРё РїРµСЂСЃРїРµРєС‚РёРІС‹
 	glEnable(GL_COLOR_MATERIAL);
 
 	glEnable(GL_TEXTURE_2D);
 
-	SetLight();	
+	SetGLLight();	
 
 	BuildFont();				// Build The Font
 
@@ -235,43 +282,43 @@ int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят з
 	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
 
-	return true;                // Инициализация прошла успешно
+	return true;                // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСЂРѕС€Р»Р° СѓСЃРїРµС€РЅРѕ
 }
 
 
-GLvoid KillGLWindow( GLvoid )              // Корректное разрушение окна
+GLvoid KillGLWindow( GLvoid )              // РљРѕСЂСЂРµРєС‚РЅРѕРµ СЂР°Р·СЂСѓС€РµРЅРёРµ РѕРєРЅР°
 {
-	if( gFullscreen )              // Мы в полноэкранном режиме?
+	if( gFullscreen )              // РњС‹ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅРѕРј СЂРµР¶РёРјРµ?
 	{
-		ChangeDisplaySettings( NULL, 0 );        // Если да, то переключаемся обратно в оконный режим
-		ShowCursor( true );            // Показать курсор мышки
+		ChangeDisplaySettings( NULL, 0 );        // Р•СЃР»Рё РґР°, С‚Рѕ РїРµСЂРµРєР»СЋС‡Р°РµРјСЃСЏ РѕР±СЂР°С‚РЅРѕ РІ РѕРєРѕРЅРЅС‹Р№ СЂРµР¶РёРј
+		ShowCursor( true );            // РџРѕРєР°Р·Р°С‚СЊ РєСѓСЂСЃРѕСЂ РјС‹С€РєРё
 	}
-	if( hRC )                // Существует ли Контекст Рендеринга?
+	if( hRC )                // РЎСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РљРѕРЅС‚РµРєСЃС‚ Р РµРЅРґРµСЂРёРЅРіР°?
 	{
-		if( !wglMakeCurrent( NULL, NULL ) )        // Возможно ли освободить RC и DC?
+		if( !wglMakeCurrent( NULL, NULL ) )        // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё РѕСЃРІРѕР±РѕРґРёС‚СЊ RC Рё DC?
 		{
 			MessageBox( NULL, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
 		}
-		if( !wglDeleteContext( hRC ) )        // Возможно ли удалить RC?
+		if( !wglDeleteContext( hRC ) )        // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СѓРґР°Р»РёС‚СЊ RC?
 		{
 			MessageBox( NULL, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
 		}
-		hRC = NULL;              // Установить RC в NULL
+		hRC = NULL;              // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ RC РІ NULL
 	}
-	if( hDC && !ReleaseDC( hWnd, hDC ) )          // Возможно ли уничтожить DC?
+	if( hDC && !ReleaseDC( hWnd, hDC ) )          // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СѓРЅРёС‡С‚РѕР¶РёС‚СЊ DC?
 	{
 		MessageBox( NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		hDC=NULL;                // Установить DC в NULL
+		hDC=NULL;                // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ DC РІ NULL
 	}
-	if(hWnd && !DestroyWindow(hWnd))            // Возможно ли уничтожить окно?
+	if(hWnd && !DestroyWindow(hWnd))            // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СѓРЅРёС‡С‚РѕР¶РёС‚СЊ РѕРєРЅРѕ?
 	{
 		MessageBox( NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION );
-		hWnd = NULL;                // Установить hWnd в NULL
+		hWnd = NULL;                // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ hWnd РІ NULL
 	}
-	if( !UnregisterClass( "OpenGL", hInstance ) )        // Возможно ли разрегистрировать класс
+	if( !UnregisterClass( "OpenGL", hInstance ) )        // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СЂР°Р·СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ РєР»Р°СЃСЃ
 	{
 		MessageBox( NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		hInstance = NULL;                // Установить hInstance в NULL
+		hInstance = NULL;                // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ hInstance РІ NULL
 	}
 
 	KillFont();
@@ -280,186 +327,186 @@ GLvoid KillGLWindow( GLvoid )              // Корректное разрушение окна
 
 BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscreenflag )
 {
-	GLuint		PixelFormat;			    // Хранит результат после поиска
-	WNDCLASS	wc;						   // Структура класса окна
-	DWORD		dwExStyle;				  // Расширенный стиль окна
-	DWORD		dwStyle;				 // Обычный стиль окна
+	GLuint		PixelFormat;			    // РҐСЂР°РЅРёС‚ СЂРµР·СѓР»СЊС‚Р°С‚ РїРѕСЃР»Рµ РїРѕРёСЃРєР°
+	WNDCLASS	wc;						   // РЎС‚СЂСѓРєС‚СѓСЂР° РєР»Р°СЃСЃР° РѕРєРЅР°
+	DWORD		dwExStyle;				  // Р Р°СЃС€РёСЂРµРЅРЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
+	DWORD		dwStyle;				 // РћР±С‹С‡РЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
 
 	RECT WindowRect;                       // Grabs Rectangle Upper Left / Lower Right Values
 
-	WindowRect.left = 0L;					    	  // Установить левую составляющую в 0
-	WindowRect.right = long(width);                  // Установить правую составляющую в Width
-	WindowRect.top = 0L;					    	// Установить верхнюю составляющую в 0
-	WindowRect.bottom = long(height);              // Установить нижнюю составляющую в Height
+	WindowRect.left = 0L;					    	  // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ Р»РµРІСѓСЋ СЃРѕСЃС‚Р°РІР»СЏСЋС‰СѓСЋ РІ 0
+	WindowRect.right = long(width);                  // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїСЂР°РІСѓСЋ СЃРѕСЃС‚Р°РІР»СЏСЋС‰СѓСЋ РІ Width
+	WindowRect.top = 0L;					    	// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РІРµСЂС…РЅСЋСЋ СЃРѕСЃС‚Р°РІР»СЏСЋС‰СѓСЋ РІ 0
+	WindowRect.bottom = long(height);              // РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРёР¶РЅСЋСЋ СЃРѕСЃС‚Р°РІР»СЏСЋС‰СѓСЋ РІ Height
 
-	gFullscreen = fullscreenflag;              // Устанавливаем значение глобальной переменной fullscreen
+	gFullscreen = fullscreenflag;              // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј Р·РЅР°С‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№ fullscreen
 
-	hInstance = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
+	hInstance = GetModuleHandle(NULL);        // РЎС‡РёС‚Р°РµРј РґРµСЃРєСЂРёРїС‚РѕСЂ РЅР°С€РµРіРѕ РїСЂРёР»РѕР¶РµРЅРёСЏ
 
-	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
-	wc.lpfnWndProc		= (WNDPROC) WndProc;					  // Процедура обработки сообщений
-	wc.cbClsExtra		= 0;									 // Нет дополнительной информации для окна
-	wc.cbWndExtra		= 0;							 	    // Нет дополнительной информации для окна
-	wc.hInstance		= hInstance;						   // Устанавливаем дескриптор
-	wc.hIcon			= LoadIcon(NULL, IDI_WINLOGO);        // Загружаем иконку по умолчанию
-	wc.hCursor			= LoadCursor(NULL, IDC_ARROW);       // Загружаем указатель мышки
-	wc.hbrBackground	= NULL;								// Фон не требуется для GL
-	wc.lpszMenuName		= NULL;							   // Меню в окне не будет
-	wc.lpszClassName	= "OpenGL";						  // Устанавливаем имя классу
+	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // РџРµСЂРµСЂРёСЃСѓРµРј РїСЂРё РїРµСЂРµРјРµС‰РµРЅРёРё Рё СЃРѕР·РґР°С‘Рј СЃРєСЂС‹С‚С‹Р№ DC
+	wc.lpfnWndProc		= (WNDPROC) WndProc;					  // РџСЂРѕС†РµРґСѓСЂР° РѕР±СЂР°Р±РѕС‚РєРё СЃРѕРѕР±С‰РµРЅРёР№
+	wc.cbClsExtra		= 0;									 // РќРµС‚ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё РґР»СЏ РѕРєРЅР°
+	wc.cbWndExtra		= 0;							 	    // РќРµС‚ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё РґР»СЏ РѕРєРЅР°
+	wc.hInstance		= hInstance;						   // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґРµСЃРєСЂРёРїС‚РѕСЂ
+	wc.hIcon			= LoadIcon(NULL, IDI_WINLOGO);        // Р—Р°РіСЂСѓР¶Р°РµРј РёРєРѕРЅРєСѓ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	wc.hCursor			= LoadCursor(NULL, IDC_ARROW);       // Р—Р°РіСЂСѓР¶Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РјС‹С€РєРё
+	wc.hbrBackground	= NULL;								// Р¤РѕРЅ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ РґР»СЏ GL
+	wc.lpszMenuName		= NULL;							   // РњРµРЅСЋ РІ РѕРєРЅРµ РЅРµ Р±СѓРґРµС‚
+	wc.lpszClassName	= "OpenGL";						  // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РёРјСЏ РєР»Р°СЃСЃСѓ
 
-	if( !RegisterClass( &wc ) )              // Пытаемся зарегистрировать класс окна
+	if( !RegisterClass( &wc ) )              // РџС‹С‚Р°РµРјСЃСЏ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ РєР»Р°СЃСЃ РѕРєРЅР°
 	{
 		MessageBox( NULL, "Failed To Register The Window Class.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Выход и возвращение функцией значения false
+		return false;                // Р’С‹С…РѕРґ Рё РІРѕР·РІСЂР°С‰РµРЅРёРµ С„СѓРЅРєС†РёРµР№ Р·РЅР°С‡РµРЅРёСЏ false
 	}
 
-	if( gFullscreen )                // Полноэкранный режим?
+	if( gFullscreen )                // РџРѕР»РЅРѕСЌРєСЂР°РЅРЅС‹Р№ СЂРµР¶РёРј?
 	{
-		DEVMODE dmScreenSettings;            // Режим устройства
-		memset( &dmScreenSettings, 0, sizeof( dmScreenSettings ) );    // Очистка для хранения установок
+		DEVMODE dmScreenSettings;            // Р РµР¶РёРј СѓСЃС‚СЂРѕР№СЃС‚РІР°
+		memset( &dmScreenSettings, 0, sizeof( dmScreenSettings ) );    // РћС‡РёСЃС‚РєР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СѓСЃС‚Р°РЅРѕРІРѕРє
 
-		dmScreenSettings.dmSize=sizeof( dmScreenSettings );      // Размер структуры Devmode
-		dmScreenSettings.dmPelsWidth  =   width;				// Ширина экрана
-		dmScreenSettings.dmPelsHeight  =   height;			   // Высота экрана
-		dmScreenSettings.dmBitsPerPel  =   bits;			  // Глубина цвета
-		dmScreenSettings.dmFields= DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;// Режим Пикселя
+		dmScreenSettings.dmSize=sizeof( dmScreenSettings );      // Р Р°Р·РјРµСЂ СЃС‚СЂСѓРєС‚СѓСЂС‹ Devmode
+		dmScreenSettings.dmPelsWidth  =   width;				// РЁРёСЂРёРЅР° СЌРєСЂР°РЅР°
+		dmScreenSettings.dmPelsHeight  =   height;			   // Р’С‹СЃРѕС‚Р° СЌРєСЂР°РЅР°
+		dmScreenSettings.dmBitsPerPel  =   bits;			  // Р“Р»СѓР±РёРЅР° С†РІРµС‚Р°
+		dmScreenSettings.dmFields= DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;// Р РµР¶РёРј РџРёРєСЃРµР»СЏ
 
-		// Пытаемся установить выбранный режим и получить результат.  Примечание: CDS_FULLSCREEN убирает панель управления.
+		// РџС‹С‚Р°РµРјСЃСЏ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Р№ СЂРµР¶РёРј Рё РїРѕР»СѓС‡РёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚.  РџСЂРёРјРµС‡Р°РЅРёРµ: CDS_FULLSCREEN СѓР±РёСЂР°РµС‚ РїР°РЅРµР»СЊ СѓРїСЂР°РІР»РµРЅРёСЏ.
 		if( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
 		{
-			// Если переключение в полноэкранный режим невозможно, будет предложено два варианта: оконный режим или выход.
+			// Р•СЃР»Рё РїРµСЂРµРєР»СЋС‡РµРЅРёРµ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅС‹Р№ СЂРµР¶РёРј РЅРµРІРѕР·РјРѕР¶РЅРѕ, Р±СѓРґРµС‚ РїСЂРµРґР»РѕР¶РµРЅРѕ РґРІР° РІР°СЂРёР°РЅС‚Р°: РѕРєРѕРЅРЅС‹Р№ СЂРµР¶РёРј РёР»Рё РІС‹С…РѕРґ.
 			if( MessageBox( NULL, "The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?",
 				"NeHe GL", MB_YESNO | MB_ICONEXCLAMATION) == IDYES )
 			{
-				gFullscreen = false;          // Выбор оконного режима (fullscreen = false)
+				gFullscreen = false;          // Р’С‹Р±РѕСЂ РѕРєРѕРЅРЅРѕРіРѕ СЂРµР¶РёРјР° (fullscreen = false)
 			}
 			else
 			{
-				// Выскакивающее окно, сообщающее пользователю о закрытие окна.
+				// Р’С‹СЃРєР°РєРёРІР°СЋС‰РµРµ РѕРєРЅРѕ, СЃРѕРѕР±С‰Р°СЋС‰РµРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ Рѕ Р·Р°РєСЂС‹С‚РёРµ РѕРєРЅР°.
 				MessageBox( NULL, "Program Will Now Close.", "ERROR", MB_OK | MB_ICONSTOP );
-				return false;            // Выход и возвращение функцией false
+				return false;            // Р’С‹С…РѕРґ Рё РІРѕР·РІСЂР°С‰РµРЅРёРµ С„СѓРЅРєС†РёРµР№ false
 			}
 		}
 	}
 
-	if(gFullscreen)                  // Мы остались в полноэкранном режиме?
+	if(gFullscreen)                  // РњС‹ РѕСЃС‚Р°Р»РёСЃСЊ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅРѕРј СЂРµР¶РёРјРµ?
 	{
-		dwExStyle  =   WS_EX_APPWINDOW;      // Расширенный стиль окна
-		dwStyle    =   WS_POPUP;            // Обычный стиль окна
-		ShowCursor( false );               // Скрыть указатель мышки
+		dwExStyle  =   WS_EX_APPWINDOW;      // Р Р°СЃС€РёСЂРµРЅРЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
+		dwStyle    =   WS_POPUP;            // РћР±С‹С‡РЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
+		ShowCursor( false );               // РЎРєСЂС‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РјС‹С€РєРё
 	}
 	else
 	{
-		dwExStyle  =   WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;       // Расширенный стиль окна
-		dwStyle    =   WS_OVERLAPPEDWINDOW;						// Обычный стиль окна
+		dwExStyle  =   WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;       // Р Р°СЃС€РёСЂРµРЅРЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
+		dwStyle    =   WS_OVERLAPPEDWINDOW;						// РћР±С‹С‡РЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
 	}
 
-	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );      // Подбирает окну подходящие размеры
+	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );      // РџРѕРґР±РёСЂР°РµС‚ РѕРєРЅСѓ РїРѕРґС…РѕРґСЏС‰РёРµ СЂР°Р·РјРµСЂС‹
 
 	if( !( hWnd = CreateWindowEx(  
-		dwExStyle,										// Расширенный стиль для окна
-		("OpenGL"),									   // Имя класса
-		title,										  // Заголовок окна
-		WS_CLIPSIBLINGS |							 // Требуемый стиль для окна
-		WS_CLIPCHILDREN |							// Требуемый стиль для окна
-		dwStyle,								   // Выбираемые стили для окна
-		0, 0,									  // Позиция окна
-		WindowRect.right-WindowRect.left,		 // Вычисление подходящей ширины
-		WindowRect.bottom-WindowRect.top,		// Вычисление подходящей высоты
-		NULL,								   // Нет родительского
-		NULL,								  // Нет меню
-		hInstance,							 // Дескриптор приложения
-		NULL ) ) )							// Не передаём ничего до WM_CREATE (???)
+		dwExStyle,										// Р Р°СЃС€РёСЂРµРЅРЅС‹Р№ СЃС‚РёР»СЊ РґР»СЏ РѕРєРЅР°
+		("OpenGL"),									   // РРјСЏ РєР»Р°СЃСЃР°
+		title,										  // Р—Р°РіРѕР»РѕРІРѕРє РѕРєРЅР°
+		WS_CLIPSIBLINGS |							 // РўСЂРµР±СѓРµРјС‹Р№ СЃС‚РёР»СЊ РґР»СЏ РѕРєРЅР°
+		WS_CLIPCHILDREN |							// РўСЂРµР±СѓРµРјС‹Р№ СЃС‚РёР»СЊ РґР»СЏ РѕРєРЅР°
+		dwStyle,								   // Р’С‹Р±РёСЂР°РµРјС‹Рµ СЃС‚РёР»Рё РґР»СЏ РѕРєРЅР°
+		0, 0,									  // РџРѕР·РёС†РёСЏ РѕРєРЅР°
+		WindowRect.right-WindowRect.left,		 // Р’С‹С‡РёСЃР»РµРЅРёРµ РїРѕРґС…РѕРґСЏС‰РµР№ С€РёСЂРёРЅС‹
+		WindowRect.bottom-WindowRect.top,		// Р’С‹С‡РёСЃР»РµРЅРёРµ РїРѕРґС…РѕРґСЏС‰РµР№ РІС‹СЃРѕС‚С‹
+		NULL,								   // РќРµС‚ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ
+		NULL,								  // РќРµС‚ РјРµРЅСЋ
+		hInstance,							 // Р”РµСЃРєСЂРёРїС‚РѕСЂ РїСЂРёР»РѕР¶РµРЅРёСЏ
+		NULL ) ) )							// РќРµ РїРµСЂРµРґР°С‘Рј РЅРёС‡РµРіРѕ РґРѕ WM_CREATE (???)
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	static  PIXELFORMATDESCRIPTOR pfd=              // pfd сообщает Windows каким будет вывод на экран каждого пикселя
+	static  PIXELFORMATDESCRIPTOR pfd=              // pfd СЃРѕРѕР±С‰Р°РµС‚ Windows РєР°РєРёРј Р±СѓРґРµС‚ РІС‹РІРѕРґ РЅР° СЌРєСЂР°РЅ РєР°Р¶РґРѕРіРѕ РїРёРєСЃРµР»СЏ
 	{
-		sizeof(PIXELFORMATDESCRIPTOR),            // Размер дескриптора данного формата пикселей
-		1,										 // Номер версии
-		PFD_DRAW_TO_WINDOW |					// Формат для Окна
-		PFD_SUPPORT_OPENGL |				   // Формат для OpenGL
-		PFD_DOUBLEBUFFER,					  // Формат для двойного буфера
-		PFD_TYPE_RGBA,						 // Требуется RGBA формат
-		bits,								// Выбирается бит глубины цвета
-		0, 0, 0, 0, 0, 0,				   // Игнорирование цветовых битов
-		0,								  // Нет буфера прозрачности
-		0,								 // Сдвиговый бит игнорируется
-		0,								// Нет буфера накопления
-		0, 0, 0, 0,					   // Биты накопления игнорируются
-		32,							  // 32 битный Z-буфер (буфер глубины)
-		0,							 // Нет буфера трафарета
-		0,							// Нет вспомогательных буферов
-		PFD_MAIN_PLANE,            // Главный слой рисования
-		0,						  // Зарезервировано
-		0, 0, 0                  // Маски слоя игнорируются
+		sizeof(PIXELFORMATDESCRIPTOR),            // Р Р°Р·РјРµСЂ РґРµСЃРєСЂРёРїС‚РѕСЂР° РґР°РЅРЅРѕРіРѕ С„РѕСЂРјР°С‚Р° РїРёРєСЃРµР»РµР№
+		1,										 // РќРѕРјРµСЂ РІРµСЂСЃРёРё
+		PFD_DRAW_TO_WINDOW |					// Р¤РѕСЂРјР°С‚ РґР»СЏ РћРєРЅР°
+		PFD_SUPPORT_OPENGL |				   // Р¤РѕСЂРјР°С‚ РґР»СЏ OpenGL
+		PFD_DOUBLEBUFFER,					  // Р¤РѕСЂРјР°С‚ РґР»СЏ РґРІРѕР№РЅРѕРіРѕ Р±СѓС„РµСЂР°
+		PFD_TYPE_RGBA,						 // РўСЂРµР±СѓРµС‚СЃСЏ RGBA С„РѕСЂРјР°С‚
+		bits,								// Р’С‹Р±РёСЂР°РµС‚СЃСЏ Р±РёС‚ РіР»СѓР±РёРЅС‹ С†РІРµС‚Р°
+		0, 0, 0, 0, 0, 0,				   // РРіРЅРѕСЂРёСЂРѕРІР°РЅРёРµ С†РІРµС‚РѕРІС‹С… Р±РёС‚РѕРІ
+		0,								  // РќРµС‚ Р±СѓС„РµСЂР° РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚Рё
+		0,								 // РЎРґРІРёРіРѕРІС‹Р№ Р±РёС‚ РёРіРЅРѕСЂРёСЂСѓРµС‚СЃСЏ
+		0,								// РќРµС‚ Р±СѓС„РµСЂР° РЅР°РєРѕРїР»РµРЅРёСЏ
+		0, 0, 0, 0,					   // Р‘РёС‚С‹ РЅР°РєРѕРїР»РµРЅРёСЏ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ
+		32,							  // 32 Р±РёС‚РЅС‹Р№ Z-Р±СѓС„РµСЂ (Р±СѓС„РµСЂ РіР»СѓР±РёРЅС‹)
+		0,							 // РќРµС‚ Р±СѓС„РµСЂР° С‚СЂР°С„Р°СЂРµС‚Р°
+		0,							// РќРµС‚ РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹С… Р±СѓС„РµСЂРѕРІ
+		PFD_MAIN_PLANE,            // Р“Р»Р°РІРЅС‹Р№ СЃР»РѕР№ СЂРёСЃРѕРІР°РЅРёСЏ
+		0,						  // Р—Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅРѕ
+		0, 0, 0                  // РњР°СЃРєРё СЃР»РѕСЏ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ
 	};
 
-	if( !( hDC = GetDC( hWnd ) ) )              // Можем ли мы получить Контекст Устройства?
+	if( !( hDC = GetDC( hWnd ) ) )              // РњРѕР¶РµРј Р»Рё РјС‹ РїРѕР»СѓС‡РёС‚СЊ РљРѕРЅС‚РµРєСЃС‚ РЈСЃС‚СЂРѕР№СЃС‚РІР°?
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Can't Create A GL Device Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	if( !( PixelFormat = ChoosePixelFormat( hDC, &pfd ) ) )        // Найден ли подходящий формат пикселя?
+	if( !( PixelFormat = ChoosePixelFormat( hDC, &pfd ) ) )        // РќР°Р№РґРµРЅ Р»Рё РїРѕРґС…РѕРґСЏС‰РёР№ С„РѕСЂРјР°С‚ РїРёРєСЃРµР»СЏ?
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	if( !SetPixelFormat( hDC, PixelFormat, &pfd ) )          // Возможно ли установить Формат Пикселя?
+	if( !SetPixelFormat( hDC, PixelFormat, &pfd ) )          // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р¤РѕСЂРјР°С‚ РџРёРєСЃРµР»СЏ?
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	if( !( hRC = wglCreateContext( hDC ) ) )          // Возможно ли установить Контекст Рендеринга?
+	if( !( hRC = wglCreateContext( hDC ) ) )          // Р’РѕР·РјРѕР¶РЅРѕ Р»Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РљРѕРЅС‚РµРєСЃС‚ Р РµРЅРґРµСЂРёРЅРіР°?
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	if( !wglMakeCurrent( hDC, hRC ) )            // Попробовать активировать Контекст Рендеринга
+	if( !wglMakeCurrent( hDC, hRC ) )            // РџРѕРїСЂРѕР±РѕРІР°С‚СЊ Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊ РљРѕРЅС‚РµРєСЃС‚ Р РµРЅРґРµСЂРёРЅРіР°
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, "Can't Activate The GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	ShowWindow( hWnd, SW_SHOW );				  // Показать окно
-	SetForegroundWindow( hWnd );				 // Слегка повысим приоритет
-	SetFocus( hWnd );							// Установить фокус клавиатуры на наше окно
-	ReSizeGLScene( width, height );			   // Настроим перспективу для нашего OpenGL экрана.
+	ShowWindow( hWnd, SW_SHOW );				  // РџРѕРєР°Р·Р°С‚СЊ РѕРєРЅРѕ
+	SetForegroundWindow( hWnd );				 // РЎР»РµРіРєР° РїРѕРІС‹СЃРёРј РїСЂРёРѕСЂРёС‚РµС‚
+	SetFocus( hWnd );							// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ С„РѕРєСѓСЃ РєР»Р°РІРёР°С‚СѓСЂС‹ РЅР° РЅР°С€Рµ РѕРєРЅРѕ
+	ReSizeGLScene( width, height );			   // РќР°СЃС‚СЂРѕРёРј РїРµСЂСЃРїРµРєС‚РёРІСѓ РґР»СЏ РЅР°С€РµРіРѕ OpenGL СЌРєСЂР°РЅР°.
 
-	if( !InitGL() )                  // Инициализация только что созданного окна
+	if( !InitGL() )                  // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ С‚РѕР»СЊРєРѕ С‡С‚Рѕ СЃРѕР·РґР°РЅРЅРѕРіРѕ РѕРєРЅР°
 	{
-		KillGLWindow();                // Восстановить экран
+		KillGLWindow();                // Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЌРєСЂР°РЅ
 		MessageBox( NULL, ("Initialization Failed."), ("ERROR"), MB_OK | MB_ICONEXCLAMATION );
-		return false;                // Вернуть false
+		return false;                // Р’РµСЂРЅСѓС‚СЊ false
 	}
 
-	return true;                  // Всё в порядке!
+	return true;                  // Р’СЃС‘ РІ РїРѕСЂСЏРґРєРµ!
 }
 
 
-bool DrawGLScene()                // Здесь будет происходить вся прорисовка
+bool DrawGLScene()                // Р—РґРµСЃСЊ Р±СѓРґРµС‚ РїСЂРѕРёСЃС…РѕРґРёС‚СЊ РІСЃСЏ РїСЂРѕСЂРёСЃРѕРІРєР°
 {	  
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // Очистить экран и буфер глубины	
-	glMatrixMode(GL_MODELVIEW);								  // Выбор матрицы вида модели
-	glLoadIdentity();										 // Сбросить текущую матрицу
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // РћС‡РёСЃС‚РёС‚СЊ СЌРєСЂР°РЅ Рё Р±СѓС„РµСЂ РіР»СѓР±РёРЅС‹	
+	glMatrixMode(GL_MODELVIEW);								  // Р’С‹Р±РѕСЂ РјР°С‚СЂРёС†С‹ РІРёРґР° РјРѕРґРµР»Рё
+	glLoadIdentity();										 // РЎР±СЂРѕСЃРёС‚СЊ С‚РµРєСѓС‰СѓСЋ РјР°С‚СЂРёС†Сѓ
 
 	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
 		mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
 		mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
-	SetLight();
+	SetGLLight();
 
 	mGame.Draw();
 
@@ -493,8 +540,8 @@ bool DrawGLScene()                // Здесь будет происходить вся прорисовка
 	if (gShowDebugInfo)
 	{
 		glLoadIdentity();
-		glColor3f(1, 1, 1);
 		glPushMatrix();
+		glColor3f(1, 1, 1);		
 		glTranslatef(-5.0f, 3.6f, -10.0f);	
 		glScalef(0.2f, 0.2f, 0.2f);
 		glPrint("FPS: %2.2f", fps);						// Print GL Text To The Screen
@@ -572,7 +619,7 @@ bool LoadData()
 		posx = 0.0f, posy = 0.0f, posz = 0.0f, 
 		velx = 0.0f, vely = 0.0f, velz = 0.0f;
 		//bool isLight = false;
-		Color4f color = {0.0f, 0.0f, 0.0f, 0.0f};
+		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 		dataFile >> m >> r 
 			>> posx >> posy >> posz 
 			>> velx >> vely >> velz
@@ -629,33 +676,33 @@ void UpdateKeys()
 		gPause = !gPause;
 		gKeys[VK_SPACE] = false;
 	}
-	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
+	if (gKeys['L'] && !gLightOnKey)			// РљР»Р°РІРёС€Р° 'L' РЅР°Р¶Р°С‚Р° Рё РЅРµ СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ?
 	{
-		gLightOnKey=true;						// lp присвоили TRUE
-		gLightOn=!gLightOn;				// Переключение света TRUE/FALSE
-		if (!gLightOn)					// Если не свет
+		gLightOnKey=true;						// lp РїСЂРёСЃРІРѕРёР»Рё TRUE
+		gLightOn=!gLightOn;				// РџРµСЂРµРєР»СЋС‡РµРЅРёРµ СЃРІРµС‚Р° TRUE/FALSE
+		if (!gLightOn)					// Р•СЃР»Рё РЅРµ СЃРІРµС‚
 		{
-			glDisable(GL_LIGHTING);		// Запрет освещения
+			glDisable(GL_LIGHTING);		// Р—Р°РїСЂРµС‚ РѕСЃРІРµС‰РµРЅРёСЏ
 		}
-		else							// В противном случае
+		else							// Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 		{
-			glEnable(GL_LIGHTING);		// Разрешить освещение
+			glEnable(GL_LIGHTING);		// Р Р°Р·СЂРµС€РёС‚СЊ РѕСЃРІРµС‰РµРЅРёРµ
 		}
 	}
-	if (!gKeys['L'])					// Клавиша 'L' Отжата?
+	if (!gKeys['L'])					// РљР»Р°РІРёС€Р° 'L' РћС‚Р¶Р°С‚Р°?
 	{
-		gLightOnKey=false;						// Если так, то lp равно FALSE
+		gLightOnKey=false;						// Р•СЃР»Рё С‚Р°Рє, С‚Рѕ lp СЂР°РІРЅРѕ FALSE
 	}
 
-	if( gKeys[VK_F1] )				// Была ли нажата F1?
+	if( gKeys[VK_F1] )				// Р‘С‹Р»Р° Р»Рё РЅР°Р¶Р°С‚Р° F1?
 	{
-		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
-		KillGLWindow();					// Разрушаем текущее окно
-		gFullscreen = !gFullscreen;		// Переключаем режим
-		// Пересоздаём наше OpenGL окно
-		if( !CreateGLWindow( ("NeHe OpenGL структура"), gWidth, gHeight, 32, gFullscreen ) )
+		gKeys[VK_F1] = false;			// Р•СЃР»Рё С‚Р°Рє, РјРµРЅСЏРµРј Р·РЅР°С‡РµРЅРёРµ СЏС‡РµР№РєРё РјР°СЃСЃРёРІР° РЅР° false
+		KillGLWindow();					// Р Р°Р·СЂСѓС€Р°РµРј С‚РµРєСѓС‰РµРµ РѕРєРЅРѕ
+		gFullscreen = !gFullscreen;		// РџРµСЂРµРєР»СЋС‡Р°РµРј СЂРµР¶РёРј
+		// РџРµСЂРµСЃРѕР·РґР°С‘Рј РЅР°С€Рµ OpenGL РѕРєРЅРѕ
+		if( !CreateGLWindow( ("NeHe OpenGL СЃС‚СЂСѓРєС‚СѓСЂР°"), gWidth, gHeight, 32, gFullscreen ) )
 		{
-			//return 0;						// Выходим, если это невозможно
+			//return 0;						// Р’С‹С…РѕРґРёРј, РµСЃР»Рё СЌС‚Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 		}
 	} 
 	if( gKeys[VK_F5])
@@ -665,7 +712,7 @@ void UpdateKeys()
 		LoadData();
 		gTime = 0.0f;
 		gTimeScale =1.0f;
-		SetLight();
+		SetGLLight();
 	}
 	if( gKeys[VK_RIGHT])
 	{
@@ -760,79 +807,79 @@ void UpdateKeys()
 		gTimeScale = 1.0f;
 }
 
-LRESULT CALLBACK WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 UINT  uMsg,				// Сообщение для этого окна
-						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam)            // Дополнительная информация
+LRESULT CALLBACK WndProc(  HWND  hWnd,				// Р”РµСЃРєСЂРёРїС‚РѕСЂ РЅСѓР¶РЅРѕРіРѕ РѕРєРЅР°
+						 UINT  uMsg,				// РЎРѕРѕР±С‰РµРЅРёРµ РґР»СЏ СЌС‚РѕРіРѕ РѕРєРЅР°
+						 WPARAM  wParam,            // Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
+						 LPARAM  lParam)            // Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
 {
-	switch (uMsg)                // Проверка сообщения для окна
+	switch (uMsg)                // РџСЂРѕРІРµСЂРєР° СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ РѕРєРЅР°
 	{
-	case WM_ACTIVATE:            // Проверка сообщения активности окна
+	case WM_ACTIVATE:            // РџСЂРѕРІРµСЂРєР° СЃРѕРѕР±С‰РµРЅРёСЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё РѕРєРЅР°
 		{
-			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
+			if( !HIWORD( wParam ) )          // РџСЂРѕРІРµСЂРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ РјРёРЅРёРјРёР·Р°С†РёРё
 			{
-				gActive = true;					// Программа активна
+				gActive = true;					// РџСЂРѕРіСЂР°РјРјР° Р°РєС‚РёРІРЅР°
 			}
 			else
 			{
-				gActive = false;					// Программа теперь не активна
+				gActive = false;					// РџСЂРѕРіСЂР°РјРјР° С‚РµРїРµСЂСЊ РЅРµ Р°РєС‚РёРІРЅР°
 			}
 
-			return 0;						// Возвращаемся в цикл обработки сообщений
+			return 0;						// Р’РѕР·РІСЂР°С‰Р°РµРјСЃСЏ РІ С†РёРєР» РѕР±СЂР°Р±РѕС‚РєРё СЃРѕРѕР±С‰РµРЅРёР№
 		}
-	case WM_SYSCOMMAND:            // Перехватываем системную команду
+	case WM_SYSCOMMAND:            // РџРµСЂРµС…РІР°С‚С‹РІР°РµРј СЃРёСЃС‚РµРјРЅСѓСЋ РєРѕРјР°РЅРґСѓ
 		{
-			switch ( wParam )            // Останавливаем системный вызов
+			switch ( wParam )            // РћСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРёСЃС‚РµРјРЅС‹Р№ РІС‹Р·РѕРІ
 			{
-			case SC_SCREENSAVE:				// Пытается ли запустится скринсейвер?
-			case SC_MONITORPOWER:			// Пытается ли монитор перейти в режим сбережения энергии?
-				return 0;						// Предотвращаем это
+			case SC_SCREENSAVE:				// РџС‹С‚Р°РµС‚СЃСЏ Р»Рё Р·Р°РїСѓСЃС‚РёС‚СЃСЏ СЃРєСЂРёРЅСЃРµР№РІРµСЂ?
+			case SC_MONITORPOWER:			// РџС‹С‚Р°РµС‚СЃСЏ Р»Рё РјРѕРЅРёС‚РѕСЂ РїРµСЂРµР№С‚Рё РІ СЂРµР¶РёРј СЃР±РµСЂРµР¶РµРЅРёСЏ СЌРЅРµСЂРіРёРё?
+				return 0;						// РџСЂРµРґРѕС‚РІСЂР°С‰Р°РµРј СЌС‚Рѕ
 			}
-			break;              // Выход
+			break;              // Р’С‹С…РѕРґ
 		}
-	case WM_CLOSE:              // Мы получили сообщение о закрытие?
+	case WM_CLOSE:              // РњС‹ РїРѕР»СѓС‡РёР»Рё СЃРѕРѕР±С‰РµРЅРёРµ Рѕ Р·Р°РєСЂС‹С‚РёРµ?
 		{
-			PostQuitMessage( 0 );			// Отправить сообщение о выходе
-			return 0;							// Вернуться назад
+			PostQuitMessage( 0 );			// РћС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ Рѕ РІС‹С…РѕРґРµ
+			return 0;							// Р’РµСЂРЅСѓС‚СЊСЃСЏ РЅР°Р·Р°Рґ
 		}
 
-	case WM_KEYDOWN:            // Была ли нажата кнопка?
+	case WM_KEYDOWN:            // Р‘С‹Р»Р° Р»Рё РЅР°Р¶Р°С‚Р° РєРЅРѕРїРєР°?
 		{
-			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
-			return 0;							// Возвращаемся
+			gKeys[wParam] = true;			// Р•СЃР»Рё С‚Р°Рє, РјС‹ РїСЂРёСЃРІР°РёРІР°РµРј СЌС‚РѕР№ СЏС‡РµР№РєРµ true
+			return 0;							// Р’РѕР·РІСЂР°С‰Р°РµРјСЃСЏ
 		}
-	case WM_KEYUP:              // Была ли отпущена клавиша?
+	case WM_KEYUP:              // Р‘С‹Р»Р° Р»Рё РѕС‚РїСѓС‰РµРЅР° РєР»Р°РІРёС€Р°?
 		{
-			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
-			return 0;						// Возвращаемся
+			gKeys[wParam] = false;			//  Р•СЃР»Рё С‚Р°Рє, РјС‹ РїСЂРёСЃРІР°РёРІР°РµРј СЌС‚РѕР№ СЏС‡РµР№РєРµ false
+			return 0;						// Р’РѕР·РІСЂР°С‰Р°РµРјСЃСЏ
 		}
-	case WM_SIZE:              // Изменены размеры OpenGL окна
+	case WM_SIZE:              // РР·РјРµРЅРµРЅС‹ СЂР°Р·РјРµСЂС‹ OpenGL РѕРєРЅР°
 		{
-			ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
-			return 0;											// Возвращаемся
+			ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// РњР»Р°РґС€РµРµ СЃР»РѕРІРѕ=Width, СЃС‚Р°СЂС€РµРµ СЃР»РѕРІРѕ=Height
+			return 0;											// Р’РѕР·РІСЂР°С‰Р°РµРјСЃСЏ
 		}
 	}
-	// пересылаем все необработанные сообщения DefWindowProc
+	// РїРµСЂРµСЃС‹Р»Р°РµРј РІСЃРµ РЅРµРѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ DefWindowProc
 	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }
 
 
-int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
-					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
-					LPSTR    lpCmdLine,					// Параметры командной строки
-					int    nCmdShow )					// Состояние отображения окна
+int WINAPI WinMain(	HINSTANCE  hInstance,				// Р”РµСЃРєСЂРёРїС‚РѕСЂ РїСЂРёР»РѕР¶РµРЅРёСЏ
+					HINSTANCE  hPrevInstance,			// Р”РµСЃРєСЂРёРїС‚РѕСЂ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ РїСЂРёР»РѕР¶РµРЅРёСЏ
+					LPSTR    lpCmdLine,					// РџР°СЂР°РјРµС‚СЂС‹ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
+					int    nCmdShow )					// РЎРѕСЃС‚РѕСЏРЅРёРµ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РѕРєРЅР°
 {
-	MSG  msg;           // Структура для хранения сообщения Windows
+	MSG  msg;           // РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СЃРѕРѕР±С‰РµРЅРёСЏ Windows
 	
-	bool  done = false;	// Логическая переменная для выхода из цикла
+	bool  done = false;	// Р›РѕРіРёС‡РµСЃРєР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РІС‹С…РѕРґР° РёР· С†РёРєР»Р°
 
 	DWORD tickCount = 0;
 	DWORD lastTickCount = 0;
 
-	// Спрашивает пользователя, какой режим экрана он предпочитает
-	//if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
+	// РЎРїСЂР°С€РёРІР°РµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РєР°РєРѕР№ СЂРµР¶РёРј СЌРєСЂР°РЅР° РѕРЅ РїСЂРµРґРїРѕС‡РёС‚Р°РµС‚
+	//if( MessageBox( NULL, "РҐРѕС‚РёС‚Рµ Р»Рё Р’С‹ Р·Р°РїСѓСЃС‚РёС‚СЊ РїСЂРёР»РѕР¶РµРЅРёРµ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅРѕРј СЂРµР¶РёРјРµ?",  "Р—Р°РїСѓСЃС‚РёС‚СЊ РІ РїРѕР»РЅРѕСЌРєСЂР°РЅРЅРѕРј СЂРµР¶РёРјРµ?", MB_YESNO | MB_ICONQUESTION) == IDNO )
 	//{
-		//fullscreen = false;          // Оконный режим
+		//fullscreen = false;          // РћРєРѕРЅРЅС‹Р№ СЂРµР¶РёРј
 	//
 
 	if (!LoadData()) {
@@ -840,36 +887,36 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 		return 1;													// Return False (Failure)
 	}
 
-	// Создать наше OpenGL окно
-	if( !CreateGLWindow( "NeHe OpenGL окно", gWidth, gHeight, 32, gFullscreen ) )
+	// РЎРѕР·РґР°С‚СЊ РЅР°С€Рµ OpenGL РѕРєРЅРѕ
+	if( !CreateGLWindow( "NeHe OpenGL РѕРєРЅРѕ", gWidth, gHeight, 32, gFullscreen ) )
 	{
-		return 1;              // Выйти, если окно не может быть создано
+		return 1;              // Р’С‹Р№С‚Рё, РµСЃР»Рё РѕРєРЅРѕ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРѕР·РґР°РЅРѕ
 	}
 
 	lastTickCount = GetTickCount ();		// Get Tick Count
 	float framesPerSecond = 0.0f	;
 	float lastTime = 0.0f;
 
-	while( !done )							// Цикл продолжается, пока done не равно true
+	while( !done )							// Р¦РёРєР» РїСЂРѕРґРѕР»Р¶Р°РµС‚СЃСЏ, РїРѕРєР° done РЅРµ СЂР°РІРЅРѕ true
 	{
-		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )    // Есть ли в очереди какое-нибудь сообщение?
+		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )    // Р•СЃС‚СЊ Р»Рё РІ РѕС‡РµСЂРµРґРё РєР°РєРѕРµ-РЅРёР±СѓРґСЊ СЃРѕРѕР±С‰РµРЅРёРµ?
 		{
-			if( msg.message == WM_QUIT )						// Мы поучили сообщение о выходе?
+			if( msg.message == WM_QUIT )						// РњС‹ РїРѕСѓС‡РёР»Рё СЃРѕРѕР±С‰РµРЅРёРµ Рѕ РІС‹С…РѕРґРµ?
 			{
-				done = true;										// Если так, done=true
+				done = true;										// Р•СЃР»Рё С‚Р°Рє, done=true
 			}
-			else												// Если нет, обрабатывает сообщения
+			else												// Р•СЃР»Рё РЅРµС‚, РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ СЃРѕРѕР±С‰РµРЅРёСЏ
 			{
-				TranslateMessage( &msg );							// Переводим сообщение
-				DispatchMessage( &msg );							// Отсылаем сообщение
+				TranslateMessage( &msg );							// РџРµСЂРµРІРѕРґРёРј СЃРѕРѕР±С‰РµРЅРёРµ
+				DispatchMessage( &msg );							// РћС‚СЃС‹Р»Р°РµРј СЃРѕРѕР±С‰РµРЅРёРµ
 			}
 		}
-		else	// Если нет сообщений
+		else	// Р•СЃР»Рё РЅРµС‚ СЃРѕРѕР±С‰РµРЅРёР№
 		{
-				// Прорисовываем сцену.
-			if( gActive )          // Активна ли программа?
+				// РџСЂРѕСЂРёСЃРѕРІС‹РІР°РµРј СЃС†РµРЅСѓ.
+			if( gActive )          // РђРєС‚РёРІРЅР° Р»Рё РїСЂРѕРіСЂР°РјРјР°?
 			{
-				//else            // Не время для выхода, обновим экран.
+				//else            // РќРµ РІСЂРµРјСЏ РґР»СЏ РІС‹С…РѕРґР°, РѕР±РЅРѕРІРёРј СЌРєСЂР°РЅ.
 				{
 					//--------------------------------
 					{
@@ -889,13 +936,13 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 							framesPerSecond = 0.0f;
 						}
 						lastTickCount = tickCount;			// Set Last Count To Current Count
-						DrawGLScene();						// Рисуем сцену
-						SwapBuffers( hDC );					// Меняем буфер (двойная буферизация)
+						DrawGLScene();						// Р РёСЃСѓРµРј СЃС†РµРЅСѓ
+						SwapBuffers( hDC );					// РњРµРЅСЏРµРј Р±СѓС„РµСЂ (РґРІРѕР№РЅР°СЏ Р±СѓС„РµСЂРёР·Р°С†РёСЏ)
 					}
 
-					if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
+					if(gKeys[VK_ESCAPE])						// Р‘С‹Р»Рѕ Р»Рё РЅР°Р¶Р°С‚Р° РєР»Р°РІРёС€Р° ESC?
 					{
-						done = true;							// ESC говорит об останове выполнения программы
+						done = true;							// ESC РіРѕРІРѕСЂРёС‚ РѕР± РѕСЃС‚Р°РЅРѕРІРµ РІС‹РїРѕР»РЅРµРЅРёСЏ РїСЂРѕРіСЂР°РјРјС‹
 					}
 					UpdateKeys();
 				}
@@ -904,6 +951,6 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 	}
 
 	// Shutdown
-	KillGLWindow();						// Разрушаем окно
-	return ( msg.wParam );              // Выходим из программы
+	KillGLWindow();						// Р Р°Р·СЂСѓС€Р°РµРј РѕРєРЅРѕ
+	return ( msg.wParam );              // Р’С‹С…РѕРґРёРј РёР· РїСЂРѕРіСЂР°РјРјС‹
 }

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 //-----------------------------------------------------------------------------
 // A homogeneous row-major 4x4 matrix class.
 //
@@ -230,33 +230,33 @@ inline void Matrix4::fromHeadPitchRoll(float headDegrees, float pitchDegrees, fl
 inline void Matrix4::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
 {
  	float D = -asin( mtx[2]);
- 	pitchDegrees = D;        // Считаем ось Y 
+ 	pitchDegrees = D;        // РЎС‡РёС‚Р°РµРј РѕСЃСЊ Y 
  	float C           =  cos( pitchDegrees );
  	pitchDegrees    *= RADIANS;
  
- 	if ( fabs( C ) > 0.005 )             // ось зафиксирована? 
+ 	if ( fabs( C ) > 0.005 )             // РѕСЃСЊ Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅР°? 
  	{
- 		trx      =  mat[10] / C;           // Нет, так что находим угол по X
+ 		trx      =  mat[10] / C;           // РќРµС‚, С‚Р°Рє С‡С‚Рѕ РЅР°С…РѕРґРёРј СѓРіРѕР» РїРѕ X
  		try      = -mat[6]  / C;
  
  		headDegrees  = atan2( try, trx ) * RADIANS;
  
- 		trx      =  mat[0] / C;            // находим угол по оси Z 
+ 		trx      =  mat[0] / C;            // РЅР°С…РѕРґРёРј СѓРіРѕР» РїРѕ РѕСЃРё Z 
  		try      = -mat[1] / C;
  
  		rollDegrees  = atan2( try, trx ) * RADIANS;
  	}
- 	else                                 // ось все-таки зафиксирована
+ 	else                                 // РѕСЃСЊ РІСЃРµ-С‚Р°РєРё Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅР°
  	{
- 		headDegrees  = 0;                      // Устанавливаем угол по оси X на 0
+ 		headDegrees  = 0;                      // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј СѓРіРѕР» РїРѕ РѕСЃРё X РЅР° 0
  
- 		trx      = mat[5];                 // И считаем ось Z
+ 		trx      = mat[5];                 // Р СЃС‡РёС‚Р°РµРј РѕСЃСЊ Z
  		try      = mat[4];
  
  		rollDegrees  = atan2( try, trx ) * RADIANS;
  	}
  
- 	headDegrees = clamp( headDegrees, 0, 360 );  // Приводим углы к диапазону 
+ 	headDegrees = clamp( headDegrees, 0, 360 );  // РџСЂРёРІРѕРґРёРј СѓРіР»С‹ Рє РґРёР°РїР°Р·РѕРЅСѓ 
  	pitchDegrees = clamp( pitchDegrees, 0, 360 );
  	rollDegrees = clamp( rollDegrees, 0, 360 );
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Math/Vector3.h"
 #include "../Color.h"
 
@@ -7,12 +7,17 @@ class Entity
 public:
 	Entity():m(1.0f), pos(0.0f, 0.0f, 0.0f), vel(0.0f, 0.0f, 0.0f), c(0)
 	{
-
 	}
 
-	virtual ~Entity(){}
+	Entity(float m, Vector3 pos, Vector3 vel, Color4f color)
+	: m(m)
+	, pos(pos)
+	, vel(vel)
+	, color(color)
+	, c(0)
+	{}
 
-	virtual void function() = 0;
+	virtual ~Entity(){}
 
 	virtual Vector3& GetPos()
 	{
@@ -49,33 +54,27 @@ public:
 		return color;
 	}
 
+	void SetColor(Color4f color)
+	{
+		this->color = color;
+	}
+
 	virtual float GetR()
 	{
 		return 0.f;
 	}
 
-	virtual void applyForce(Vector3 Force)
-	{
-	}
+	virtual void applyForce(Vector3 Force) = 0;
 
-	virtual void simulateForce(float dt)
-	{
-	}
+	virtual void simulateForce(float dt) = 0;
 
-	virtual void init()
-	{
-	}
+	virtual void init() = 0;
 
 	virtual void Draw() = 0;
 
-	virtual void Collision(Entity& Entity)
-	{
-	}
+	virtual void Collision(Entity& Entity) = 0;
 
-	virtual bool IsColisions(Entity& Entity)
-	{
-		return false;
-	}
+	virtual bool IsColisions(Entity& Entity) = 0;
 
 	virtual float ProcessColisions(Entity& Entity) = 0;	
 

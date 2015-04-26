@@ -1,4 +1,4 @@
-#include "Math.h"
+﻿#include "Math.h"
 
 // const float PI = float(M_PI);
 // const float HALF_PI = float(M_PI/2.0f);

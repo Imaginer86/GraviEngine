@@ -1,6 +1,54 @@
-#include "Box.h"
+п»ї#include "Box.h"
 
 #include "..\gl\glaux.h"
+
+Box::Box()
+: Entity()
+, size(1.0, 1.0, 1.0)
+, angle(0.0, 0.0, 0.0)
+, force(0.0f, 0.0f, 0.0f)
+, q(0.0f,0.0f,0.0f,0.0f)
+, qVel(0.0f, 0.0f, 0.0f, 0.0f)
+{
+	this->color.r = 1.0f;
+	this->color.g = 1.0f;
+	this->color.b = 1.0f;
+	this->color.a = 1.0f;
+}
+
+void Box::init()
+{
+	force.x = 0;
+	force.y = 0;
+	force.z = 0;
+}
+
+
+void Box::simulateForce(float dt)
+{
+	vel += (force / m) * dt;				// Change in velocity is added to the velocity.
+	// The change is proportinal with the acceleration (force / m) and change in time
+
+	pos += vel * dt;						// Change in position is added to the position.
+	// Change in position is velocity times the change in time
+
+	angle += angleVel*dt;
+
+	Quaternion temp = qVel;
+	Vector3 temp2(temp.x, temp.y, temp.z);
+	temp2.unitize();
+	float angle = acosf(temp.w);
+	angle *= dt;
+	Quaternion temp3(cosf(angle), temp2.x*sinf(angle), temp2.y*sinf(angle), temp2.z*sinf(angle));
+	//temp.normalize();
+	//temp.w *= dt;
+	//temp.normalize();
+	//if (dt==0.0f)
+		//temp = Quaternion(1,0,0,0);
+	q *= temp3;
+
+	return;
+}
 
 void Box::Draw()
 {
@@ -21,48 +69,48 @@ void Box::Draw()
 
 	glColor3f(color.r, color.g, color.b);
 
-	glBegin(GL_QUADS);       // Начало рисования четырехугольников
-	// Передняя грань
-	//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 1 (Перед)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Перед)
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Перед)
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Перед)
-	// Задняя грань
-	//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Зад)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Зад)
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 3 (Зад)
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Зад)
-	// Верхняя грань
-	// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
-	// 		glVertex3f(-1.0f,  1.0f, -1.0f); // Точка 1 (Верх)
-	// 		glVertex3f(-1.0f,  1.0f,  1.0f); // Точка 2 (Верх)
-	// 		glVertex3f( 1.0f,  1.0f,  1.0f); // Точка 3 (Верх)
-	//		glVertex3f( 1.0f,  1.0f, -1.0f); // Точка 4 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
+	glBegin(GL_QUADS);       // РќР°С‡Р°Р»Рѕ СЂРёСЃРѕРІР°РЅРёСЏ С‡РµС‚С‹СЂРµС…СѓРіРѕР»СЊРЅРёРєРѕРІ
+	// РџРµСЂРµРґРЅСЏСЏ РіСЂР°РЅСЊ
+	//glNormal3f( 0.0f, 0.0f, 1.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РЅР° РЅР°Р±Р»СЋРґР°С‚РµР»СЏ
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 1 (РџРµСЂРµРґ)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 2 (РџРµСЂРµРґ)
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 3 (РџРµСЂРµРґ)
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 4 (РџРµСЂРµРґ)
+	// Р—Р°РґРЅСЏСЏ РіСЂР°РЅСЊ
+	//glNormal3f( 0.0f, 0.0f,-1.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РѕС‚ РЅР°Р±Р»СЋРґР°С‚РµР»СЏ
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 1 (Р—Р°Рґ)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 2 (Р—Р°Рґ)
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 3 (Р—Р°Рґ)
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 4 (Р—Р°Рґ)
+	// Р’РµСЂС…РЅСЏСЏ РіСЂР°РЅСЊ
+	// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РІРІРµСЂС…
+	// 		glVertex3f(-1.0f,  1.0f, -1.0f); // РўРѕС‡РєР° 1 (Р’РµСЂС…)
+	// 		glVertex3f(-1.0f,  1.0f,  1.0f); // РўРѕС‡РєР° 2 (Р’РµСЂС…)
+	// 		glVertex3f( 1.0f,  1.0f,  1.0f); // РўРѕС‡РєР° 3 (Р’РµСЂС…)
+	//		glVertex3f( 1.0f,  1.0f, -1.0f); // РўРѕС‡РєР° 4 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 1 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 2 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 3 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 4 (Р’РµСЂС…)
 
-	// Нижняя грань
-	glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 4 (Верх)
-	// Правая грань
-	glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
-	// Левая грань
-	glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // Точка 4 (Верх)
+	// РќРёР¶РЅСЏСЏ РіСЂР°РЅСЊ
+	glNormal3f( 0.0f,-1.0f, 0.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РІРЅРёР·
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 1 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 2 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 3 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 4 (Р’РµСЂС…)
+	// РџСЂР°РІР°СЏ РіСЂР°РЅСЊ
+	glNormal3f( 1.0f, 0.0f, 0.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РІРїСЂР°РІРѕ
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 1 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 2 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 3 (Р’РµСЂС…)
+	glVertex3f(pos.x + size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 4 (Р’РµСЂС…)
+	// Р›РµРІР°СЏ РіСЂР°РЅСЊ
+	glNormal3f(-1.0f, 0.0f, 0.0f);     // РќРѕСЂРјР°Р»СЊ СѓРєР°Р·С‹РІР°РµС‚ РІР»РµРІРѕ
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 1 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y + size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 2 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z + size.z/2.0f); // РўРѕС‡РєР° 3 (Р’РµСЂС…)
+	glVertex3f(pos.x - size.x/2.0f, pos.y - size.y/2.0f,  pos.z - size.z/2.0f); // РўРѕС‡РєР° 4 (Р’РµСЂС…)
 	glEnd();
 
 	glPopMatrix();

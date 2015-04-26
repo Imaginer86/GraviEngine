@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 //#include <list>
 #include <vector>
 #include "Math/Math.h"
 
-#include <fstream>
+//#include <fstream>
 
 using namespace Math;
 
@@ -15,18 +15,22 @@ const float G = 0.01f;
 class Game
 {
 public:
-	Game()
-	: numEntitys(0)
-	//, Entities(null)
-	, graviAcc(0, 0, 0)
+	Game();
+
+	virtual ~Game(void)
 	{
-		fileOut = std::ofstream("out.dat", std::ios::out);
+//		fileOut.close();
+	}	
+
+	void SetNumEntities(int entities)
+	{
+		numEntitys = entities;
 	}
 
-	~Game(void)
+	int GetNumEntities()
 	{
-		fileOut.close();
-	}	
+		return numEntitys;
+	}
 
 	void Game::SetNumMasses( int num )
 	{	
@@ -56,16 +60,6 @@ public:
 	Vector3 GraviForce(int a, int b);
 	virtual void release();							// delete the masses created;
 
-	void SetNumEntities(int entities)
-	{
-		numEntitys = entities;
-	}
-
-	int GetNumEntities()
-	{
-		return numEntitys;
-	}
-
 	//Entity& GetEntity(int i)
  	//{
 //		return Entities[i];
@@ -82,5 +76,5 @@ private:
 	//list<Entity> Entities;
 	Vector3 graviAcc;
 
-	std::ofstream fileOut;
+//	std::ofstream fileOut;
 };

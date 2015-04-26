@@ -1,5 +1,17 @@
-#include "..\gl\glaux.h"
+﻿#include "..\gl\glaux.h"
 #include "Line.h"
+
+Line::Line()
+: Entity()
+, r(1.0f)
+, h(1.0f)
+, q(0.0f, 0.0f, 0.0f, 0.0f)
+{
+	this->color.r = 1.0f;
+	this->color.g = 1.0f;
+	this->color.b = 1.0f;
+	this->color.a = 1.0f;
+}
 
 void Line::Draw()
 {

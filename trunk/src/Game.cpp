@@ -222,7 +222,7 @@ void Game::solve() /* no implementation because no forces are wanted in this bas
 		int b = 0;
 		for(vector<Entity*>::iterator iterb = Entities.begin(); iterb != Entities.end(); iterb++, b++)
 		{
-			//if(itera != iterb) (*itera)->applyForce(GraviForce(a,b));
+			if(itera != iterb) (*itera)->applyForce(GraviForce(a,b));
 		}
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses

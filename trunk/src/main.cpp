@@ -1,6 +1,7 @@
 ﻿#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
+#include <string>
 //#include "GL\glaux.h"
 
 #include <Windows.h>
@@ -67,6 +68,8 @@ float gMoveScale = 1.0f;
 
 float fps = 0.0f;
 float ups = 0.0f;
+
+unsigned SceneNum = 1;
 
 Game mGame;
 Camera mCamera;
@@ -547,7 +550,9 @@ void DrawGLScene()                // Здесь будет происходит�
 		glPushMatrix();
 		glColor3f(1, 1, 1);		
 		glTranslatef(-5.0f, 3.6f, -10.0f);	
-		glScalef(0.2f, 0.2f, 0.2f);
+		glScalef(0.2f, 0.2f, 0.2f);		
+		glPrint("Scene #: %d", SceneNum);
+		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("FPS: %2.2f", fps);						// Print GL Text To The Screen
 		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("UPS: %2.2f", ups);
@@ -585,9 +590,12 @@ void DrawGLScene()                // Здесь будет происходит�
 // 		}
 }
 
-bool LoadData(bool camera)
+bool LoadData(bool camera, unsigned fileNum)
 {
-	std::ifstream dataFile("data.dat", std::ios::in);	
+
+	std::string fileNumstr = std::to_string(fileNum);
+	std::string fileName = "data" + fileNumstr + ".dat";
+	std::ifstream dataFile(fileName, std::ios::in);	
 	if ( !dataFile )
 		return false;
 
@@ -739,12 +747,83 @@ void UpdateKeys()
 			//return 0;						// Выходим, если это невозможно
 		}
 	} 
+
 	if( gKeys[VK_F5])
 	{
 		gKeys[VK_F5] = false;
 		mGame.release();
-		LoadData(true);
+		LoadData(true, SceneNum);
 		//LoadData(false);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['1'])
+	{
+		gKeys['1'] = false;
+		mGame.release();
+		SceneNum = 1;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['2'])
+	{
+		gKeys['2']= false;
+		mGame.release();
+		SceneNum = 2;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['3'])
+	{
+		gKeys['3'] = false;
+		mGame.release();
+		SceneNum = 3;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['4'])
+	{
+		gKeys['4'] = false;
+		mGame.release();
+		SceneNum = 4;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['5'])
+	{
+		gKeys['5'] = false;
+		mGame.release();
+		SceneNum = 5;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['6'])
+	{
+		gKeys['6'] = false;
+		mGame.release();
+		SceneNum = 6;
+		LoadData(true, SceneNum);
+		gTime = 0.0f;
+		gTimeScale =1.0f;
+		SetGLLight();
+	}
+	if( gKeys['7'])
+	{
+		gKeys['7'] = false;
+		mGame.release();
+		SceneNum = 7;
+		LoadData(true, SceneNum);
 		gTime = 0.0f;
 		gTimeScale =1.0f;
 		SetGLLight();
@@ -919,7 +998,7 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 		//fullscreen = false;          // Оконный режим
 	//
 
-	if (!LoadData(true)) {
+	if (!LoadData(true, SceneNum)) {
 		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
 		return 1;													// Return False (Failure)
 	}

@@ -20,14 +20,14 @@ Game::Game()
 
  
 
-void Game::SetMass( int index, float m, float r, Vector3 pos, Vector3 vel, Color4f light )
+void Game::SetMass( float m, float r, Vector3 pos, Vector3 vel, Color4f light )
 {	
 	Mass* mass = new Mass;	
 	mass->Set(m, r, pos, vel, light);
 	Entities.push_back(mass);
 }
 
-void Game::SetBox( int index, float m, Vector3 pos, Vector3 vel, Vector3 size, Vector3 angle, Vector3 angleVel, Color4f color )
+void Game::SetBox( float m, Vector3 pos, Vector3 vel, Vector3 size, Vector3 angle, Vector3 angleVel, Color4f color )
 {
 
 	Box *box = new Box;	
@@ -41,9 +41,10 @@ void Game::SetBox( int index, float m, Vector3 pos, Vector3 vel, Vector3 size, V
 	Entities.push_back(box);
 }
 
-void Game::SetLine(int index, float m, float r, float h, Vector3 pos, Quaternion q, Color4f color)
+void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color)
 {
-	Line *line = new Line;		
+	Line *line = new Line;
+	line->SetMass(m);
 	line->SetR(r);
 	line->SetH(h);
 	line->SetPos(pos);
@@ -101,8 +102,8 @@ void Game::Update( float dt )
 							float t_colission = (*itera)->ProcessColisions(**iterb);
 							if( t_colission < 0.f)
 							{
-								(*itera)->c++;
-								(*iterb)->c++;
+								//(*itera)->c++;
+								//(*iterb)->c++;
 
 								(*itera)->Collision(**iterb);
 
@@ -112,8 +113,8 @@ void Game::Update( float dt )
 
 								
 
-								(*itera)->c--;
-								(*iterb)->c--;
+								//(*itera)->c--;
+								//(*iterb)->c--;
 
 								if (abs(t_colission) < 0.f)
 								{
@@ -191,9 +192,10 @@ Vector3 Game::GraviForce( int a, int b )
 	if (r < 0.1)
 	{
 		gforce = 0;
-		
-		(*itera)->SetVel(Vector3(0.0f, 0.0f ,0.0f));
-		(*iterb)->SetVel(Vector3(0.0f, 0.0f ,0.0f));
+		Vector3 vel0(0.0f, 0.0f ,0.0f);
+
+		(*itera)->SetVel(vel0);
+		(*iterb)->SetVel(vel0);
 		
 		f.x = 0;
 		f.y = 0;
@@ -222,7 +224,8 @@ void Game::solve() /* no implementation because no forces are wanted in this bas
 		int b = 0;
 		for(vector<Entity*>::iterator iterb = Entities.begin(); iterb != Entities.end(); iterb++, b++)
 		{
-			if(itera != iterb) (*itera)->applyForce(GraviForce(a,b));
+			Vector3 force(GraviForce(a,b));
+			if(itera != iterb) (*itera)->applyForce(force);
 		}
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses

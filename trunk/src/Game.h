@@ -36,21 +36,21 @@ public:
 	{	
 		this->numEntitys += num;
 	}
-    void SetMass(int index, float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
+    void SetMass(float m, float r,  Vector3 pos, Vector3 vel, Color4f light);
 
 	void Game::SetNumBoxes( int num )
 	{
 		this->numEntitys += num;
 	}
 
-	void SetBox( int index, float m, Vector3 pos, Vector3 vel, Vector3 size, Vector3 angle, Vector3 angleVel, Color4f color );
+	void SetBox(float m, Vector3 pos, Vector3 vel, Vector3 size, Vector3 angle, Vector3 angleVel, Color4f color );
 
 	void Game::SetNumLines( int num )
 	{
 		this->numEntitys += num;	
 	}
 
-	void SetLine(int index, float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
+	void SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
 	void SetGraviAcc(Vector3 graviAcc);
 

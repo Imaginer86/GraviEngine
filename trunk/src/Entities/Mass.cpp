@@ -6,7 +6,7 @@
 
 static float rt = 0.0f;
 
-Mass::Mass(float m, float r, Vector3 p, Vector3 v)
+Mass::Mass(float m, float r, Vector3 pos, Vector3 vel)
 : Entity(m, pos, vel, Color4f(0.0f, 0.0f, 0.0f, 0.0f))
 , r(r)
 {
@@ -40,7 +40,7 @@ void Mass::update(float dt)
 	this->pos += this->vel * dt;
 }
 
-void Mass::applyForce(Vector3 force)
+void Mass::applyForce(Vector3& force)
 {
 	this->force += force;					// The external force is added to the force of the mass
 }
@@ -95,10 +95,6 @@ void Mass::Collision(Entity& entity)
 		float v2n = v2.dotProduct(p2p1);
 		float v2ts = v2.dotProduct(v2t);
 
-		//float v1a = - v1n* + ((v1n*m1 + v2n*m2)*2)/(m1 + m2);
-		//float v2a = - v2n + ((v1n*m1 + v2n*m2)*2)/(m1 + m2);
-
-			
 		Vector3 v11 = p1p2*v1n + ((p1p2*m1*v1n + p2p1*m2*v2n)/(m1+m2))*2.0f;
 		Vector3 v22 = v2t - p2p1*v2n + ((p1p2*m1*v1n + p2p1*m2*v2n)/(m1+m2))*2.0f;
 			
@@ -108,11 +104,6 @@ void Mass::Collision(Entity& entity)
 		this->SetVel(-v11);
 		entity.SetVel(v22);
 
-
-
-		//dt = ProcessColisions(entity);
-		//}
-		//return dt;
 	}
 	else if (typeid(entity) == typeid(Box))
 	{

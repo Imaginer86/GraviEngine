@@ -9,6 +9,7 @@ Line::Line()
 , r(1.0f)
 , h(1.0f)
 , q(0.0f, 0.0f, 0.0f, 0.0f)
+, force(0.0f, 0.0f, 0.0f)
 {
 	this->color.r = 1.0f;
 	this->color.g = 1.0f;

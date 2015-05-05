@@ -13,7 +13,7 @@ public:
 	: Entity()
 	{}
 
-	Mass(float m, float r, Vector3 p, Vector3 v);								// Constructor	
+	Mass(float m, float r, Vector3 pos, Vector3 vel);								// Constructor	
 
 	virtual ~Mass(){};	
 
@@ -31,7 +31,7 @@ public:
 		return r;
 	}
 
-	virtual void applyForce(Vector3 force);
+	virtual void applyForce(Vector3& force);
 	
 	virtual void simulateForce(float dt);	
 
@@ -41,6 +41,7 @@ public:
 	
 	virtual bool IsColisions(Entity& entity)
 	{
+		Vector3 pos =  entity.GetPos(); //todo
 		return false;
 	}
 

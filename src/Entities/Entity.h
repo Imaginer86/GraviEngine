@@ -5,7 +5,10 @@
 class Entity
 {
 public:
-	Entity():m(1.0f), pos(0.0f, 0.0f, 0.0f), vel(0.0f, 0.0f, 0.0f), c(0)
+	Entity()
+	: m(1.0f)
+	, pos(0.0f, 0.0f, 0.0f)
+	, vel(0.0f, 0.0f, 0.0f)
 	{
 	}
 
@@ -14,7 +17,6 @@ public:
 	, pos(pos)
 	, vel(vel)
 	, color(color)
-	, c(0)
 	{}
 
 	virtual ~Entity(){}
@@ -64,7 +66,7 @@ public:
 		return 0.f;
 	}
 
-	virtual void applyForce(Vector3 Force) = 0;
+	virtual void applyForce(Vector3& Force) = 0;
 
 	virtual void simulateForce(float dt) = 0;
 
@@ -83,5 +85,4 @@ public:
 	Vector3 vel;
 	float m;
 	Color4f color;
-	unsigned int c;
 };

@@ -251,7 +251,7 @@ void SetGLLight()
 }
 
 
-int InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
+bool InitGL( GLvoid )                // Все установки касаемо OpenGL происходят здесь
 {
 	//if (!LoadGLTextures())								// If Loading The Textures Failed
 //	{
@@ -427,7 +427,7 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 		PFD_SUPPORT_OPENGL |				   // Формат для OpenGL
 		PFD_DOUBLEBUFFER,					  // Формат для двойного буфера
 		PFD_TYPE_RGBA,						 // Требуется RGBA формат
-		bits,								// Выбирается бит глубины цвета
+		BYTE(bits),								// Выбирается бит глубины цвета
 		0, 0, 0, 0, 0, 0,				   // Игнорирование цветовых битов
 		0,								  // Нет буфера прозрачности
 		0,								 // Сдвиговый бит игнорируется
@@ -455,14 +455,14 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 		return false;                // Вернуть false
 	}
 
-	if( !SetPixelFormat( hDC, PixelFormat, &pfd ) )          // Возможно ли установить Формат Пикселя?
+	if( !SetPixelFormat( hDC, PixelFormat, &pfd ))          // Возможно ли установить Формат Пикселя?
 	{
 		KillGLWindow();                // Восстановить экран
 		MessageBox( NULL, "Can't Set The PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION );
 		return false;                // Вернуть false
 	}
 
-	if( !( hRC = wglCreateContext( hDC ) ) )          // Возможно ли установить Контекст Рендеринга?
+	if( !( hRC = wglCreateContext( hDC ) ) ) // Возможно ли установить Контекст Рендеринга?
 	{
 		KillGLWindow();                // Восстановить экран
 		MessageBox( NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -667,7 +667,7 @@ bool LoadData(bool camera, unsigned fileNum)
 			>> velx >> vely >> velz
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetMass(i, m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
+		mGame.SetMass(m, r, Vector3(posx, posy, posz), Vector3(velx, vely, velz), /*isLight,*/ color);        
 	}
 
 	int numBoxs = 0;
@@ -685,7 +685,7 @@ bool LoadData(bool camera, unsigned fileNum)
 			>> angle.x >> angle.y >> angle.z
 			>> angleVel.x >> angleVel.y >> angleVel.z
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetBox(i, m, pos, vel, size, angle, angleVel, color);
+		mGame.SetBox(m, pos, vel, size, angle, angleVel, color);
 	}
 
 	int numLines = 0;
@@ -703,7 +703,7 @@ bool LoadData(bool camera, unsigned fileNum)
 			>> u.x >> u.y >> u.z >> w
 			>> color.r >> color.g >> color.b >> color.a;
 		q.fromAxisAngle(u, w);
-		mGame.SetLine(i, m, r, h, pos, q, color);
+		mGame.SetLine(m, r, h, pos, q, color);
 	}
 
 	dataFile.close();

@@ -18,7 +18,7 @@ public:
 		return size;
 	}
 
-	void SetSize(Vector3 size)
+	void SetSize(Vector3& size)
 	{
 		this->size = size;
 	}
@@ -28,7 +28,7 @@ public:
 //		return angle;
 //	}
 
-	void SetAngle(Vector3 angle)
+	void SetAngle(Vector3& angle)
 	{
 //		this->angle = angle;
 		this->q.fromAngleXYZ(angle);
@@ -39,30 +39,34 @@ public:
 		return angleVel;
 	}
 
-	void SetAngleVel(Vector3 angleVel)
+	void SetAngleVel(Vector3& angleVel)
 	{
 		this->angleVel = angleVel;
 		this->qVel.fromAngleXYZ(angleVel);
 	}
 
-	virtual void applyForce(Vector3 force)
+	virtual void applyForce(Vector3& force)
 	{
+		this->force += force;
 		return;
 	}
 
 	virtual void simulateForce(float dt);	
 
-	virtual void Collision(Entity& Entity)
+	virtual void Collision(Entity& entity)
 	{
+		Vector3 pos = entity.GetPos(); //todo
 	}
 
-	virtual bool IsColisions(Entity& Entity)
+	virtual bool IsColisions(Entity& entity)
 	{
+		Vector3 pos = entity.GetPos(); //todo
 		return false;
 	}
 
 	virtual float ProcessColisions(Entity& entity)
 	{
+		Vector3 pos = entity.GetPos(); //todo
 		return 0.0f;
 	}
 

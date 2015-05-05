@@ -1,11 +1,14 @@
 ﻿#include "Box.h"
 
-#include "..\gl\glaux.h"
+//#include "..\gl\glaux.h"
+#include <Windows.h>
+#include <gl\GL.h>
+#include <gl\GLU.h>
 
 Box::Box()
 : Entity()
 , size(1.0, 1.0, 1.0)
-, angle(0.0, 0.0, 0.0)
+//, angle(0.0, 0.0, 0.0)
 , force(0.0f, 0.0f, 0.0f)
 , q(0.0f,0.0f,0.0f,0.0f)
 , qVel(0.0f, 0.0f, 0.0f, 0.0f)
@@ -32,7 +35,7 @@ void Box::simulateForce(float dt)
 	pos += vel * dt;						// Change in position is added to the position.
 	// Change in position is velocity times the change in time
 
-	angle += angleVel*dt;
+//	angle += angleVel*dt;
 
 	Quaternion temp = qVel;
 	Vector3 temp2(temp.x, temp.y, temp.z);
@@ -56,7 +59,7 @@ void Box::Draw()
 	Vector3 posr = GetPos();
 	Vector3 pos;
 	Vector3 size = GetSize();
-	Vector3 angle = GetAngle();
+//	Vector3 angle = GetAngle();
 	Color4f color = GetColor();
 
 	glTranslatef(posr.x, posr.y, posr.z);

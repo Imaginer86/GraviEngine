@@ -66,6 +66,8 @@ void Game::Update( float dt )
 	solve();									// Step 2: apply forces
 	simulate(dt);								// Step 3: iterate the masses by the change in time
 
+	return;
+
 	//int a = 0;
 
 	//int cc = 2;//

@@ -1,4 +1,4 @@
-﻿	#pragma once
+﻿#pragma once
 struct Color4f{
 	float r;
 	float g;
@@ -17,5 +17,8 @@ struct Color4f{
 	,g(g)
 	,b(b)
 	,a(a)
+	{}
+
+	~Color4f()
 	{}
 };

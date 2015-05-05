@@ -23,14 +23,14 @@ public:
 		this->size = size;
 	}
 
-	Vector3 GetAngle()
-	{
-		return angle;
-	}
+//	Vector3 GetAngle()
+//	{
+//		return angle;
+//	}
 
 	void SetAngle(Vector3 angle)
 	{
-		this->angle = angle;
+//		this->angle = angle;
 		this->q.fromAngleXYZ(angle);
 	}
 
@@ -70,7 +70,7 @@ public:
 
 private:	
 	Vector3 size;
-	Vector3 angle;
+	//Vector3 angle;
 	Vector3 angleVel;
 	Vector3 force;
 	Quaternion q;

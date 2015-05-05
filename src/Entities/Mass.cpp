@@ -1,8 +1,8 @@
 ﻿#include "Mass.h"
-
-//#include <gl\GL.h>
-//#include <gl\GLU.h>
-#include "..\gl\glaux.h"
+#include <Windows.h>
+#include <gl\GL.h>
+#include <gl\GLU.h>
+//#include "..\gl\glaux.h"
 
 static float rt = 0.0f;
 

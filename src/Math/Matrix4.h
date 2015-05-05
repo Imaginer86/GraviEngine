@@ -6,10 +6,12 @@
 // Multiplies Vector3s to the left of the matrix.
 //-----------------------------------------------------------------------------
 
-//#define  _USE_MATH_DEFINES
-#include <math.h>
+#define  _USE_MATH_DEFINES
+//#include <math.h>
 
 #include "Math.h"
+
+#include "Vector3.h"
 
 class Matrix4
 {
@@ -44,10 +46,10 @@ public:
 	Matrix4 operator*(float scalar) const;
 	Matrix4 operator/(float scalar) const;
 
-	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
+	//void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
 	void identity();
 	void rotate(const Vector3 &axis, float degrees);
-	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
+	//void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
 private:
 	float mtx[4][4];
@@ -222,17 +224,18 @@ inline void Matrix4::identity()
 	mtx[3][0] = 0.0f, mtx[3][1] = 0.0f, mtx[3][2] = 0.0f, mtx[3][3] = 1.0f;
 }
 
-inline void Matrix4::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
-{
+//inline void Matrix4::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
+//{
 
-}
+//}
+
 /*
 inline void Matrix4::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
 {
- 	float D = -asin( mtx[2]);
+ 	float D = -asinf( mtx[0][2]);
  	pitchDegrees = D;        // Считаем ось Y 
- 	float C           =  cos( pitchDegrees );
- 	pitchDegrees    *= RADIANS;
+ 	float C           =  cosf( pitchDegrees );
+ 	pitchDegrees    *= Math::RADIANS;
  
  	if ( fabs( C ) > 0.005 )             // ось зафиксирована? 
  	{

@@ -1,107 +1,93 @@
 ﻿#pragma once
 #include "Math/Vector3.h"
-#include "Math/Matrix4.h"
+//#include "Math/Matrix4.h"
 #include "Math/Quaternion.h"
 
 class Camera
 {
 public:
-	Camera():pos(0,0,0), view(0,0,0), Up(0,1,0)//, angle(0,0,0)
+	Camera()
+	: pos(0,0,0)
+	//, view(0,0,0)
+	, Up(0,1,0)
+	//, angle(0,0,0)
+	, q(0, 1, 1, 1)
 	{}
 	virtual  ~Camera() {};
+
+	void RotateUpDown(float anglef);
+
+	void RotateLR(float angle);
+
+	void MoveCamera(float speed);		
+
+	void MoveLRCamera(float speed);
 
 	Vector3 GetPos()
 	{
 		return pos;
 	}
 
-	void SetPos(Vector3 pos)
+	void SetPos(Vector3& pos)
 	{
 		this->pos = pos;
 	}
 
 	Vector3 GetView()
 	{
+		Vector3 view;
+		Vector3 axic;
+		float angle;
+		q.toAxisAngle(axic, angle);
+		//this->view = pos + angle;
 		return view;
 	}
 
-	void SetView(Vector3 pos2)
-	{
-		this->view = pos2;
-	}
+//	void SetView(Vector3 pos2)
+//	{
+//		this->view = pos2;
+//	}
 
 	Vector3 GetUp()
 	{
 		return Up;
 	}
 
-	void SetUp(Vector3 up)
+	//void SetUp(Vector3& up)
+	//{
+		//this->Up = up;
+	//}
+
+	Quaternion GetQuaternion()
 	{
-		this->Up = up;
+		return q;
 	}
 
-	void AddPosX(float x)
+	void SetQuaternion(Quaternion& q)
 	{
-		this->pos.x += x;
-		this->view.x += x;
+		this->q = q;
 	}
 
-	void AddPosY(float y)
-	{
-		this->pos.y += y;
-		this->view.y += y;
-	}
+protected:
 
-	void AddPosZ(float z)
-	{
-		this->pos.z += z;
-		this->view.z += z;
-	}
+	//void AddPosX(float x)
+	//{
+//		this->pos.x += x;
+		//this->view.x += x;
+	//}
 
-	void RotateView(float angle)
-	{
-		Vector3 v;
-		v = view - pos;
-		view.z = pos.z + sin(angle) * v.x + cos(angle) * v.z;
-		view.x = pos.x + cos(angle) * v.x - sin(angle) * v.z;
-	}
+	//void AddPosY(float y)
+	//{
+//		this->pos.y += y;
+		//this->view.y += y;
+	//}
 
-	void MoveCamera(float speed)
-	{
-		Vector3 v;
-		v = view - pos;
+	//void AddPosZ(float z)
+	//{
+//		this->pos.z += z;
+		//this->view.z += z;
+	//}
 
-		v.y = 0;
-		v.unitize();
-
-		pos += v*speed;
-		view += v*speed;
-	}
-
-	void MoveLRCamera(float speed)
-	{
-		Vector3 v;
-		v = view - pos;
-
-		v = v*Up;
-
-		v.y = 0;
-		v.unitize();
-
-		pos += v*speed;
-		view += v*speed;
-	}
-// 
-// 	Vector3 GetAngle()
-// 	{
-// 		return angle;
-// 	}
-// 
-// 	void SetAngle(Vector3 angle)
-// 	{
-// 		this->angle = angle;
-// 	}
-// 
 // 	void AddAngleX(float x)
 // 	{
 // 		this->angle.x += x;
@@ -119,10 +105,12 @@ public:
 // 	{
 // 		this->angle.z += z;
 // 	}
+
 private:
-	Vector3 pos;
-	Vector3 view;
-	Vector3 angle;
+	Vector3 pos;	
+	//Vector3 angle;
 	Vector3 Up;
-	//Quaternion q;
+
+	//Vector3 view;
+	Quaternion q;
 };

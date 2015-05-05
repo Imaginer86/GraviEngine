@@ -1,14 +1,21 @@
 ﻿keys:
+tab		: show/hide debug info
 space	: pause
-L		: light
++		: time speed-up
+-		: time slowdown
 F1		: info
 F5		: reload
+1-6		: load Scene
+L		: light
+shift	: speed rotate/move
 right	: rotate right
 left	: rotate left
-W		: move forward
-S		: move back
-A		: move left
-D		: move right
+up		: rotate up
+down	: rotate down
+W		: move forward	not work
+S		: move back		not work
+A		: move left		not work
+D		: move right	not work
 
 data.dat:
 

@@ -38,53 +38,21 @@ void Camera::RotateLR(float anglef)
 
 void Camera::MoveCamera(float speed)
 {
-	Vector3 b(0,0,1);
-
-	//Quaternion qn(Vector3(1, 0, 0), 0);
-	//qn.normalize();
-	
-	//q *= qn;
-	//b = 
-	
-	Vector3 a;
-	float angle;
-	q.toAxisAngle(a, angle);
-
-	Vector3 c = a*b;
-	b = c*a;
-
-	//v = v*Vector3(0, 1, 0);
-
-	if (angle <= 0.0f)
-	{
-//		pos -= v*speed;
-	}
-	else
-	{
-//		pos -= v*speed;
-	}
-
-	auto t = GetView();
-
-
-
-
-//	v = view - pos;
-
-	//v.y = 0;
-	//v.unitize();
-
-	//pos += v*speed;
-//	view += v*speed;
+	Vector3 b(0,0,-1);
+	pos += b*speed;
 }
 
 void Camera::MoveLRCamera(float speed)
 {
-	Vector3 v;
-	float angle;
-	q.toAxisAngle(v, angle);
-	v.unitize();
-	pos += v*speed;
+//	Vector3 v;
+//	float angle;
+//	q.toAxisAngle(v, angle);
+//	v.unitize();
+//	pos += v*speed;
+
+	Vector3 b(1,0,0);
+	pos += b*speed;
+
 }
 
 

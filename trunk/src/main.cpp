@@ -4,12 +4,19 @@
 //#include "GL\glaux.h"
 
 #include <Windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL\gl.h>
+#include <GL\glu.h>
 
 #include "Game.h"
 #include "Camera.h"
 #include "Color.h"
+
+
+HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
+HDC		hDC  = NULL;              // Приватный контекст устройства GDI
+HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
+HINSTANCE  hInstance;              // Здесь будет хранится дескриптор приложения 
+
 
 /*
 ** RGB Image Structure
@@ -36,23 +43,6 @@ AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
 
 
 
-
-
-
-
-
-
-
-
-
-
-HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
-HDC		hDC  = NULL;              // Приватный контекст устройства GDI
-HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
-HINSTANCE  hInstance;              // Здесь будет хранится дескриптор приложения 
-
-
-
 const int gWidth = 1600;
 const int gHeight = 900;
 
@@ -71,6 +61,9 @@ bool  gFullscreen = false;              // Флаг режима окна, ус�
 
 float gTimeScale = 1.0f;
 float gTime = 0.0f;
+
+float gAngleScale = 1.0f;
+float gMoveScale = 1.0f;
 
 float fps = 0.0f;
 float ups = 0.0f;
@@ -496,18 +489,29 @@ BOOL CreateGLWindow( LPCSTR title, int width, int height, int bits, bool fullscr
 }
 
 
-bool DrawGLScene()                // Здесь будет происходить вся прорисовка
+//float angle_ = 0.0f;
+
+void DrawGLScene()                // Здесь будет происходить вся прорисовка
 {	  
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );      // Очистить экран и буфер глубины	
 	glMatrixMode(GL_MODELVIEW);								  // Выбор матрицы вида модели
 	glLoadIdentity();										 // Сбросить текущую матрицу
 
-	gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
-		mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
-		mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
+	//gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
+	//mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
+		//mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
+
+	Quaternion q = mCamera.GetQuaternion();
+	Vector3 cameraAxic;
+	float cameraAngle;
+	q.toAxisAngle(cameraAxic, cameraAngle);
+	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
+
+	Vector3 cameraPos = mCamera.GetPos();
+	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
 
 	SetGLLight();
-
 	mGame.Draw();
 
 	/*	glRotatef(xrot, 1.0f, 0.0f, 0.0f);					// Rotate On The X Axis
@@ -551,13 +555,17 @@ bool DrawGLScene()                // Здесь будет происходит�
 		glPrint("Time: %2.2f", gTime);
 		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("Time Scale: %2.2f", gTimeScale);
+		glTranslatef(0.0f, -1.0f, 0);
+		glPrint("Camera Pos: %2.2f %2.2f %2.2f", mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z);
+//		glTranslatef(0.0f, -1.0f, 0);
+//		glPrint("Camera View: %2.2f %2.2f %2.2f", mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z);
 		
 		glPopMatrix();	
 	}  
 
 	glFlush();
 	
-	return true;
+	//return true;
 
 // 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
 // 	glRotatef(mCamera.angle.x, 1, 0, 0);
@@ -577,21 +585,47 @@ bool DrawGLScene()                // Здесь будет происходит�
 // 		}
 }
 
-bool LoadData()
+bool LoadData(bool camera)
 {
 	std::ifstream dataFile("data.dat", std::ios::in);	
 	if ( !dataFile )
 		return false;
 
-	Vector3 cameraPos, cameraPos2, cameraUp;
+	Vector3 cameraPos;
+	Vector3 cameraAxic;
+	float cameraAngle;
+	//Vector3 cameraHeadPitchRoll;
+	//Vector3 cameraUp;
+	//Vector3 cameraView;
+	//Quaternion cameraQ;
 
-	dataFile	>> cameraPos.x >> cameraPos.y >> cameraPos.z
-				>> cameraPos2.x >> cameraPos2.y >> cameraPos2.z		
-				>> cameraUp.x >> cameraUp.y >> cameraUp.z;
-	mCamera.SetPos(cameraPos);
-	mCamera.SetView(cameraPos2);
-	mCamera.SetUp(cameraUp);
-	//mCamera.SetAngle(cameraAngle);
+	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
+		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z 
+		>> cameraAngle;
+				//>> cameraView.x >> cameraView.y >> cameraView.z		
+				//>> cameraUp.x >> cameraUp.y >> cameraUp.z
+				//>> cameraQ.x >> cameraQ.y >> cameraQ.z >> cameraQ.w;
+				//>> cameraHeadPitchRoll.x >> cameraHeadPitchRoll.y >> cameraHeadPitchRoll.z;
+
+	if (camera)
+	{
+		mCamera.SetPos(cameraPos);
+		//mCamera.SetAngle(cameraAngle);		
+		//mCamera.SetUp(cameraUp);
+
+		Quaternion q;
+		q.fromAxisAngle(cameraAxic, cameraAngle);
+		q.normalize();
+		mCamera.SetQuaternion(q);
+
+		//mCamera.SetQuaternion(cameraPos, cameraView, cameraUp);
+		//mCamera.SetQuaternionFromHeadPitchRoll(cameraHeadPitchRoll.x, cameraHeadPitchRoll.y, cameraHeadPitchRoll.z);
+		//mCamera.SetView(cameraView);
+
+		
+
+		//mCamera.SetQuaternion(cameraPos, cameraPos2, cameraUp);
+	}
 
 	dataFile >> gLightAmbient[0] >> gLightAmbient[1] >> gLightAmbient[2] >> gLightAmbient[3];
 	dataFile >> gLightDiffuse[0] >> gLightDiffuse[1] >> gLightDiffuse[2] >> gLightDiffuse[3];
@@ -709,7 +743,8 @@ void UpdateKeys()
 	{
 		gKeys[VK_F5] = false;
 		mGame.release();
-		LoadData();
+		LoadData(true);
+		//LoadData(false);
 		gTime = 0.0f;
 		gTimeScale =1.0f;
 		SetGLLight();
@@ -717,16 +752,18 @@ void UpdateKeys()
 	if( gKeys[VK_RIGHT])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateView(1.0f*0.1f);
+			mCamera.RotateLR(1.0f*gAngleScale*gTimeScale);
 		else
-			mCamera.RotateView(0.1f*0.1f);				
+			mCamera.RotateLR(.1f*gAngleScale*gTimeScale);				
 	}
 	if( gKeys[VK_LEFT])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateView(-1.0f*0.1f);
+			mCamera.RotateLR(-1.0f*gAngleScale*gTimeScale);
+			//mCamera.RotateLR(0.0f);
 		else
-			mCamera.RotateView(-0.1f*0.1f);
+			mCamera.RotateLR(-0.1f*gAngleScale*gTimeScale);
+			//mCamera.RotateLR(0.0f);
 	}
 	if( gKeys[VK_UP])
 	{
@@ -737,9 +774,9 @@ void UpdateKeys()
 
 
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(1.0f);
+			mCamera.RotateUpDown(1.0f*gAngleScale*gTimeScale);
 		else
-			mCamera.MoveCamera(0.1f);
+			mCamera.RotateUpDown(0.1f*gAngleScale*gTimeScale);
 	}
 	if( gKeys[VK_DOWN])
 	{
@@ -749,9 +786,9 @@ void UpdateKeys()
 // 			mCamera.AddAngleY(-0.1f);
 
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(-1.0f);
+			mCamera.RotateUpDown(-1.0f*gAngleScale*gTimeScale);
 		else
-			mCamera.MoveCamera(-0.1f);
+			mCamera.RotateUpDown(-0.1f*gAngleScale*gTimeScale);
 
 	}
 	if( gKeys['W'])
@@ -760,11 +797,11 @@ void UpdateKeys()
 // 			mCamera.AddPosZ(1.0f);
 // 		else
 // 			mCamera.AddPosZ(0.1f);
-
+		
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(1.0f);
+			mCamera.MoveCamera(1.0f*gMoveScale*gTimeScale);
 		else
-			mCamera.MoveCamera(0.1f);
+			mCamera.MoveCamera(0.1f*gMoveScale*gTimeScale);
 	}
 	if( gKeys['S']) 
 	{
@@ -774,23 +811,23 @@ void UpdateKeys()
 // 			mCamera.AddPosZ(-0.1f);
 
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(-1.0f);
+			mCamera.MoveCamera(-1.0f*gMoveScale*gTimeScale);
 		else
-			mCamera.MoveCamera(-0.1f);
+			mCamera.MoveCamera(-0.1f*gMoveScale*gTimeScale);
 	}
 	if( gKeys['A'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(-1.0f);
+			mCamera.MoveLRCamera(-1.0f*gMoveScale*gTimeScale);
 		else
-			mCamera.MoveLRCamera(-0.1f);
+			mCamera.MoveLRCamera(-0.1f*gMoveScale*gTimeScale);
 	}
 	if( gKeys['D'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(1.0f);
+			mCamera.MoveLRCamera(1.0f*gMoveScale*gTimeScale);
 		else
-			mCamera.MoveLRCamera(0.1f);
+			mCamera.MoveLRCamera(0.1f*gMoveScale*gTimeScale);
 	}
 	if (gKeys[VK_TAB] && !gShowDebugInfoKey)
 	{
@@ -882,7 +919,7 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 		//fullscreen = false;          // Оконный режим
 	//
 
-	if (!LoadData()) {
+	if (!LoadData(true)) {
 		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
 		return 1;													// Return False (Failure)
 	}

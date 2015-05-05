@@ -1,5 +1,8 @@
-﻿#include "..\gl\glaux.h"
+﻿//#include "..\gl\glaux.h"
 #include "Line.h"
+#include <Windows.h>
+#include <gl\GL.h>
+#include <gl\GLU.h>
 
 Line::Line()
 : Entity()
@@ -47,7 +50,7 @@ void Line::Draw()
 
 	glTranslatef(pos.x, pos.y, pos.z - h/2.0f);
 	float headDegrees = 0.0f, pitchDegrees = 0.0f, rollDegrees = 0.0f;
-	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
+//	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
 	glRotatef(headDegrees, 1, 0, 0);
 	glRotatef(pitchDegrees, 0, 1, 0);
 	glRotatef(rollDegrees, 0, 0, 1);

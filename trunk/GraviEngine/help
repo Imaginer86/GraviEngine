@@ -1,4 +1,4 @@
-keys:
+﻿keys:
 space	: pause
 L		: light
 F1		: info
@@ -13,7 +13,8 @@ D		: move right
 data.dat:
 
 CameraPos
-CameraAngle
+Camera Axic
+Camera Angle
 
 LightAmbient
 LightDiffuse

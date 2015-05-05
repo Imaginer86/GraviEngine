@@ -95,18 +95,18 @@
     <ClCompile Include="..\src\Entities\Box.cpp" />
     <ClCompile Include="..\src\Entities\Line.cpp" />
     <ClCompile Include="..\src\Entities\Mass.cpp" />
-    <ClCompile Include="..\src\Math\Math.cpp" />
+    <ClCompile Include="..\src\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Color.h" />
     <ClInclude Include="..\src\Game.h" />
-    <ClInclude Include="..\src\GL\glaux.h" />
     <ClInclude Include="..\src\Entities\Box.h" />
     <ClInclude Include="..\src\Entities\Entity.h" />
     <ClInclude Include="..\src\Entities\Line.h" />
     <ClInclude Include="..\src\Entities\Mass.h" />
     <ClInclude Include="..\src\Math\Math.h" />
+    <ClInclude Include="..\src\Math\Matrix3.h" />
     <ClInclude Include="..\src\Math\Matrix4.h" />
     <ClInclude Include="..\src\Math\Quaternion.h" />
     <ClInclude Include="..\src\Math\Vector3.h" />

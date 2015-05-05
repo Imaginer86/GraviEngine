@@ -24,7 +24,7 @@ public:
 		return pos;
 	}
 
-	virtual void SetPos(Vector3 Pos)
+	virtual void SetPos(Vector3& pos)
 	{
 		this->pos = pos;
 	}
@@ -34,7 +34,7 @@ public:
 		return vel;
 	}
 
-	virtual void SetVel(Vector3 Vel)
+	virtual void SetVel(Vector3& Vel)
 	{
 		this->vel = Vel;
 	}
@@ -44,7 +44,7 @@ public:
 		return m;
 	}
 
-	virtual void SetMass(float Mass)
+	virtual void SetMass(float& Mass)
 	{
 		this->m = Mass;
 	}
@@ -54,7 +54,7 @@ public:
 		return color;
 	}
 
-	void SetColor(Color4f color)
+	void SetColor(Color4f& color)
 	{
 		this->color = color;
 	}

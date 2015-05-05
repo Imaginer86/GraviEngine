@@ -1,54 +1,55 @@
 ﻿#pragma once
+//#define  _USE_MATH_DEFINES
+//#include <math.h>
 #include "Math.h"
 #include "Vector3.h"
-#include "Matrix4.h"
+//#include "Matrix4.h"
 
-// namespace Math
-// {
-	class Quaternion
-	{
-		friend Quaternion operator*(float lhs, const Quaternion &rhs);
 
-	public:
-		static const Quaternion IDENTITY;
+class Quaternion
+{
+	friend Quaternion operator*(float lhs, const Quaternion &rhs);
 
-		float w, x, y, z;
+public:
+	static const Quaternion IDENTITY;
 
-		Quaternion() {}
-		Quaternion(float w_, float x_, float y_, float z_);
-		~Quaternion() {}
+	float w, x, y, z;
 
-		bool operator==(const Quaternion &rhs) const;
-		bool operator!=(const Quaternion &rhs) const;
+	Quaternion() {}
+	Quaternion(float w_, float x_, float y_, float z_);
+	~Quaternion() {}
 
-		Quaternion &operator+=(const Quaternion &rhs);
-		Quaternion &operator-=(const Quaternion &rhs);
-		Quaternion &operator*=(const Quaternion &rhs);		
-		Quaternion &operator*=(float scalar);
-		Quaternion &operator/=(float scalar);
+	bool operator==(const Quaternion &rhs) const;
+	bool operator!=(const Quaternion &rhs) const;
 
-		Quaternion operator+(const Quaternion &rhs) const;
-		Quaternion operator-(const Quaternion &rhs) const;
-		Quaternion operator*(const Quaternion &rhs) const;
-		Quaternion operator*(float scalar) const;
-		Quaternion operator/(float scalar) const;
+	Quaternion &operator+=(const Quaternion &rhs);
+	Quaternion &operator-=(const Quaternion &rhs);
+	Quaternion &operator*=(const Quaternion &rhs);		
+	Quaternion &operator*=(float scalar);
+	Quaternion &operator/=(float scalar);
 
-		void rotate(Vector3 &v) const;
+	Quaternion operator+(const Quaternion &rhs) const;
+	Quaternion operator-(const Quaternion &rhs) const;
+	Quaternion operator*(const Quaternion &rhs) const;
+	Quaternion operator*(float scalar) const;
+	Quaternion operator/(float scalar) const;
 
-		Quaternion conjugate() const;
-		void fromAxisAngle(const Vector3 &axis, float degrees);
-		void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
-		void fromAngleXYZ(const Vector3 &angle);
-		void fromMatrix(const Matrix4 &m);
-		void identity();
-		Quaternion inverse() const;
-		float magnitude() const;
-		void normalize();
-		void set(float w_, float x_, float y_, float z_);
-		void toAxisAngle(Vector3 &axis, float &degrees) const;
-		void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
-		Matrix4 toMatrix4() const;
-	};
+	void rotate(Vector3 &v) const;
+
+	Quaternion conjugate() const;
+	void fromAxisAngle(const Vector3 &axis, float degrees);
+//	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
+	void fromAngleXYZ(const Vector3 &angle);
+//	void fromMatrix(const Matrix4 &m);
+	void identity();
+	Quaternion inverse() const;
+	float magnitude() const;
+	void normalize();
+	void set(float w_, float x_, float y_, float z_);
+	void toAxisAngle(Vector3 &axis, float &degrees) const;
+//	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
+//	Matrix4 toMatrix4() const;
+};
 
 
 inline Quaternion operator*(float lhs, const Quaternion &rhs)
@@ -171,13 +172,13 @@ inline void Quaternion::fromAxisAngle(const Vector3 &axis, float degrees)
     w = cosf(halfTheta), x = axis.x * s, y = axis.y * s, z = axis.z * s;
 }
 
- inline void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
-{
+ //inline void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
+//{
      //Matrix4 m;
      //m.fromHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
 
 //     fromMatrix(m);
-}
+//}
 
  inline void Quaternion::fromAngleXYZ(const Vector3 &angle)
 {
@@ -227,17 +228,17 @@ inline void Quaternion::set(float w_, float x_, float y_, float z_)
     w = w_, x = x_, y = y_, z = z_;
 }
 
-inline void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
-{
-    Matrix4 m;
-    //m.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees)
-	m = this->toMatrix4();
-}
+//inline void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
+//{
+//    Matrix4 m;
+//    m.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees)
+//	m = this->toMatrix4();
+//}
 
 
 //const Quaternion Quaternion::IDENTITY(1.0f, 0.0f, 0.0f, 0.0f);
 
-inline void Quaternion::fromMatrix(const Matrix4 &m)
+/*inline void Quaternion::fromMatrix(const Matrix4 &m)
 {
  	// Creates a quaternion from a rotation matrix. 
  	// The algorithm used is from Allan and Mark Watt's "Advanced 
@@ -279,7 +280,7 @@ inline void Quaternion::fromMatrix(const Matrix4 &m)
  	}
  
  	x = q[0], y = q[1], z = q[2], w = q[3];
-}
+}*/
 
 inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
 {
@@ -304,7 +305,7 @@ inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
 	}
 }
 
-inline Matrix4 Quaternion::toMatrix4() const
+/*inline Matrix4 Quaternion::toMatrix4() const
 {
 	// Converts this quaternion to a rotation matrix.
 	//
@@ -350,6 +351,4 @@ inline Matrix4 Quaternion::toMatrix4() const
 
 	return m;
 }
-
-//}
-
+*/

@@ -6,11 +6,7 @@
 // Multiplies Vector3s to the left of the matrix.
 //-----------------------------------------------------------------------------
 
-#define  _USE_MATH_DEFINES
-//#include <math.h>
-
 #include "Math.h"
-
 #include "Vector3.h"
 
 class Matrix4

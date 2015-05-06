@@ -1,12 +1,5 @@
 ﻿#pragma once
-//#include <list>
 #include <vector>
-//#include "Math/Math.h"
-
-//#include <fstream>
-
-//using namespace Math;
-
 #include "Entities\Entity.h"
 #include "Math\Quaternion.h"
 

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Math/Vector3.h"
-//#include "Math/Matrix4.h"
 #include "Math/Quaternion.h"
 
 class Camera
@@ -33,15 +32,7 @@ public:
 		this->pos = pos;
 	}
 
-	Vector3 GetView()
-	{
-		Vector3 view;
-		Vector3 axic;
-		float angle;
-		q.toAxisAngle(axic, angle);
-		//this->view = pos + angle;
-		return view;
-	}
+	Vector3 GetView();
 
 //	void SetView(Vector3 pos2)
 //	{

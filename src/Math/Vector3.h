@@ -1,9 +1,7 @@
 ﻿#pragma once
+#include "math.h"
 
-#include <math.h>
-
-// class Vector3		---> An object to represent a 3D vector or a 3D point in space
-class Vector3
+class Vector3		//---> An object to represent a 3D vector or a 3D point in space
 {
 public:
     Vector3()									// Constructor to set x = y = z = 0

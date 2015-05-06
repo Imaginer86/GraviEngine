@@ -511,7 +511,7 @@ void DrawGLScene()                // Здесь будет происходит�
 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
 	Vector3 cameraPos = mCamera.GetPos();
-	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+	glTranslatef(cameraPos.x, cameraPos.y, cameraPos.z);
 
 
 	SetGLLight();
@@ -562,9 +562,16 @@ void DrawGLScene()                // Здесь будет происходит�
 		glPrint("Time Scale: %2.2f", gTimeScale);
 		glTranslatef(0.0f, -1.0f, 0);
 		glPrint("Camera Pos: %2.2f %2.2f %2.2f", mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z);
-//		glTranslatef(0.0f, -1.0f, 0);
-//		glPrint("Camera View: %2.2f %2.2f %2.2f", mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z);
-		
+		glTranslatef(0.0f, -1.0f, 0);
+		glPrint("Camera View: %2.2f %2.2f %2.2f", mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z);
+		Quaternion q = mCamera.GetQuaternion();
+		Vector3 axic;
+		float angle;
+		q.toAxisAngle(axic, angle);
+		glTranslatef(0.0f, -1.0f, 0);
+		glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+		glTranslatef(0.0f, -1.0f, 0);
+		glPrint("Camera Angle: %2.2f", angle);		
 		glPopMatrix();	
 	}  
 
@@ -623,7 +630,10 @@ bool LoadData(bool camera, unsigned fileNum)
 
 		Quaternion q;
 		q.fromAxisAngle(cameraAxic, cameraAngle);
-		q.normalize();
+		if (cameraAngle > 0.0f)
+		{
+			q.normalize();
+		}
 		mCamera.SetQuaternion(q);
 
 		//mCamera.SetQuaternion(cameraPos, cameraView, cameraUp);

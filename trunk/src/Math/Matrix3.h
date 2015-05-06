@@ -11,6 +11,9 @@ public:
 		float m31, float m32, float m33);
 	~Matrix3(){}
 
+	float *operator[](int row);
+	const float *operator[](int row) const;
+
 	inline Matrix3 &operator*(const Matrix3 &rhs);
 	Vector3 operator*(const Vector3 &lhs);
 	Matrix3 &operator*(float scalar);
@@ -30,6 +33,17 @@ inline Matrix3::Matrix3(float m11, float m12, float m13,
 	mtx[1][0] = m21, mtx[1][1] = m22, mtx[1][2] = m23,
 	mtx[2][0] = m31, mtx[2][1] = m32, mtx[2][2] = m33;	
 }
+
+inline float *Matrix3::operator[](int row)
+{
+	return mtx[row];
+}
+
+inline const float *Matrix3::operator[](int row) const
+{
+	return mtx[row];
+}
+
 
 inline Matrix3 &Matrix3::operator*(const Matrix3 &rhs)
 {

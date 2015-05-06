@@ -1,10 +1,6 @@
 ﻿#pragma once
-//#define  _USE_MATH_DEFINES
-//#include <math.h>
 #include "Math.h"
 #include "Vector3.h"
-//#include "Matrix4.h"
-
 
 class Quaternion
 {

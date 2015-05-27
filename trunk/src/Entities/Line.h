@@ -60,22 +60,17 @@ public:
 		return;
 	}	
 
-	virtual void Collision(Entity& entity)
-	{
-		Vector3 pos = entity.GetPos(); //todo
-	}
-
 	virtual bool IsColisions(Entity& entity)
 	{
 		Vector3 pos = entity.GetPos(); //todo
 		return false;
 	}
 
-	virtual float ProcessColisions(Entity& entity)
-	{
-		Vector3 pos = entity.GetPos(); //todo
-		return 0.f;
-	}
+	//virtual float ProcessColisions(Entity& entity)
+	//{
+		//Vector3 pos = entity.GetPos(); //todo
+		//return 0.f;
+	//}
 
 	virtual void Draw();
 

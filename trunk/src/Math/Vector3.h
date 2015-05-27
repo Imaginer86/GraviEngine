@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "math.h"
+#include "Math.h"
 
 class Vector3		//---> An object to represent a 3D vector or a 3D point in space
 {

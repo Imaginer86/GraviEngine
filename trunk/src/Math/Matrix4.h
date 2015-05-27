@@ -44,7 +44,7 @@ public:
 
 	//void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
 	void identity();
-	void rotate(const Vector3 &axis, float degrees);
+	//void rotate(const Vector3 &axis, float degrees);
 	//void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
 private:

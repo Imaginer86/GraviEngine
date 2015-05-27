@@ -5,7 +5,7 @@ space	: pause
 -		: time slowdown
 F1		: info
 F5		: reload
-1-6		: load Scene
+1-7		: load Scene
 L		: light
 shift	: speed rotate/move
 right	: rotate right
@@ -42,16 +42,9 @@ color
 numBox
 
 m
-pos
 size
+pos
 vel
-angle
-angleVel
-color
-
-numLine
-m
-r
-pos1
-pos2
+angleQ
+angleVelQ
 color

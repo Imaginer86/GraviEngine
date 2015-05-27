@@ -1,53 +1,38 @@
 ﻿#pragma once
-
 #include "Entity.h"
-#include "Box.h"
-#include "../Math/Quaternion.h"
-
-#include <typeinfo>
 
 class Mass: public Entity
 {
 public:	
-	Mass()
-	: Entity()
-	{}
+	Mass();
 
-	Mass(float m, float r, Vector3 pos, Vector3 vel);								// Constructor	
+	Mass(float m_, float r_, Vector3 pos_, Vector3 vel_);								// Constructor	
 
 	virtual ~Mass(){};	
 
 	void Set(float m, float r, Vector3 p, Vector3 v, Color4f color);
 
-	virtual void init();
-
-	void simuleteAcc(Vector3 acc, float dt);
-
 	void update(float dt);
-
 
 	virtual float GetR()
 	{
 		return r;
 	}
 
-	virtual void applyForce(Vector3& force);
-	
-	virtual void simulateForce(float dt);	
+	virtual Color4f GetColor()
+	{
+		return color;
+	}
+
+	void SetColor(Color4f& color)
+	{
+		this->color = color;
+	}
+
 
 	virtual void Draw();
 
-	virtual void Collision(Entity& entity);
-	
-	virtual bool IsColisions(Entity& entity)
-	{
-		Vector3 pos =  entity.GetPos(); //todo
-		return false;
-	}
-
-	virtual float ProcessColisions(Entity& entity);
-
 private:
 	float r;
-	Vector3 force;
+	Color4f color;
 };

@@ -11,8 +11,6 @@ public:
 	Box();
 	virtual ~Box(){};
 
-	virtual void init();
-
 	Vector3 GetSize()
 	{
 		return size;
@@ -23,60 +21,44 @@ public:
 		this->size = size;
 	}
 
-//	Vector3 GetAngle()
-//	{
-//		return angle;
-//	}
-
-	void SetAngle(Vector3& angle)
+	Quaternion GetAngleQ()
 	{
-//		this->angle = angle;
-		this->q.fromAngleXYZ(angle);
+		return q;
 	}
 
-	Vector3 GetAngleVel()
+	void SetAngleQ(Quaternion q_)
 	{
-		return angleVel;
+		q = q_;
 	}
 
-	void SetAngleVel(Vector3& angleVel)
+	Quaternion GetAngleVelQ()
 	{
-		this->angleVel = angleVel;
-		this->qVel.fromAngleXYZ(angleVel);
+		return qVel;
 	}
 
-	virtual void applyForce(Vector3& force)
+	void SetAngleVelQ(Quaternion qVel_)
 	{
-		this->force += force;
-		return;
+		qVel = qVel_;
 	}
+
+	virtual Color4f GetColor()
+	{
+		return color;
+	}
+
+	void SetColor(Color4f& color)
+	{
+		this->color = color;
+	}
+
 
 	virtual void simulateForce(float dt);	
-
-	virtual void Collision(Entity& entity)
-	{
-		Vector3 pos = entity.GetPos(); //todo
-	}
-
-	virtual bool IsColisions(Entity& entity)
-	{
-		Vector3 pos = entity.GetPos(); //todo
-		return false;
-	}
-
-	virtual float ProcessColisions(Entity& entity)
-	{
-		Vector3 pos = entity.GetPos(); //todo
-		return 0.0f;
-	}
 
 	virtual void Draw();
 
 private:	
 	Vector3 size;
-	//Vector3 angle;
-	Vector3 angleVel;
-	Vector3 force;
 	Quaternion q;
 	Quaternion qVel;
+	Color4f color;
 };

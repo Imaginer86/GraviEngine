@@ -1,14 +1,18 @@
 ﻿#pragma once
-#define  _USE_MATH_DEFINES
+//#define  _USE_MATH_DEFINES
 #include <math.h>
 
 
 
 namespace Math
 {
+
+	static const float M_PI = 3.14159265358979323846f;
+
 	static const float PI = float(M_PI);
 	static const float HALF_PI = float(M_PI)/2.0f;
-	static float EPSILON  = 0.00000000001f;;
+	//static float EPSILON  = 0.00000000001f;;
+	static float EPSILON  = 0.001f;;
 
 	static bool closeEnough(float f1, float f2)
 	{

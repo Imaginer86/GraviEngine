@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Math.h"
 #include "Vector3.h"
+#include "Matrix3.h"
 
 class Quaternion
 {
@@ -30,7 +31,7 @@ public:
 	Quaternion operator*(float scalar) const;
 	Quaternion operator/(float scalar) const;
 
-	void rotate(Vector3 &v) const;
+//	void rotate(Vector3 &v) const;
 
 	Quaternion conjugate() const;
 	void fromAxisAngle(const Vector3 &axis, float degrees);
@@ -40,6 +41,7 @@ public:
 	void identity();
 	Quaternion inverse() const;
 	float magnitude() const;
+	Vector3 rotate(Vector3 p);
 	void normalize();
 	void set(float w_, float x_, float y_, float z_);
 	void toAxisAngle(Vector3 &axis, float &degrees) const;
@@ -148,12 +150,12 @@ inline Quaternion Quaternion::operator/(float scalar) const
     return tmp;
 }
 
-inline void Quaternion::rotate(Vector3 &v) const
-{
-	Vector3 u(x,y,z);
-	float sinHalfAlpha = u.unitize();
-	v = v*(w*w) + (u*v-v*u)*sinHalfAlpha*w-u*v*u*(sinHalfAlpha*sinHalfAlpha);
-}
+//inline void Quaternion::rotate(Vector3 &v) const
+//{
+//	Vector3 u(x,y,z);
+//	float sinHalfAlpha = u.unitize();
+//	v = v*(w*w) + (u*v-v*u)*sinHalfAlpha*w-u*v*u*(sinHalfAlpha*sinHalfAlpha);
+//}
 
 inline Quaternion Quaternion::conjugate() const
 {
@@ -211,6 +213,23 @@ inline float Quaternion::magnitude() const
     return sqrtf(w * w + x * x + y * y + z * z);
 }
 
+inline Vector3 Quaternion::rotate(Vector3 p)
+{
+	Matrix3 RotateM;
+	RotateM[0][0] = 1 - 2 * y*y - 2 * z*z;
+	RotateM[0][1] = 2 * x*y - 2 * z*w;
+	RotateM[0][2] = 2 * x*z + 2 * y*w;
+	RotateM[1][0] = 2 * x*y + 2 * z*w;
+	RotateM[1][1] = 1 - 2 * x*x - 2 * z*z;
+	RotateM[1][2] = 2 * y*z - 2 * x*w;
+	RotateM[2][0] = 2 * x*z - 2 * y*w;
+	RotateM[2][1] = 2 * y*z + 2 * x*w;
+	RotateM[2][2] = 1 - 2 * x*x - 2 * y*y;
+
+	Vector3 p1 = RotateM * p;
+
+	return p1;
+}
 inline void Quaternion::normalize()
 {
 	if (w==0.0f&&x==0.0f&&y==0.0f&&z==0.0f)

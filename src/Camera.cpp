@@ -18,7 +18,7 @@
 
 void Camera::RotateUpDown(float anglef)
 {
-	Vector3 axic(1, 0, 0);
+	Vector3 axic(-1, 0, 0);
 	Quaternion qn;
 	qn.fromAxisAngle(axic, anglef);
 	q *= qn;
@@ -40,22 +40,26 @@ void Camera::RotateLR(float anglef)
 Vector3 Camera::GetView()
 {
 	Vector3 view(0,0,1);	
-	Matrix3 RotateM;
-	Vector3 a;
-	float angle;
-	q.toAxisAngle(a, angle);
-	RotateM[0][0] = cosf(angle) + (1 - cosf(angle))*a.x*a.x;
-	RotateM[0][1] = (1 - cosf(angle))*a.x*a.y - sinf(angle)*a.z;
-	RotateM[0][2] = (1 - cosf(angle))*a.x*a.z + sinf(angle)*a.y;
-	RotateM[1][0] = (1 - cosf(angle))*a.y*a.x + sinf(angle)*a.z;
-	RotateM[1][1] = cosf(angle) + (1 - cosf(angle))*a.y*a.y;
-	RotateM[1][2] = (1 - cosf(angle))*a.y*a.z - sinf(angle)*a.x;
-	RotateM[2][0] = (1 - cosf(angle))*a.z*a.x - sinf(angle)*a.y;
-	RotateM[2][1] = (1 - cosf(angle))*a.z*a.y - sinf(angle)*a.x;
-	RotateM[2][2] = cosf(angle) + (1 - cosf(angle))*a.z*a.z;
-	view = RotateM * view;
+//	Matrix3 RotateM;
+//	float w = q.w;
+//	float x = q.x;
+//	float y = q.y;
+//	float z = q.z;
+//	RotateM[0][0] = 1 - 2*y*y - 2*z*z;
+//	RotateM[0][1] = 2*x*y - 2*z*w;
+//	RotateM[0][2] = 2*x*z + 2*y*w;
+//	RotateM[1][0] = 2*x*y + 2*z*w;
+//	RotateM[1][1] = 1 - 2*x*x - 2*z*z;
+//	RotateM[1][2] = 2*y*z - 2*x*w;
+//	RotateM[2][0] = 2*x*z - 2*y*w;
+//	RotateM[2][1] = 2*y*z + 2*x*w;
+//	RotateM[2][2] = 1 - 2*x*x - 2*y*y;
 
-	//view.unitize();
+//	view = RotateM * view;
+
+	view = q.rotate(view);
+
+	view.unitize();
 
 	return view;
 }

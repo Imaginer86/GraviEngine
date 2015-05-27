@@ -8,7 +8,8 @@ public:
 	Entity()
 	: m(1.0f)
 	, pos(0.0f, 0.0f, 0.0f)
-	, vel(0.0f, 0.0f, 0.0f)
+	, vel(0.0f, 0.0f, 0.0f)	
+	, force(0.0f, 0.0f, 0.0f)
 	{
 	}
 
@@ -16,12 +17,12 @@ public:
 	: m(m)
 	, pos(pos)
 	, vel(vel)
-	, color(color)
+	, force(0.0f, 0.0f, 0.0f)
 	{}
 
 	virtual ~Entity(){}
 
-	virtual Vector3& GetPos()
+	virtual Vector3 GetPos()
 	{
 		return pos;
 	}
@@ -36,9 +37,9 @@ public:
 		return vel;
 	}
 
-	virtual void SetVel(Vector3& Vel)
+	virtual void SetVel(Vector3& v)
 	{
-		this->vel = Vel;
+		this->vel = v;
 	}
 
 	virtual float GetMass()
@@ -46,43 +47,44 @@ public:
 		return m;
 	}
 
-	virtual void SetMass(float& Mass)
+	virtual void SetMass(float& mass)
 	{
-		this->m = Mass;
+		this->m = mass;
 	}
 
-	virtual Color4f GetColor()
+	virtual Color4f GetColor() = 0;
+
+	virtual void SetColor(Color4f& color) = 0;
+
+	void applyForce(Vector3& force)
 	{
-		return color;
+		this->force += force;					// The external force is added to the force of the mass
 	}
 
-	void SetColor(Color4f& color)
+	void applyAcc(Vector3& acc, float dt)
 	{
-		this->color = color;
+		vel += acc*dt;
 	}
 
-	virtual float GetR()
+	virtual void simulateForce(float dt)
 	{
-		return 0.f;
+		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
+		// The change is proportinal with the acceleration (force / m) and change in time
+
+		pos += vel * dt;						// Change in position is added to the position.
+		// Change in position is velocity times the change in time
 	}
 
-	virtual void applyForce(Vector3& Force) = 0;
-
-	virtual void simulateForce(float dt) = 0;
-
-	virtual void init() = 0;
+	virtual void init()
+	{
+		force = Vector3(0.0f, 0.0f, 0.0f);
+	}
 
 	virtual void Draw() = 0;
 
-	virtual void Collision(Entity& Entity) = 0;
-
-	virtual bool IsColisions(Entity& Entity) = 0;
-
-	virtual float ProcessColisions(Entity& Entity) = 0;	
-
 public:
+	float m;
 	Vector3 pos;
 	Vector3 vel;
-	float m;
-	Color4f color;
+	Vector3 force;
 };

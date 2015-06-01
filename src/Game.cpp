@@ -211,6 +211,8 @@ void Game::Draw()
 	for(int i = 0; i < GetNumEntities(); i++) {
 		Entities[i]->Draw();
 	}
+
+	wave.Draw();
 }
 
 
@@ -254,14 +256,14 @@ void Game::Update(float dt)
 {
 
 	//static unsigned int iteration = 0;
-	this->Init();										// Step 1: reset forces to zero
+	this->Init();										// Step 1: reset forces to zero	
+	//this->AddGraviAcc(dt);
 	//this->Solve();									// Step 2: apply forces
-	this->AddGraviAcc(dt);
 	this->Simulate(dt);								// Step 3: iterate the masses by the change in time
 
-	//this->Collision(dt);
+	this->Collision(dt);
 
-	return;
+	wave.Update(dt);
 }
 
 void Game::Init() /* this method will call the init() method of every mass */

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include "Entities\Entity.h"
+#include "Entities\Wave.h"
 #include "Math\Quaternion.h"
 
 class Game
@@ -53,4 +54,5 @@ private:
 	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
 	Vector3 graviAcc;
+	Wave wave;
 };

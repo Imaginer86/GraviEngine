@@ -12,8 +12,6 @@ public:
 
 	void Set(float m, float r, Vector3 p, Vector3 v, Color4f color);
 
-	void update(float dt);
-
 	virtual float GetR()
 	{
 		return r;

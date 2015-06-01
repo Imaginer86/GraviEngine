@@ -90,15 +90,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Entities\Wave.cpp" />
     <ClCompile Include="..\src\Game.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Entities\Box.cpp" />
     <ClCompile Include="..\src\Entities\Mass.cpp" />
     <ClCompile Include="..\src\Camera.cpp" />
+    <ClCompile Include="..\src\RenderGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Color.h" />
+    <ClInclude Include="..\src\Entities\Wave.h" />
     <ClInclude Include="..\src\Game.h" />
     <ClInclude Include="..\src\Entities\Box.h" />
     <ClInclude Include="..\src\Entities\Entity.h" />
@@ -111,6 +114,8 @@
     <ClInclude Include="..\src\Math\Quaternion.h" />
     <ClInclude Include="..\src\Math\Vector3.h" />
     <ClInclude Include="..\src\Math\VectorField.h" />
+    <ClInclude Include="..\src\Render.h" />
+    <ClInclude Include="..\src\RenderGL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

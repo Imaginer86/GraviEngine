@@ -22,6 +22,7 @@ data.dat:
 CameraPos
 Camera Axic
 Camera Angle
+UpdateCamera
 
 LightAmbient
 LightDiffuse
@@ -48,3 +49,9 @@ vel
 angleQ
 angleVelQ
 color
+
+numWave
+
+pos
+numR numRo
+w

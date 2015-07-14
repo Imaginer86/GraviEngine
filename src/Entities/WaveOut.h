@@ -2,28 +2,28 @@
 #include "..\Math\Vector3.h"
 #include "..\Color.h"
 
-class Wave
+class WaveOut
 {
 public:
-	Wave()
-		: tGame(0.0f)
+	WaveOut()
 	{}
-	virtual ~Wave(){}
+	virtual ~WaveOut(){}
 
-	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, const Color4f& _color)
+	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, float width_, float height_, const Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
 		numRo = numRo_;
 		w = w_;
+		width = width_;
+		height = height_;
 		color = _color;
 	}
-	virtual void Update(float dt_);
 	virtual void Draw();
 private:
-	float tGame;
-	Vector3 pos;
+	Vector3 pos, posW;
 	unsigned numR, numRo;
 	float w;
+	float width, height;
 	Color4f color;
 };

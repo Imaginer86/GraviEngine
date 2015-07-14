@@ -11,10 +11,8 @@ static const float minDistG = 0.1f;
 
 Game::Game()
 : numEntitys(0)
-//, Entities(null)
 , graviAcc(0, 0, 0)
 {
-//		fileOut = std::ofstream("out.dat", std::ios::out);
 }
 
 Game::~Game()
@@ -23,6 +21,14 @@ Game::~Game()
 	for (unsigned i = 0; i < Entities.size(); i++)
 		delete Entities[i];
 	Entities.clear();
+	if (wave)
+	{
+		delete wave;
+		wave = nullptr;
+		delete waveOut;
+		waveOut = nullptr;
+
+	}
 }
 
 void Game::Release() /* delete the masses created */
@@ -31,6 +37,14 @@ void Game::Release() /* delete the masses created */
 	for (unsigned i = 0; i < Entities.size(); i++)
 		delete Entities[i];
 	Entities.clear();
+	if (wave)
+	{
+		delete wave;
+		wave = nullptr;
+		delete waveOut;
+		waveOut = nullptr;
+
+	}
 }
 
 void Game::SetMass( float m, float r, Vector3 pos, Vector3 vel, Color4f color )
@@ -68,6 +82,13 @@ void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f
 }
 */
 
+void Game::SetWave(Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, Color4f& color_)
+{
+	//wave = new Wave;
+	//wave->Set(pos_, numR_, numRo_, w_, color_);
+	waveOut = new WaveOut;
+	waveOut->Set(pos_, numR_, numRo_, w_, 80.0f, 60.0f, color_);
+}
 
 
 void Game::Collision(float dt)
@@ -208,11 +229,15 @@ void Game::Collision(float dt)
 
 void Game::Draw()
 {
-	for(int i = 0; i < GetNumEntities(); i++) {
+	for(int i = 0; i < GetNumEntities(); i++) 
+	{
 		Entities[i]->Draw();
 	}
 
-	wave.Draw();
+	if (wave)
+		wave->Draw();
+	if (waveOut)
+		waveOut->Draw();
 }
 
 
@@ -257,13 +282,14 @@ void Game::Update(float dt)
 
 	//static unsigned int iteration = 0;
 	this->Init();										// Step 1: reset forces to zero	
-	//this->AddGraviAcc(dt);
-	//this->Solve();									// Step 2: apply forces
+	this->AddGraviAcc(dt);
+	this->Solve();									// Step 2: apply forces
 	this->Simulate(dt);								// Step 3: iterate the masses by the change in time
 
 	this->Collision(dt);
 
-	wave.Update(dt);
+	if (wave)
+		wave->Update(dt);
 }
 
 void Game::Init() /* this method will call the init() method of every mass */

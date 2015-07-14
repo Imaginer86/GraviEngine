@@ -1,5 +1,5 @@
 ﻿#pragma once
-#define _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include <string>
 
@@ -13,10 +13,6 @@
 #include "Math\Math.h"
 
 #include "RenderGL.h"
-
-#include "Entities\Video.h"
-
-
 
 
 /*
@@ -49,12 +45,13 @@ AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
 const int gWidth = 1600;
 const int gHeight = 900;
 
-bool  gKeys[256];                // Массив, используемый для операций с клавиатурой
+bool gKeys[256];                // Массив, используемый для операций с клавиатурой
 bool gLightOnKey = false;         // L нажата?
+bool gShowDebugInfo = true;
 bool gShowDebugInfoKey = false;		// TAB нажат?
-bool  gActive = true;                // Флаг активности окна, установленный в true по умолчанию
+bool gActive = true;                // Флаг активности окна, установленный в true по умолчанию
 
-bool  gPause = true;
+bool gPause = true;
 
 
 float gTimeScale = 1.0f;
@@ -67,7 +64,7 @@ float gShiftScale = 0.1f;
 float gfps = 0.0f;
 float gups = 0.0f;
 
-unsigned gSceneNum = 8;
+unsigned gSceneNum = 2;
 unsigned gSceneNumMax = 8;
 
 float gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
@@ -76,19 +73,11 @@ float gLightPosition[4];//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция с
 
 bool gUpdateCamera = false;
 bool gFirstLoad = true;
+
+
 Game mGame;
 Camera mCamera;
-RenderGL mRender;
-
-Video mVideo;
-
-
-
-
-	//GLfloat		xrot		=  0.0f;						// X Rotation
-	//GLfloat		yrot		=  0.0f;						// Y Rotation
-	//GLfloat		xrotspeed	=  0.01f;						// X Rotation Speed
-	//GLfloat		yrotspeed	=  0.0f;						// Y Rotation Speed
+Render* mRender = new RenderGL;
 
 
 //AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
@@ -105,18 +94,14 @@ Video mVideo;
 
 
 
-LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
-
-//float angle_ = 0.0f;
-
-void DrawGLScene()                // Здесь будет происходить вся прорисовка
-{	  
-	mRender.BeginDraw();
-	//mGame.Draw();
-	mVideo.Draw(); //Video
-	mRender.EndDraw();	
+void Draw()                // Здесь будет происходить вся прорисовка
+{
+	mRender->BeginDraw();
+	mGame.Draw();
+	if (gShowDebugInfo)
+		mRender->DrawDebugInfo();
+	mRender->EndDraw();
 }
-
 
 void Release()
 {
@@ -124,22 +109,23 @@ void Release()
 	gTime = 0.0f;
 	gTimeScale = 1.0f;
 }
+
 bool LoadData(unsigned fileNum)
 {
 	gSceneNum = fileNum;
 
 	std::string fileNumstr = std::to_string(fileNum);
-	std::string fileName = "data" + fileNumstr + ".dat";
-	std::ifstream dataFile(fileName, std::ios::in);	
-	if ( !dataFile )
+	std::string fileName = "data//data" + fileNumstr + ".dat";
+	std::ifstream dataFile(fileName, std::ios::in);
+	if (!dataFile)
 		return false;
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;
-	float cameraAngle;	
+	float cameraAngle;
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
-		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z 
+		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z
 		>> cameraAngle;
 	dataFile >> gUpdateCamera;
 
@@ -160,10 +146,10 @@ bool LoadData(unsigned fileNum)
 	dataFile >> gLightDiffuse[0] >> gLightDiffuse[1] >> gLightDiffuse[2] >> gLightDiffuse[3];
 	dataFile >> gLightPosition[0] >> gLightPosition[1] >> gLightPosition[2] >> gLightPosition[3];
 
-	mRender.rLightAmbient = gLightAmbient;
-	mRender.rLightDiffuse= gLightDiffuse;
-	mRender.rLightPosition = gLightPosition;
-	
+	mRender->rLightAmbient = gLightAmbient;
+	mRender->rLightDiffuse = gLightDiffuse;
+	mRender->rLightPosition = gLightPosition;
+
 
 	Vector3 graviAcc;
 
@@ -178,28 +164,28 @@ bool LoadData(unsigned fileNum)
 
 	int numMass = 0;
 
-	dataFile >>  numMass;
+	dataFile >> numMass;
 
 	//mGame.SetNumMasses(numMass);
 
-	for(int i = 0; i < numMass; i++) {
+	for (int i = 0; i < numMass; i++) {
 		float m = 0.0f, r = 0.0f;
 		Vector3 pos, vel;
 		//bool isLight = false;
 		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
-		dataFile >> m >> r 
-			>> pos.x >> pos.y >> pos.z 
+		dataFile >> m >> r
+			>> pos.x >> pos.y >> pos.z
 			>> vel.x >> vel.y >> vel.z
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetMass(m, r, pos, vel, /*isLight,*/ color);        
+		mGame.SetMass(m, r, pos, vel, /*isLight,*/ color);
 	}
 
 	int numBoxs = 0;
 	dataFile >> numBoxs;
 
 	//mGame.SetNumBoxes(numBoxs);
-	for(int i = 0; i < numBoxs; i++) {
+	for (int i = 0; i < numBoxs; i++) {
 		float m = 0.0;
 		Vector3 pos, size, vel;
 		Color4f color;
@@ -207,7 +193,7 @@ bool LoadData(unsigned fileNum)
 		Quaternion qVel;
 		float angle, angleVel;
 		Vector3 angleAxic, angleVelAxic;
-		dataFile >> m 			
+		dataFile >> m
 			>> size.x >> size.y >> size.z
 			>> pos.x >> pos.y >> pos.z
 			>> vel.x >> vel.y >> vel.z
@@ -229,43 +215,31 @@ bool LoadData(unsigned fileNum)
 		mGame.SetBox(m, size, pos, vel, q, qVel, color);
 	}
 
-/*	int numLines = 0;
+	/*	int numLines = 0;
 	//dataFile >> numLines;
 	//mGame.SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++) {
-		float m = 0.0f, r = 0.0f, h = 0.0f;
-		Vector3 pos;
-		Color4f color;
-		Quaternion q;
-		Vector3 u;
-		float w = 0.0f;
-		dataFile >> m >> r >> h
-			>> pos.x >> pos.y >> pos.z
-			>> u.x >> u.y >> u.z >> w
-			>> color.r >> color.g >> color.b >> color.a;
-		q.fromAxisAngle(u, w);
-		mGame.SetLine(m, r, h, pos, q, color);
+	float m = 0.0f, r = 0.0f, h = 0.0f;
+	Vector3 pos;
+	Color4f color;
+	Quaternion q;
+	Vector3 u;
+	float w = 0.0f;
+	dataFile >> m >> r >> h
+	>> pos.x >> pos.y >> pos.z
+	>> u.x >> u.y >> u.z >> w
+	>> color.r >> color.g >> color.b >> color.a;
+	q.fromAxisAngle(u, w);
+	mGame.SetLine(m, r, h, pos, q, color);
 	}
-*/
-
-	int numWaves = 0;
-	dataFile >> numWaves;
-
-	if (numWaves)
-	{
-		Vector3 pos;
-		unsigned numR, numRo;
-		float w;
-		Color4f color;
-		dataFile >> pos.x >> pos.y >> pos.z
-			>> numR >> numRo >> w
-			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetWave(pos, numR, numRo, w, color);
-	}
+	*/
 
 	dataFile.close();
 	return true;
 }
+
+
+//LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
 
 
 bool UpdateKeys()
@@ -278,32 +252,33 @@ bool UpdateKeys()
 	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
 	{
 		gLightOnKey=true;						// lp присвоили TRUE
-		mRender.LightOn=!mRender.LightOn;				// Переключение света TRUE/FALSE
-		if (mRender.LightOn)					// Если не свет
+		mRender->LightOn=!mRender->LightOn;				// Переключение света TRUE/FALSE
+		if (mRender->LightOn)					// Если не свет
 		{
-			mRender.EnableLight();
+			mRender->EnableLight();
 		}
 		else							// В противном случае
 		{
-			mRender.DisableLight();
+			mRender->DisableLight();
 		}
 	}
 	if (!gKeys['L'])					// Клавиша 'L' Отжата?
 	{
 		gLightOnKey=false;						// Если так, то lp равно FALSE
 	}
-
+	/*
 	if( gKeys[VK_F1] )				// Была ли нажата F1?
 	{
 		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
-		mRender.Release();					// Разрушаем текущее окно
-		mRender.Fullscreen = !mRender.Fullscreen;		// Переключаем режим
+		mRender->Release();					// Разрушаем текущее окно
+		mRender->Fullscreen = !mRender->Fullscreen;		// Переключаем режим
 		// Пересоздаём наше OpenGL окно
-		if (!mRender.CreateGLWindow(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
+		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
 		{
 			return false;						// Выходим, если это невозможно
 		}
 	} 
+	*/
 
 	if( gKeys[VK_F5])
 	{
@@ -311,7 +286,7 @@ bool UpdateKeys()
 		Release();		
 		if (!LoadData(gSceneNum))
 			return false;
-		mRender.SetGLLight();
+		mRender->SetGLLight();
 	}
 
 	for (unsigned i = 0; i < gSceneNumMax; i++)
@@ -323,7 +298,7 @@ bool UpdateKeys()
 			Release();
 			if (!LoadData(i + 1))
 				return false;
-			mRender.SetGLLight();
+			mRender->SetGLLight();
 		}
 	}
 	if( gKeys[VK_RIGHT])
@@ -384,8 +359,8 @@ bool UpdateKeys()
 	}
 	if (gKeys[VK_TAB] && !gShowDebugInfoKey)
 	{
-		gShowDebugInfoKey = true;		
-		mRender.ShowDebugInfo = !mRender.ShowDebugInfo;
+		gShowDebugInfoKey = true;
+		gShowDebugInfo = !gShowDebugInfo;
 	}
 	if (!gKeys[VK_TAB])
 		gShowDebugInfoKey = false;
@@ -447,7 +422,7 @@ LRESULT CALLBACK WndProc(  HWND  hWnd,				// Дескриптор нужного
 		}
 	case WM_SIZE:              // Изменены размеры OpenGL окна
 		{
-			mRender.ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
+			mRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
 			return 0;											// Возвращаемся
 		}
 	}
@@ -461,20 +436,21 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 					LPSTR    lpCmdLine,					// Параметры командной строки
 					int    nCmdShow )					// Состояние отображения окна
 {
-	mRender.rhInstance = hInstance;
+	//mRender->rhInstance = hInstance;
 	//mRender.rhWnd = hWnd;
-	mRender.rCamera = &mCamera;
-	mRender.rSceneNum = &gSceneNum;
-	mRender.rfps = &gfps;
-	mRender.rups = &gups;
-	mRender.rTimeScale = &gTimeScale;
-	mRender.rTime = &gTime;
+	mRender->rCamera = &mCamera;
+	mRender->rSceneNum = &gSceneNum;
+	mRender->rfps = &gfps;
+	mRender->rups = &gups;
+	mRender->rTimeScale = &gTimeScale;
+	mRender->rTime = &gTime;
+
 	MSG  msg;           // Структура для хранения сообщения Windows
 	
 	bool  done = false;	// Логическая переменная для выхода из цикла
 
-	DWORD tickCount = 0;
-	DWORD lastTickCount = 0;
+	unsigned long tickCount = 0;
+	unsigned long lastTickCount = 0;
 
 	// Спрашивает пользователя, какой режим экрана он предпочитает
 	//if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
@@ -482,33 +458,20 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 		//fullscreen = false;          // Оконный режим
 	//
 
-	//Application			application;									// Application Structure	//Video
-	//GL_Window			window;											// Window Structure			//Video
-	//Video::Keys				keys;											// Key Structure			//Video
-	//keys.keyDown = gKeys;
-
-
-
-
 	if (!LoadData(gSceneNum)) {
 		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
 		return 1;													// Return False (Failure)
 	}
 
 	// Создать наше OpenGL окно
-	if (!mRender.CreateGLWindow(WndProc, "OpenGL окно", gWidth, gHeight, 32))
+	if (!mRender->CreateWin(WndProc, "Gravi Engine", gWidth, gHeight, 32))
 	{
 		return 1;              // Выйти, если окно не может быть создано
 	}
 
-	if (!mVideo.Initialize())					// Call User Intialization	  //Video
-	{
-		// Failure															  //Video
-		return 1;															   //Video
-	}
-
 	lastTickCount = GetTickCount ();		// Get Tick Count
-	float framesPerSecond = 0.0f	;
+
+	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
 
 	while( !done )							// Цикл продолжается, пока done не равно true
@@ -537,14 +500,14 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 						tickCount = GetTickCount();				// Get The Tick Count
 
 						if (!gPause)
-						{				
-							gTime += gTimeScale*float(tickCount - lastTickCount)/1000.0f;
-							mGame.Update(gTimeScale*float(tickCount - lastTickCount)/1000.0f );
+						{			
+							float dt = float(tickCount - lastTickCount) * 0.001f;
+							gTime += gTimeScale*dt;
 
-							mVideo.Update(tickCount - lastTickCount); //Video
+							mGame.Update(gTimeScale*dt);
 						} 					
 						framesPerSecond++;
-						float currentTime = ((float)tickCount)*0.001f;
+						float currentTime = float(tickCount)*0.001f;
 						if ((currentTime - lastTime) > 1.0f)
 						{
 							lastTime = currentTime;
@@ -552,7 +515,8 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 							framesPerSecond = 0.0f;
 						}
 						lastTickCount = tickCount;			// Set Last Count To Current Count
-						DrawGLScene();						// Рисуем сцену
+
+						Draw();						// Рисуем сцену
 						
 					}
 
@@ -571,8 +535,7 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 	}
 
 	// Shutdown
-	mVideo.Deinitialize();							// User Defined DeInitialization //Video
-	mRender.Release();						// Разрушаем окно
+	mRender->Release();						// Разрушаем окно
 	
 	return ( msg.wParam );              // Выходим из программы
 }

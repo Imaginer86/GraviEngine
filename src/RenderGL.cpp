@@ -5,7 +5,7 @@
 #include <GL\gl.h>
 #include <GL\glu.h>
 
-#include "Camera.h"
+//#include "Camera.h"
 
 #include "Math/Quaternion.h"
 #include "Math/Vector3.h"
@@ -26,9 +26,6 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 //WNDPROC *WndProc;					  // Процедура обработки сообщений					 
 
 RenderGL::RenderGL()
-: LightOn(true)
-, Fullscreen(false)
-, ShowDebugInfo(true)
 {
 
 }
@@ -181,7 +178,7 @@ void RenderGL::SetGLLight()
 		glEnable(GL_LIGHTING);
 }
 
-bool RenderGL::CreateGLWindow(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits)
+bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits)
 {
 	GLuint		PixelFormat;			    // Хранит результат после поиска
 	WNDCLASS	wc;						   // Структура класса окна
@@ -469,40 +466,39 @@ void RenderGL::BeginDraw()
 
 void RenderGL::EndDraw()
 {
-	if (ShowDebugInfo)
-	{
-		glLoadIdentity();
-		glPushMatrix();
-		glColor3f(1, 1, 1);
-		glTranslatef(-5.0f, 3.6f, -10.0f);
-		glScalef(0.2f, 0.2f, 0.2f);
-		glPrint("Scene #: %d", *rSceneNum);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("FPS: %2.2f", *rfps);						// Print GL Text To The Screen
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("UPS: %2.2f", *rups);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Time: %2.2f", *rTime);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Time Scale: %2.2f", *rTimeScale);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Camera Pos: %2.2f %2.2f %2.2f", rCamera->GetPos().x, rCamera->GetPos().y, rCamera->GetPos().z);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Camera View: %2.2f %2.2f %2.2f", rCamera->GetView().x, rCamera->GetView().y, rCamera->GetView().z);
-		Quaternion q = rCamera->GetQuaternion();
-		Vector3 axic;
-		float angle;
-		q.toAxisAngle(axic, angle);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
-		glTranslatef(0.0f, -1.0f, 0);
-		glPrint("Camera Angle: %2.2f", angle);
-		glPopMatrix();
-	}
-
 	glFlush();
-
 	SwapBuffers(hDC);					// Меняем буфер (двойная буферизация)
+}
+
+void RenderGL::DrawDebugInfo()
+{
+	glLoadIdentity();
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(-5.0f, 3.6f, -10.0f);
+	glScalef(0.2f, 0.2f, 0.2f);
+	glPrint("Scene #: %d", *rSceneNum);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("FPS: %2.2f", *rfps);						// Print GL Text To The Screen
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("UPS: %2.2f", *rups);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Time: %2.2f", *rTime);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Time Scale: %2.2f", *rTimeScale);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Pos: %2.2f %2.2f %2.2f", rCamera->GetPos().x, rCamera->GetPos().y, rCamera->GetPos().z);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera View: %2.2f %2.2f %2.2f", rCamera->GetView().x, rCamera->GetView().y, rCamera->GetView().z);
+	Quaternion q = rCamera->GetQuaternion();
+	Vector3 axic;
+	float angle;
+	q.toAxisAngle(axic, angle);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Angle: %2.2f", angle);
+	glPopMatrix();
 }
 
 void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const

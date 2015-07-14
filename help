@@ -20,8 +20,7 @@ D		: move right	not work
 data.dat:
 
 CameraPos
-Camera Axic
-Camera Angle
+Camera Axic Angle
 UpdateCamera
 
 LightAmbient

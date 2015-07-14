@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include <vector>
 #include "Entities\Entity.h"
-#include "Entities\Wave.h"
-#include "Entities\WaveOut.h"
 #include "Math\Quaternion.h"
 
 class Game
@@ -31,8 +29,6 @@ public:
 
 //	void SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
-	void SetWave(Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, Color4f& _color);
-
 	void Game::SetGraviAcc(Vector3 graviAcc_)
 	{
 		this->graviAcc = graviAcc_;
@@ -57,6 +53,4 @@ private:
 	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
 	Vector3 graviAcc;
-	Wave *wave;
-	WaveOut *waveOut;
 };

@@ -82,7 +82,7 @@ public:
 
 	virtual void Draw() = 0;
 
-public:
+protected:
 	float m;
 	Vector3 pos;
 	Vector3 vel;

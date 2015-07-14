@@ -7,7 +7,6 @@ class Camera
 public:
 	Camera()
 	: pos(0,0,0)
-	, Up(0,1,0)
 	, q(0, 1, 1, 1)
 	{}
 	virtual  ~Camera() {};
@@ -37,16 +36,6 @@ public:
 //		this->view = pos2;
 //	}
 
-	Vector3 GetUp()
-	{
-		return Up;
-	}
-
-	//void SetUp(Vector3& up)
-	//{
-		//this->Up = up;
-	//}
-
 	Quaternion GetQuaternion()
 	{
 		return q;
@@ -58,6 +47,5 @@ public:
 	}
 private:
 	Vector3 pos;
-	Vector3 Up;
 	Quaternion q;
 };

@@ -1,5 +1,5 @@
 ﻿#include "Render.h"
-#include "Camera.h"
+//#include "Camera.h"
 
 #include <Windows.h>
 
@@ -13,18 +13,19 @@ public:
 		return SingleRender;
 	}
 	virtual ~RenderGL();
+
 	void BuildFont();
 	void KillFont();
 	int LoadGLTextures();
 	void glPrint(const char *fmt, ...);
-	void ReSizeGLScene(unsigned width, unsigned height);
-	void SetGLLight();
-	bool CreateGLWindow(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits);
+	virtual void ReSizeGLScene(unsigned width, unsigned height);
+	virtual void SetGLLight();
+	virtual bool CreateWin(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits);
 
 	void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
 
-	void EnableLight();
-	void DisableLight();
+	virtual void EnableLight();
+	virtual void DisableLight();
 
 	void SetFullScreen(bool Fullscreen_);
 
@@ -33,6 +34,8 @@ public:
 
 	virtual void BeginDraw();
 	virtual void EndDraw();
+
+	virtual void DrawDebugInfo();
 
 	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const;
 	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const;
@@ -43,19 +46,4 @@ public:
 	HINSTANCE  rhInstance;              // Здесь будет хранится дескриптор приложения
 	HWND	rhWnd;              // Здесь будет хранится дескриптор окна
 
-	Camera *rCamera;
-
-	float *rLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-	float *rLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-	float *rLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
-
-	bool LightOn;      // Свет ВКЛ / ВЫКЛ
-	bool Fullscreen;
-	bool ShowDebugInfo;
-
-	unsigned *rSceneNum;
-	float *rfps;
-	float *rups;
-	float *rTimeScale;
-	float *rTime;
 };

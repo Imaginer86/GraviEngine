@@ -14,6 +14,8 @@
 
 #include "RenderGL.h"
 
+#include "Entities\Video.h"
+
 
 
 
@@ -65,17 +67,20 @@ float gShiftScale = 0.1f;
 float gfps = 0.0f;
 float gups = 0.0f;
 
-unsigned gSceneNum = 1;
-unsigned gSceneNumMax = 7;
+unsigned gSceneNum = 8;
+unsigned gSceneNumMax = 8;
 
 float gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 float gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 float gLightPosition[4];//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
-bool gUpdateCamera = true;
+bool gUpdateCamera = false;
+bool gFirstLoad = true;
 Game mGame;
 Camera mCamera;
 RenderGL mRender;
+
+Video mVideo;
 
 
 
@@ -96,10 +101,7 @@ RenderGL mRender;
 //	}
 
 //	return NULL;										// If Load Failed Return NULL
-//}
-
-
-
+//}	
 
 
 
@@ -110,59 +112,9 @@ LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Протот�
 void DrawGLScene()                // Здесь будет происходить вся прорисовка
 {	  
 	mRender.BeginDraw();
-	mGame.Draw();
-	mRender.EndDraw();
-	
-	
-
-	/*	glRotatef(xrot, 1.0f, 0.0f, 0.0f);					// Rotate On The X Axis
-	glRotatef(yrot, 0.0f, 1.0f, 0.0f);					// Rotate On The Y Axis
-
-		xrot += xrotspeed;									// Update X Rotation Angle By xrotspeed
-	yrot += yrotspeed;									// Update Y Rotation Angle By yrotspeed
-
-	
-
-
-		glColor3f(1.0f, 1.0f, 1.0f);						// Set Color To White
-	//glBindTexture(GL_TEXTURE_2D, texture[1]);			// Select Texture 2 (1)
-	//gluSphere(q, 0.35f, 32, 16);						// Draw First Sphere
-
-	glBindTexture(GL_TEXTURE_2D, texture[3]);			// Select Texture 3 (2)
-	//glColor4f(1.0f, 1.0f, 1.0f, 0.4f);					// Set Color To White With 40% Alpha
-	//glEnable(GL_BLEND);									// Enable Blending
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);					// Set Blending Mode To Mix Based On SRC Alpha
-	//glEnable(GL_TEXTURE_GEN_S);							// Enable Sphere Mapping
-	//glEnable(GL_TEXTURE_GEN_T);							// Enable Sphere Mapping
-
-	gluSphere(q, 0.35f, 32, 16);						// Draw Another Sphere Using New Texture
-														// Textures Will Mix Creating A MultiTexture Effect (Reflection)
-	//glDisable(GL_TEXTURE_GEN_S);						// Disable Sphere Mapping
-	//glDisable(GL_TEXTURE_GEN_T);						// Disable Sphere Mapping
-	//glDisable(GL_BLEND);								// Disable Blending
-	*/
-
-	
-	//return true;
-
-// 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
-// 	glRotatef(mCamera.angle.x, 1, 0, 0);
-// 	glRotatef(mCamera.angle.y, 0, 1, 0);
-// 	glRotatef(mCamera.angle.z, 0, 0, 1);
-// 	glTranslatef(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z);
-
-//		GLenum light = GL_LIGHT0;
-// 		if (mGame.Entities[i].isLight) {
-// 			glDisable(GL_LIGHTING);
-// 			GLfloat massLight[] = {mGame.Entities[i].color.r, mGame.Entities[i].color.g,mGame.Entities[i].color.b,mGame.Entities[i].color.a,};
-// 			GLfloat massPos[] = {mGame.Entities[i].pos.x, mGame.Entities[i].pos.y, mGame.Entities[i].pos.z, 1.0f};
-// 			glLightfv(light ,GL_DIFFUSE, massLight);
-// 			glLightfv(light ,GL_POSITION, massPos);            
-// 			glEnable(light);
-// 			light++;
-// 		}
-
-	
+	//mGame.Draw();
+	mVideo.Draw(); //Video
+	mRender.EndDraw();	
 }
 
 
@@ -184,15 +136,16 @@ bool LoadData(unsigned fileNum)
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;
-	float cameraAngle;
+	float cameraAngle;	
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
 		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z 
 		>> cameraAngle;
 	dataFile >> gUpdateCamera;
 
-	if (gUpdateCamera)
+	if (gUpdateCamera || gFirstLoad)
 	{
+		gFirstLoad = false;
 		mCamera.SetPos(cameraPos);
 		Quaternion q;
 		q.fromAxisAngle(cameraAxic, cameraAngle);
@@ -258,15 +211,9 @@ bool LoadData(unsigned fileNum)
 			>> size.x >> size.y >> size.z
 			>> pos.x >> pos.y >> pos.z
 			>> vel.x >> vel.y >> vel.z
-			//>> q.x >> q.y >> q.z >> q.w
-			//>> qVel.x >> qVel.y >> qVel.z >> qVel.w
 			>> q.x >> q.y >> q.z >> angle
 			>> qVel.x >> qVel.y >> qVel.z >> angleVel
-			//>> angleAxic.x >> angleAxic.y >> angleAxic.z >> angle
-			//>> angleVelAxic.x >> angleVelAxic.y >> angleVelAxic.z >> angleVel
 			>> color.r >> color.g >> color.b >> color.a;
-		//angleAxic.unitize();
-		//angleVelAxic.unitize();
 		angle = Math::degreesToRadians(angle);
 		angleVel = Math::degreesToRadians(angleVel);
 		q.w = cosf(angle / 2.0f);
@@ -274,20 +221,11 @@ bool LoadData(unsigned fileNum)
 		q.y *= sinf(angle / 2.0f);
 		q.z *= sinf(angle / 2.0f);
 
-		//q.x = angleAxic.x*sinf(angle / 2.0f);
-		//q.y = angleAxic.y*sinf(angle / 2.0f);
-		//q.z = angleAxic.z*sinf(angle / 2.0f);
-
 		qVel.w = cosf(angleVel / 2.0f);
 		qVel.x *= sinf(angleVel / 2.0f);
 		qVel.y *= sinf(angleVel / 2.0f);
 		qVel.z *= sinf(angleVel / 2.0f);
 
-		//qVel.x = angleVelAxic.x*sinf(angleVel / 2.0f);
-		//qVel.y = angleVelAxic.y*sinf(angleVel / 2.0f);
-		//qVel.z = angleVelAxic.z*sinf(angleVel / 2.0f);
-		//q.normalize();
-		//qVel.normalize();
 		mGame.SetBox(m, size, pos, vel, q, qVel, color);
 	}
 
@@ -309,6 +247,21 @@ bool LoadData(unsigned fileNum)
 		mGame.SetLine(m, r, h, pos, q, color);
 	}
 */
+
+	int numWaves = 0;
+	dataFile >> numWaves;
+
+	if (numWaves)
+	{
+		Vector3 pos;
+		unsigned numR, numRo;
+		float w;
+		Color4f color;
+		dataFile >> pos.x >> pos.y >> pos.z
+			>> numR >> numRo >> w
+			>> color.r >> color.g >> color.b >> color.a;
+		mGame.SetWave(pos, numR, numRo, w, color);
+	}
 
 	dataFile.close();
 	return true;
@@ -529,6 +482,13 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 		//fullscreen = false;          // Оконный режим
 	//
 
+	//Application			application;									// Application Structure	//Video
+	//GL_Window			window;											// Window Structure			//Video
+	//Video::Keys				keys;											// Key Structure			//Video
+	//keys.keyDown = gKeys;
+
+
+
 
 	if (!LoadData(gSceneNum)) {
 		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
@@ -536,9 +496,15 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 	}
 
 	// Создать наше OpenGL окно
-	if (!mRender.CreateGLWindow(WndProc, "NeHe OpenGL окно", gWidth, gHeight, 32))
+	if (!mRender.CreateGLWindow(WndProc, "OpenGL окно", gWidth, gHeight, 32))
 	{
 		return 1;              // Выйти, если окно не может быть создано
+	}
+
+	if (!mVideo.Initialize())					// Call User Intialization	  //Video
+	{
+		// Failure															  //Video
+		return 1;															   //Video
 	}
 
 	lastTickCount = GetTickCount ();		// Get Tick Count
@@ -574,6 +540,8 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 						{				
 							gTime += gTimeScale*float(tickCount - lastTickCount)/1000.0f;
 							mGame.Update(gTimeScale*float(tickCount - lastTickCount)/1000.0f );
+
+							mVideo.Update(tickCount - lastTickCount); //Video
 						} 					
 						framesPerSecond++;
 						float currentTime = ((float)tickCount)*0.001f;
@@ -603,6 +571,8 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 	}
 
 	// Shutdown
+	mVideo.Deinitialize();							// User Defined DeInitialization //Video
 	mRender.Release();						// Разрушаем окно
+	
 	return ( msg.wParam );              // Выходим из программы
 }

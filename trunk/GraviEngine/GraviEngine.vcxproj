@@ -90,7 +90,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Entities\Video.cpp" />
     <ClCompile Include="..\src\Entities\Wave.cpp" />
+    <ClCompile Include="..\src\Entities\WaveOut.cpp" />
     <ClCompile Include="..\src\Game.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Entities\Box.cpp" />
@@ -101,7 +103,9 @@
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Color.h" />
+    <ClInclude Include="..\src\Entities\Video.h" />
     <ClInclude Include="..\src\Entities\Wave.h" />
+    <ClInclude Include="..\src\Entities\WaveOut.h" />
     <ClInclude Include="..\src\Game.h" />
     <ClInclude Include="..\src\Entities\Box.h" />
     <ClInclude Include="..\src\Entities\Entity.h" />

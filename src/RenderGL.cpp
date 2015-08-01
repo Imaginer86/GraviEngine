@@ -2,18 +2,21 @@
 
 #include <string>
 
+#include <Windows.h>
 #include <GL\gl.h>
 #include <GL\glu.h>
+
+
 
 //#include "Camera.h"
 
 #include "Math/Quaternion.h"
 #include "Math/Vector3.h"
 
-//HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
-//HDC		hDC = nullptr;              // Приватный контекст устройства GDI
-//HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
-//HINSTANCE  hInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
+HDC		hDC = nullptr;              // Приватный контекст устройства GDI
+HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
+HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
+HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
 
 //GLfloat gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 //GLfloat gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
@@ -24,6 +27,44 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 //GLuint		texture[4];									// 3 Textures				 
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //WNDPROC *WndProc;					  // Процедура обработки сообщений					 
+
+
+/*
+** RGB Image Structure
+*/
+
+//typedef struct _AUX_RGBImageRec {
+    //GLint sizeX, sizeY;
+    //unsigned char *data;
+//} AUX_RGBImageRec;
+
+
+
+//#define auxDIBImageLoad auxDIBImageLoadA
+
+//AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
+
+
+/*
+#define auxDIBImageLoad auxDIBImageLoadA
+
+AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
+AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
+*/
+
+
+//AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
+//{
+//	std::ifstream File(Filename, std::ios::in);
+//	if (File)											// Does The File Exist?
+//	{
+//		File.close();
+//		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
+//	}
+
+//	return NULL;										// If Load Failed Return NULL
+//}	
+
 
 RenderGL::RenderGL()
 {
@@ -178,7 +219,7 @@ void RenderGL::SetGLLight()
 		glEnable(GL_LIGHTING);
 }
 
-bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits)
+bool RenderGL::CreateWin(long  WndProc, const char *title, unsigned width, unsigned height, int bits)
 {
 	GLuint		PixelFormat;			    // Хранит результат после поиска
 	WNDCLASS	wc;						   // Структура класса окна
@@ -195,7 +236,7 @@ bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, uns
 	rhInstance = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
 
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
-	wc.lpfnWndProc = WndProc;					  // Процедура обработки сообщений
+	wc.lpfnWndProc = WNDPROC(WndProc);					  // Процедура обработки сообщений
 	wc.cbClsExtra = 0;									 // Нет дополнительной информации для окна
 	wc.cbWndExtra = 0;							 	    // Нет дополнительной информации для окна
 	wc.hInstance = rhInstance;						   // Устанавливаем дескриптор
@@ -254,7 +295,7 @@ bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, uns
 
 	AdjustWindowRectEx(&WindowRect, dwStyle, false, dwExStyle);      // Подбирает окну подходящие размеры
 
-	if (!(rhWnd = CreateWindowEx(
+	if (!(hWnd = CreateWindowEx(
 		dwExStyle,										// Расширенный стиль для окна
 		("OpenGL"),									   // Имя класса
 		title,										  // Заголовок окна
@@ -296,7 +337,7 @@ bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, uns
 		0, 0, 0                  // Маски слоя игнорируются
 	};
 
-	if (!(hDC = GetDC(rhWnd)))              // Можем ли мы получить Контекст Устройства?
+	if (!(hDC = GetDC(hWnd)))              // Можем ли мы получить Контекст Устройства?
 	{
 		Release();                // Восстановить экран
 		MessageBox(NULL, "Can't Create A GL Device Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -331,9 +372,9 @@ bool RenderGL::CreateWin(WNDPROC WndProc, const char *title, unsigned width, uns
 		return false;                // Вернуть false
 	}
 
-	ShowWindow(rhWnd, SW_SHOW);				  // Показать окно
-	SetForegroundWindow(rhWnd);				 // Слегка повысим приоритет
-	SetFocus(rhWnd);							// Установить фокус клавиатуры на наше окно
+	ShowWindow(hWnd, SW_SHOW);				  // Показать окно
+	SetForegroundWindow(hWnd);				 // Слегка повысим приоритет
+	SetFocus(hWnd);							// Установить фокус клавиатуры на наше окно
 	ReSizeGLScene(width, height);			   // Настроим перспективу для нашего OpenGL экрана.
 
 	if (!Init())                  // Инициализация только что созданного окна
@@ -417,16 +458,16 @@ bool RenderGL::Release()
 		}
 		hRC = NULL;              // Установить RC в NULL
 	}
-	if (hDC && !ReleaseDC(rhWnd, hDC))          // Возможно ли уничтожить DC?
+	if (hDC && !ReleaseDC(hWnd, hDC))          // Возможно ли уничтожить DC?
 	{
 		MessageBox(NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		hDC = NULL;                // Установить DC в NULL		
 		res = false;
 	}
-	if (rhWnd && !DestroyWindow(rhWnd))            // Возможно ли уничтожить окно?
+	if (hWnd && !DestroyWindow(hWnd))            // Возможно ли уничтожить окно?
 	{
 		MessageBox(NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		rhWnd = NULL;                // Установить hWnd в NULL
+		hWnd = NULL;                // Установить hWnd в NULL
 		res = false;
 	}
 	if (!UnregisterClass("OpenGL", rhInstance))        // Возможно ли разрегистрировать класс
@@ -555,8 +596,6 @@ void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& 
 
 	glPopMatrix();
 }
-
-//static float rt = 0.0f;
 
 void RenderGL::DrawSphere(const Vector3& pos, const float r, const Color4f& color) const
 {

@@ -1,7 +1,4 @@
 ﻿#include "Render.h"
-//#include "Camera.h"
-
-#include <Windows.h>
 
 class RenderGL : public Render
 {	
@@ -20,7 +17,7 @@ public:
 	void glPrint(const char *fmt, ...);
 	virtual void ReSizeGLScene(unsigned width, unsigned height);
 	virtual void SetGLLight();
-	virtual bool CreateWin(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits);
+	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits);
 
 	void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
 
@@ -39,11 +36,4 @@ public:
 
 	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const;
 	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const;
-
-
-	HGLRC	hRC;              // Постоянный контекст рендеринга
-	HDC		hDC;              // Приватный контекст устройства GDI
-	HINSTANCE  rhInstance;              // Здесь будет хранится дескриптор приложения
-	HWND	rhWnd;              // Здесь будет хранится дескриптор окна
-
 };

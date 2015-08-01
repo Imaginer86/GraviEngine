@@ -1,5 +1,5 @@
 ﻿#pragma once
-//#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -14,45 +14,22 @@
 
 #include "RenderGL.h"
 
-
-/*
-** RGB Image Structure
-*/
-
-//typedef struct _AUX_RGBImageRec {
-    //GLint sizeX, sizeY;
-    //unsigned char *data;
-//} AUX_RGBImageRec;
-
-
-
-//#define auxDIBImageLoad auxDIBImageLoadA
-
-//AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
-
-
-/*
-#define auxDIBImageLoad auxDIBImageLoadA
-
-AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
-AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
-*/
-
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
-
-
 
 const int gWidth = 1600;
 const int gHeight = 900;
 
-bool gKeys[256];                // Массив, используемый для операций с клавиатурой
-bool gLightOnKey = false;         // L нажата?
+bool gLightOnKey = false;			// L нажата?
 bool gShowDebugInfo = true;
 bool gShowDebugInfoKey = false;		// TAB нажат?
+//bool gShowResetKey = false;			// R нажат?
+bool gReverseKeyPress = false;		// Q нажат?
+
+bool gKeys[256];					// Массив, используемый для операций с клавиатурой
+
 bool gActive = true;                // Флаг активности окна, установленный в true по умолчанию
 
 bool gPause = true;
-
 
 float gTimeScale = 1.0f;
 float gTime = 0.0f;
@@ -78,20 +55,6 @@ bool gFirstLoad = true;
 Game mGame;
 Camera mCamera;
 Render* mRender = new RenderGL;
-
-
-//AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
-//{
-//	std::ifstream File(Filename, std::ios::in);
-//	if (File)											// Does The File Exist?
-//	{
-//		File.close();
-//		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
-//	}
-
-//	return NULL;										// If Load Failed Return NULL
-//}	
-
 
 
 void Draw()                // Здесь будет происходить вся прорисовка
@@ -244,11 +207,26 @@ bool LoadData(unsigned fileNum)
 
 bool UpdateKeys()
 {
+	/*
+	if( gKeys[VK_F1] )				// Была ли нажата F1?
+	{
+		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
+		mRender->Release();					// Разрушаем текущее окно
+		mRender->Fullscreen = !mRender->Fullscreen;		// Переключаем режим
+		// Пересоздаём наше OpenGL окно
+		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
+		{
+			return false;						// Выходим, если это невозможно
+		}
+	} 
+	*/
+
 	if (gKeys[VK_SPACE])
 	{
 		gPause = !gPause;
 		gKeys[VK_SPACE] = false;
 	}
+
 	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
 	{
 		gLightOnKey=true;						// lp присвоили TRUE
@@ -266,19 +244,6 @@ bool UpdateKeys()
 	{
 		gLightOnKey=false;						// Если так, то lp равно FALSE
 	}
-	/*
-	if( gKeys[VK_F1] )				// Была ли нажата F1?
-	{
-		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
-		mRender->Release();					// Разрушаем текущее окно
-		mRender->Fullscreen = !mRender->Fullscreen;		// Переключаем режим
-		// Пересоздаём наше OpenGL окно
-		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
-		{
-			return false;						// Выходим, если это невозможно
-		}
-	} 
-	*/
 
 	if( gKeys[VK_F5])
 	{
@@ -301,6 +266,7 @@ bool UpdateKeys()
 			mRender->SetGLLight();
 		}
 	}
+
 	if( gKeys[VK_RIGHT])
 	{
 		if (gKeys[VK_SHIFT])
@@ -308,6 +274,7 @@ bool UpdateKeys()
 		else
 			mCamera.RotateLR(gShiftScale*gAngleScale*gTimeScale);				
 	}
+
 	if( gKeys[VK_LEFT])
 	{
 		if (gKeys[VK_SHIFT])
@@ -315,6 +282,7 @@ bool UpdateKeys()
 		else
 			mCamera.RotateLR(-gShiftScale*gAngleScale*gTimeScale);			
 	}
+
 	if( gKeys[VK_UP])
 	{								
 		if (gKeys[VK_SHIFT])
@@ -322,6 +290,7 @@ bool UpdateKeys()
 		else
 			mCamera.RotateUpDown(gShiftScale*gAngleScale*gTimeScale);
 	}
+
 	if( gKeys[VK_DOWN])
 	{
 		if (gKeys[VK_SHIFT])
@@ -329,6 +298,7 @@ bool UpdateKeys()
 		else
 			mCamera.RotateUpDown(-gShiftScale*gAngleScale*gTimeScale);
 	}
+
 	if( gKeys['W'])
 	{
 		if (gKeys[VK_SHIFT])
@@ -336,6 +306,7 @@ bool UpdateKeys()
 		else
 			mCamera.MoveCamera(gShiftScale*gMoveScale*gTimeScale);
 	}
+
 	if( gKeys['S']) 
 	{
 		if (gKeys[VK_SHIFT])
@@ -343,6 +314,7 @@ bool UpdateKeys()
 		else
 			mCamera.MoveCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
+
 	if( gKeys['A'])
 	{
 		if (gKeys[VK_SHIFT])
@@ -350,6 +322,7 @@ bool UpdateKeys()
 		else
 			mCamera.MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
+
 	if( gKeys['D'])
 	{
 		if (gKeys[VK_SHIFT])
@@ -357,24 +330,65 @@ bool UpdateKeys()
 		else
 			mCamera.MoveLRCamera(gShiftScale*gMoveScale*gTimeScale);
 	}
+
 	if (gKeys[VK_TAB] && !gShowDebugInfoKey)
 	{
 		gShowDebugInfoKey = true;
 		gShowDebugInfo = !gShowDebugInfo;
 	}
+
 	if (!gKeys[VK_TAB])
 		gShowDebugInfoKey = false;
-	if (gKeys[VK_ADD])
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_ADD] )
+	{
+		gTimeScale += 0.1f*gTimeScale;
+	}
+
+	else if ( gKeys[VK_ADD] )
+	{
 		gTimeScale += 0.01f;
-	if (gKeys[VK_SUBTRACT])
+	}
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
+	{
+		gTimeScale -= 0.1f*gTimeScale;
+	}
+
+	else if ( gKeys[VK_SUBTRACT] )
+	{
 		gTimeScale -= 0.01f;
-	if (gKeys['0'])
+	}
+
+	if (gKeys[VK_SHIFT] && gKeys['0'])
+	{
+		gTimeScale = -1.0f;
+	}
+
+	else if (gKeys['0'])
+	{
+		gTimeScale = 0.0f;
+	}
+
+	if( gKeys['R'])
+	{
 		gTimeScale = 1.0f;
+	}
+
+	if( gKeys['Q'] && !gReverseKeyPress)
+	{
+		gTimeScale = -gTimeScale;
+		gReverseKeyPress = true;
+	}
+	if (!gKeys['Q'] && gReverseKeyPress )
+	{
+		gReverseKeyPress = false;
+	}
 
 	return true;
 }
 
-LRESULT CALLBACK WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
 						 UINT  uMsg,				// Сообщение для этого окна
 						 WPARAM  wParam,            // Дополнительная информация
 						 LPARAM  lParam)            // Дополнительная информация
@@ -431,11 +445,18 @@ LRESULT CALLBACK WndProc(  HWND  hWnd,				// Дескриптор нужного
 }
 
 
-int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
-					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
-					LPSTR    lpCmdLine,					// Параметры командной строки
-					int    nCmdShow )					// Состояние отображения окна
+//int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
+//					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
+//					LPSTR    lpCmdLine,					// Параметры командной строки
+//					int    nCmdShow */)					// Состояние отображения окна
+
+
+int main()
 {
+
+	std::cout << "Hello" << std::endl;
+	std::cerr << "And Your Hello" << std::endl;
+
 	//mRender->rhInstance = hInstance;
 	//mRender.rhWnd = hWnd;
 	mRender->rCamera = &mCamera;
@@ -445,34 +466,44 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 	mRender->rTimeScale = &gTimeScale;
 	mRender->rTime = &gTime;
 
-	MSG  msg;           // Структура для хранения сообщения Windows
+	if (!LoadData(gSceneNum)) 
+	{
+		//MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
+
+		std::cerr << "Load Data Failed!" << std::endl;
+
+		return 1;													// Return False (Failure)
+	}
+
+	// Создать наше OpenGL окно
+	if (!mRender->CreateWin(long(WndProc), "Gravi Engine", gWidth, gHeight, 32))
+	{
+		//MessageBox (NULL, "CreateWin Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
+		std::cerr << "CreateWin Failed!" << std::endl;
+		return 1;              // Выйти, если окно не может быть создано
+	}
+
+	// Спрашивает пользователя, какой режим экрана он предпочитает
+	//if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
+	//{		
+		//fullscreen = false;          // Оконный режим
+	//
+
+	//std::cout  << "Хотите ли Вы запустить приложение в полноэкранном режиме? Y/N? " << std::endl;
 	
+
+
 	bool  done = false;	// Логическая переменная для выхода из цикла
 
 	unsigned long tickCount = 0;
 	unsigned long lastTickCount = 0;
 
-	// Спрашивает пользователя, какой режим экрана он предпочитает
-	//if( MessageBox( NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?",  "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO )
-	//{
-		//fullscreen = false;          // Оконный режим
-	//
-
-	if (!LoadData(gSceneNum)) {
-		MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
-		return 1;													// Return False (Failure)
-	}
-
-	// Создать наше OpenGL окно
-	if (!mRender->CreateWin(WndProc, "Gravi Engine", gWidth, gHeight, 32))
-	{
-		return 1;              // Выйти, если окно не может быть создано
-	}
-
 	lastTickCount = GetTickCount ();		// Get Tick Count
 
 	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
+
+	MSG  msg;           // Структура для хранения сообщения Windows
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{
@@ -493,43 +524,39 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 				// Прорисовываем сцену.
 			if( gActive )          // Активна ли программа?
 			{
-				//else            // Не время для выхода, обновим экран.
+				tickCount = GetTickCount();				// Get The Tick Count
+				
+				if (!gPause)
+				{			
+					float dt = float(tickCount - lastTickCount) * 0.001f;
+					gTime += gTimeScale*dt;
+
+					mGame.Update(gTimeScale*dt);
+				} 					
+				framesPerSecond++;
+				float currentTime = float(tickCount)*0.001f;
+				if ((currentTime - lastTime) > 1.0f)
 				{
-					//--------------------------------
-					{
-						tickCount = GetTickCount();				// Get The Tick Count
-
-						if (!gPause)
-						{			
-							float dt = float(tickCount - lastTickCount) * 0.001f;
-							gTime += gTimeScale*dt;
-
-							mGame.Update(gTimeScale*dt);
-						} 					
-						framesPerSecond++;
-						float currentTime = float(tickCount)*0.001f;
-						if ((currentTime - lastTime) > 1.0f)
-						{
-							lastTime = currentTime;
-							gfps = framesPerSecond;
-							framesPerSecond = 0.0f;
-						}
-						lastTickCount = tickCount;			// Set Last Count To Current Count
-
-						Draw();						// Рисуем сцену
-						
-					}
-
-					if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
-					{
-						done = true;							// ESC говорит об останове выполнения программы
-					}
-					if (!UpdateKeys())
-					{
-						done = true;
-						MessageBox(NULL, "Uodate Keys Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
-					}
+					lastTime = currentTime;
+					gfps = framesPerSecond;
+					framesPerSecond = 0.0f;
 				}
+				lastTickCount = tickCount;			// Set Last Count To Current Count
+
+				Draw();						// Рисуем сцену
+						
+			}
+
+			if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
+			{
+				done = true;							// ESC говорит об останове выполнения программы
+			}
+
+			if (!UpdateKeys())
+			{
+				done = true;
+				//MessageBox(NULL, "Uodate Keys Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
+				std::cerr << "Uodate Keys Failed!" << std::endl;
 			}
 		}
 	}
@@ -537,5 +564,5 @@ int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор прило�
 	// Shutdown
 	mRender->Release();						// Разрушаем окно
 	
-	return ( msg.wParam );              // Выходим из программы
+	return ( int(msg.wParam) );              // Выходим из программы
 }

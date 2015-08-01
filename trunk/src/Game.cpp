@@ -2,6 +2,7 @@
 #include "Entities\Mass.h"
 #include "Entities\Box.h"
 //#include "Entities\Line.h"
+#include "Math\Plane.h"
 
 #include <typeinfo.h>
 
@@ -192,11 +193,16 @@ void Game::Collision(float dt)
 
 
 					Vector3 pbxu = pb + pnx;
-					Vector3 pbxd = pb - pnx;
 					Vector3 pbyu = pb + pny;
-					Vector3 pbyd = pb - pny;
 					Vector3 pbzu = pb + pnz;
+					Vector3 pbxd = pb - pnx;					
+					Vector3 pbyd = pb - pny;					
 					Vector3 pbzd = pb - pnz;
+
+
+					Plane();
+
+
 
 				}
 			}

@@ -3,7 +3,7 @@
 #include "Color.h"
 #include "Camera.h"
 
-#include <Windows.h>
+//#include <Windows.h>
 
 
 class Render
@@ -19,11 +19,11 @@ public:
 	{
 	}
 
-	static Render& Instance()
-	{
-		static Render SingleRender;
-		return SingleRender;
-	}
+//	static Render& Instance() = 0;
+//	{
+//		static Render SingleRender;
+//		return SingleRender;
+//	}
 
 	virtual bool Init()
 	{
@@ -48,10 +48,10 @@ public:
 	virtual void EnableLight() {}
 	virtual void DisableLight() {}
 
-	virtual bool CreateWin(WNDPROC WndProc, const char *title, unsigned width, unsigned height, int bits)
-	{
-		return false;
-	}
+	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits) = 0;
+//	{
+//		return false;
+//	}
 
 public:
 

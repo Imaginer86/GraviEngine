@@ -6,9 +6,20 @@ struct Line
 	Vector3 p;
 	Vector3 k;	
 
+	Line()
+	{
+
+	}
+
 	Line(Vector3 pa, Vector3 pb)
 	{
 		p = pb;
-		l = pb - pa;
+		k = pb - pa;
 	}
-}
+
+	void FromAxic(const Vector3& p_, const Vector3& k_)
+	{
+		p = p_;
+		k = k_;
+	}
+};

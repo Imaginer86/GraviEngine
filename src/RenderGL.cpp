@@ -1,5 +1,8 @@
 ﻿#include "RenderGL.h"
 
+//#pragma comment(lib, "opengl32.lib")
+//#pragma comment(lib, "glu32.lib")
+
 #include <string>
 
 #include <Windows.h>
@@ -499,7 +502,7 @@ void RenderGL::BeginDraw()
 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
 	Vector3 cameraPos = rCamera->GetPos();
-	glTranslatef(cameraPos.x, cameraPos.y, cameraPos.z);
+	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
 	SetGLLight();

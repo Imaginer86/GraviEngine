@@ -6,7 +6,7 @@
 
 bool Intersect(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, Vector3& pos)
 {
-	float ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
+//	float ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
 	float ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
 
 	if (ub >= 0 && ub <= 1)
@@ -42,7 +42,7 @@ void WaveOut::Draw()
 		{
 			float angle0 = Math::degreesToRadians(hangle*float(ro));
 			float angle1 = Math::degreesToRadians(hangle*float(ro + 1));
-			float dist0 = r*w;
+			//float dist0 = r*w;
 			float dist1 = (r + 1)*w;
 
 			//pos0 = Vector3(dist0*cosf(angle0), 0.0f, dist0*sinf(angle0));
@@ -65,7 +65,7 @@ void WaveOut::Draw()
 			}
 			else
 			{																										   
-				int t = 0;
+				//int t = 0;
 			}
 
 			if (Intersect(0.0f, 0.0f, pos2.x, pos2.z, -width / 2.0f, height / 2.0f, width / 2.0f, height / 2.0f, pos3) ||
@@ -77,7 +77,7 @@ void WaveOut::Draw()
 			}
 			else
 			{
-				int t = 0;
+				//int t = 0;
 			}
 
 

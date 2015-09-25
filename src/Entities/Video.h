@@ -59,33 +59,5 @@ private:
 	void GrabAVIFrame(int frame); // Захват кадра
 	void CloseAVI();             // Функция закрытия
 
-	// Пользовательские переменные
-	float  angle;              // Для вращения
-	int    next;               // Для анимации
-	int    frame = 0;            // Счётчик кадров
-	int    effect = 3;             // Текущий эффект
-	bool   sp;                 // Пробел нажат?
-	bool   env = true;           // Показ среды(По умолчанию включен)
-	bool   ep;                 // 'E' нажато?
-	bool   bg = true;            // Фон(по умолчанию включен)
-	bool   bp;                 // 'B' нажато?
-
-
-	
-	PAVISTREAM       pavi;      // Дескриптор для открытия потока
-	PGETFRAME        pgf;       // Указатель на объект GetFrame
-	BITMAPINFOHEADER bmih;      // Заголовочная информация для DrawDibDraw декодирования
-	long             lastframe; // Последний кадр анимации
-	int              width;     // Ширина видео
-	int              height;    // Высота видео
-	char             *pdata;    // Указатель на данные текстуры
-	int              mpf;       // Сколько миллисекунд отображен кадр
-
-	GLUquadricObj *quadratic; // Хранилище для наших квадратичных объектов
-
-	HDRAWDIB      hdd;        // Дескриптор для нашего рисунка
-	HBITMAP       hBitmap;    // Дескриптор устройства растра
-	HDC hdc = CreateCompatibleDC(0); // Создание совместимого контекста устройства
-	unsigned char* data = 0;         // Указатель на наше измененное в размерах изображение
 
 };

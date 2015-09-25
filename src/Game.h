@@ -38,19 +38,21 @@ public:
 
 	void Draw();
 	
-	Vector3 GraviForce(int a, int b);
+	//Vector3 GraviForce(int a, int b);
 
 	void Init();								// this method will call the init() method of every mass;
- 	void Solve();							// no implementation because no forces are wanted in this basic container;
+ 	//void Solve();							// no implementation because no forces are wanted in this basic container;
  	void Simulate(float dt);					// Iterate the masses by the change in time;
 	void AddGraviAcc(float dt);
 
 	void Collision(float dt);
 
 private:
+	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
 	//vector<Vector3> globalForces;
 	int numEntitys;
 	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
 	Vector3 graviAcc;
+	int frame;
 };

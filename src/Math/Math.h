@@ -30,11 +30,5 @@ namespace Math
 	static float radiansToDegrees(float radians)
 	{
 		return (radians * 180.0f) / PI;
-	}							  
-
-	static float ToDegree(float radian)
-	{
-		return 180*radian/PI;
 	}
-
 }

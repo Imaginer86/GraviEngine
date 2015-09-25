@@ -302,33 +302,33 @@ bool UpdateKeys()
 	if( gKeys['W'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(gMoveScale*gTimeScale);
-		else
-			mCamera.MoveCamera(gShiftScale*gMoveScale*gTimeScale);
-	}
-
-	if( gKeys['S']) 
-	{
-		if (gKeys[VK_SHIFT])
 			mCamera.MoveCamera(-gMoveScale*gTimeScale);
 		else
 			mCamera.MoveCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
 
-	if( gKeys['A'])
+	if( gKeys['S']) 
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(-gMoveScale*gTimeScale);
+			mCamera.MoveCamera(gMoveScale*gTimeScale);
 		else
-			mCamera.MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
+			mCamera.MoveCamera(gShiftScale*gMoveScale*gTimeScale);
 	}
 
-	if( gKeys['D'])
+	if( gKeys['A'])
 	{
 		if (gKeys[VK_SHIFT])
 			mCamera.MoveLRCamera(gMoveScale*gTimeScale);
 		else
 			mCamera.MoveLRCamera(gShiftScale*gMoveScale*gTimeScale);
+	}
+
+	if( gKeys['D'])
+	{
+		if (gKeys[VK_SHIFT])
+			mCamera.MoveLRCamera(-gMoveScale*gTimeScale);
+		else
+			mCamera.MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
 
 	if (gKeys[VK_TAB] && !gShowDebugInfoKey)
@@ -453,7 +453,7 @@ long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
 
 int main()
 {
-
+	int t = float(0);
 	std::cout << "Hello" << std::endl;
 	std::cerr << "And Your Hello" << std::endl;
 

@@ -3,8 +3,10 @@
 #include "Entities\Box.h"
 //#include "Entities\Line.h"
 #include "Math\Plane.h"
+#include "Math\Math.h"
 
 #include <typeinfo.h>
+#include <iostream>
 
 static const float G = 0.01f;
 static const float minDistG = 0.1f;
@@ -13,6 +15,7 @@ static const float minDistG = 0.1f;
 Game::Game()
 : numEntitys(0)
 , graviAcc(0, 0, 0)
+, frame(0)
 {
 }
 
@@ -67,12 +70,10 @@ void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f
 }
 */
 
-
 void Game::Collision(float dt)
 {
-
-	for (unsigned a = 0; a < Entities.size(); a++)
-		for (unsigned b = 0; b < Entities.size(); b++)
+	for (unsigned a = 0; a < (Entities.size() - 1); a++)
+		for (unsigned b = a + 1; b < Entities.size(); b++)
 			if (a != b)
 			{
 				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Mass))
@@ -106,7 +107,7 @@ void Game::Collision(float dt)
 								p1p2.y*(pn1.y*pn1.x + pn1.z) + p1p2.y*pn1.y*pn1.y + p1p2.y*(pn1.y*pn1.z - pn1.x),
 								p1p2.z*(pn1.z*pn1.x - pn1.y) + p1p2.z*(pn1.z*pn1.y + pn1.x) + p1p2.z*pn1.z*pn1.z);
 							float v1n = v1.dotProduct(p1p2);
-							float v1ts = v1.dotProduct(v1t);
+							//float v1ts = v1.dotProduct(v1t);
 
 
 							Vector3 p2p1 = p1 - p2;
@@ -120,7 +121,7 @@ void Game::Collision(float dt)
 								p2p1.z*(pn2.z*pn2.x - pn2.y) + p2p1.z*(pn2.z*pn2.y + pn2.x) + p2p1.z*pn2.z*pn2.z);
 
 							float v2n = v2.dotProduct(p2p1);
-							float v2ts = v2.dotProduct(v2t);
+							//float v2ts = v2.dotProduct(v2t);
 
 
 							float m1 = ma->GetMass();
@@ -143,15 +144,15 @@ void Game::Collision(float dt)
 							dist = (ma->GetPos() - mb->GetPos()).length();
 							r2 = ma->GetR() + mb->GetR();
 
-							float t1 = v11.length() + v1.length();
-							float t2 = v22.length() + v2.length();
+							//float t1 = v11.length() + v1.length();
+							//float t2 = v22.length() + v2.length();
 
 							//ma->simulateForce(dt);
 							//mb->simulateForce(dt);
 
 							if (dist < r2)
 							{
-								int t = 0;
+								//int t = 0;
 							}
 						}
 					}
@@ -171,41 +172,112 @@ void Game::Collision(float dt)
 						mass = dynamic_cast<Mass*>(Entities[b]);
 						box = dynamic_cast<Box*>(Entities[a]);
 					}
-					Vector3 po = mass->GetPos();
-					float ro = mass->GetR();
+					Vector3 pm = mass->GetPos();
+					float rm = mass->GetR();
+					Vector3 vm = mass->GetVel();
+
 					Vector3 pb = box->GetPos();
 					Quaternion q = box->GetAngleQ();
-					//Vector3 axicb;
-					//float angleb;
-					//q.toAxisAngle(axicb, angleb);
+					Vector3 axicb;
+					float angleb;
+					q.toAxisAngle(axicb, angleb);
+					Quaternion q1;
+					q1.fromAxisAngle(axicb, -angleb);
 					Vector3 size = box->GetSize();
-					size /= 0.5f;
+					size *= 0.5f;
 
-					Quaternion qn;
-					qn.fromAxisAngle(size, 0.0f);
+					Vector3 diff = size;
 
-					Quaternion qs(qn *q);
+					Vector3 P[8];
+					P[0] = pb + Vector3(-diff.x, -diff.y, diff.z);;
+					P[1] = pb + Vector3(-diff.x, -diff.y, -diff.z);
+					P[2] = pb + Vector3(diff.x, -diff.y, -diff.z);
+					P[3] = pb + Vector3(diff.x, -diff.y, diff.z);
+					P[4] = pb + Vector3(-diff.x, diff.y, diff.z);
+					P[5] = pb + Vector3(-diff.x, diff.y, -diff.z);
+					P[6] = pb + Vector3(diff.x, diff.y, -diff.z);
+					P[7] = pb + Vector3(diff.x, diff.y, diff.z);
 
-					Vector3 pnx = qs.rotate(Vector3(po.x, 0.0f, 0.0f));
-					Vector3 pny = qs.rotate(Vector3(0.0f, po.y, 0.0f));
-					Vector3 pnz = qs.rotate(Vector3(0.0f, 0.0f, po.z));
+					for (int i = 0; i < 8; i++)
+					{
+						Vector3 d = P[i] - pb;
+						d = q1.rotate(d);
+						P[i] = pb + d;
+					}
 
+					int PI[6][4] = {{0, 1, 2, 3}, {4, 7, 6, 5}, {0, 4, 5, 1}, {2, 6, 7, 3}, {0, 3, 7, 4}, {1, 5, 6, 2}};
 
+					Plane PL[6];
+					for (int i = 0; i < 6; i++)
+						PL[i] = Plane(P[PI[i][0]], P[PI[i][1]], P[PI[i][2]]);
 
-					Vector3 pbxu = pb + pnx;
-					Vector3 pbyu = pb + pny;
-					Vector3 pbzu = pb + pnz;
-					Vector3 pbxd = pb - pnx;					
-					Vector3 pbyd = pb - pny;					
-					Vector3 pbzd = pb - pnz;
+					for (int i = 0; i < 6; i++)
+					{
+						Vector3 pr = PL[i].proj(pm);
+						//float t = PL[i].a*pr.x + PL[i].b*pr.y + PL[i].c*pr.z+PL[i].d;
+						//float d = PL[i].distance(pm);
+						float d = (pm - pr).length();
+						//std::cout  << " distance i " << i << ": " << d << std::endl;
+						if (d < rm)
+						{
+							std::cout << "Collosion M (" << pm.x << ", " << pm.y << ", " << pm.z << ") and Plane " << i << std::endl;
+							if (InterPlanePoint(pr, P[PI[i][0]], P[PI[i][1]], P[PI[i][2]], P[PI[i][3]]))
+							{					
+								Vector3 n(PL[i].a, PL[i].b, PL[i].c);
+								n.unitize();
+								Vector3 axic;
+								axic = n*vm;
+								
+								if (axic.unitize() > Math::EPSILON)
+								{
 
-
-					Plane();
-
-
+								
+									float sina = fabsf(PL[i].a*vm.x + PL[i].b*vm.y + PL[i].c*vm.z)/(sqrtf(PL[i].a*PL[i].a + PL[i].b*PL[i].b + PL[i].c*PL[i].c)*vm.length());
+									float angle = 90.0f - Math::radiansToDegrees(asinf(sina));
+									Quaternion q;
+									q.fromAxisAngle(axic, -2.0f*angle);
+									q.normalize();
+									std::cout << "angle" << angle << std::endl;
+									std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
+									vm = q.rotate(vm);
+									std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
+								}
+								//else
+								//{
+									//vm = -vm;
+								//}
+								mass->SetVel(-vm);
+							}
+						}
+					}
 
 				}
 			}
+}
+
+bool Game::InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+{
+	Vector3 p10 = p1 - p0;
+	Vector3 pm0 = pr - p0;
+	float cosa = p10.dotProduct(pm0)/(p10.length()*pm0.length());
+	if ( cosa < 0.0f || cosa > 1.0f)
+		return false;
+	Vector3 p21 = p2 - p1;
+	Vector3 pm1 = pr - p1;
+	cosa = p21.dotProduct(pm1)/(p21.length()*pm1.length());
+	if ( cosa < 0.0f || cosa > 1.0f)
+		return false;
+	Vector3 p32 = p3 - p2;
+	Vector3 pm2 = pr - p2;
+	cosa = p32.dotProduct(pm2)/(p32.length()*pm2.length());
+	if ( cosa < 0.0f || cosa > 1.0f)
+		return false;
+	Vector3 p03 = p0 - p3;
+	Vector3 pm3 = pr - p3;
+	cosa = p03.dotProduct(pm3)/(p03.length()*pm3.length());
+	if ( cosa < 0.0f || cosa > 1.0f)
+		return false;
+	return true;
 }
 
 
@@ -217,7 +289,7 @@ void Game::Draw()
 	}
 }
 
-
+/*
 Vector3 Game::GraviForce( int a, int b )
 {
 	Vector3 f;
@@ -253,9 +325,17 @@ Vector3 Game::GraviForce( int a, int b )
 
 	return f;
 }
+*/
 
 void Game::Update(float dt)
 {
+	if (dt == 0.0f)
+		return;
+	else if (dt > 0.0f)
+		frame++;
+	else if (dt < 0.0f)
+		frame--;
+
 
 	//static unsigned int iteration = 0;
 	this->Init();										// Step 1: reset forces to zero	
@@ -272,7 +352,9 @@ void Game::Init() /* this method will call the init() method of every mass */
 		Entities[i]->init();						// call init() method of the mass
 }
 
-void Game::Solve() /* no implementation because no forces are wanted in this basic container */
+/* no implementation because no forces are wanted in this basic container */
+/*
+void Game::Solve() 
 {
 	for(unsigned a = 0; a < Entities.size(); a++)
 	{
@@ -287,11 +369,15 @@ void Game::Solve() /* no implementation because no forces are wanted in this bas
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses
 }
+*/
 
 void Game::AddGraviAcc(float dt)
 {
 	for (unsigned i = 0; i < Entities.size(); i++)
-		Entities[i]->applyAcc(graviAcc, dt);
+	{
+		if (typeid(*Entities[i]) == typeid(Mass))
+			Entities[i]->applyAcc(graviAcc, dt);
+	}
 }
 
 void Game::Simulate( float dt ) /* Iterate the masses by the change in time */

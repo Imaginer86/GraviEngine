@@ -46,7 +46,7 @@ public:
 		return color;
 	}
 
-	void SetColor(Color4f& color)
+	void SetColor(const Color4f& color)
 	{
 		this->color = color;
 	}

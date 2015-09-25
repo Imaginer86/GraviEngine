@@ -79,5 +79,6 @@ private:
 	float r;
 	Vector3 force;
 	Quaternion q;
+	Color4f color;
 };
 

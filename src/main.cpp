@@ -1,9 +1,10 @@
-﻿#pragma once
+﻿//#pragma once
+#include <Windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 
-#include <Windows.h>
+
 					   
 
 #include "Game.h"
@@ -13,6 +14,7 @@
 #include "Math\Math.h"
 
 #include "RenderGL.h"
+#include "Input.h"
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 
@@ -55,6 +57,7 @@ bool gFirstLoad = true;
 Game mGame;
 Camera mCamera;
 Render* mRender = new RenderGL;
+Input* mInput = new Input;
 
 
 void Draw()                // Здесь будет происходить вся прорисовка
@@ -207,243 +210,13 @@ bool LoadData(unsigned fileNum)
 
 bool UpdateKeys()
 {
-	/*
-	if( gKeys[VK_F1] )				// Была ли нажата F1?
-	{
-		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
-		mRender->Release();					// Разрушаем текущее окно
-		mRender->Fullscreen = !mRender->Fullscreen;		// Переключаем режим
-		// Пересоздаём наше OpenGL окно
-		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
-		{
-			return false;						// Выходим, если это невозможно
-		}
-	} 
-	*/
-
-	if (gKeys[VK_SPACE])
-	{
-		gPause = !gPause;
-		gKeys[VK_SPACE] = false;
-	}
-
-	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
-	{
-		gLightOnKey=true;						// lp присвоили TRUE
-		mRender->LightOn=!mRender->LightOn;				// Переключение света TRUE/FALSE
-		if (mRender->LightOn)					// Если не свет
-		{
-			mRender->EnableLight();
-		}
-		else							// В противном случае
-		{
-			mRender->DisableLight();
-		}
-	}
-	if (!gKeys['L'])					// Клавиша 'L' Отжата?
-	{
-		gLightOnKey=false;						// Если так, то lp равно FALSE
-	}
-
-	if( gKeys[VK_F5])
-	{
-		gKeys[VK_F5] = false;
-		Release();		
-		if (!LoadData(gSceneNum))
-			return false;
-		mRender->SetGLLight();
-	}
-
-	for (unsigned i = 0; i < gSceneNumMax; i++)
-	{
-		char c = '1' + i;
-		if (gKeys[c])
-		{
-			gKeys[c] = false;
-			Release();
-			if (!LoadData(i + 1))
-				return false;
-			mRender->SetGLLight();
-		}
-	}
-
-	if( gKeys[VK_RIGHT])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.RotateLR(gAngleScale*gTimeScale);
-		else
-			mCamera.RotateLR(gShiftScale*gAngleScale*gTimeScale);				
-	}
-
-	if( gKeys[VK_LEFT])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.RotateLR(-gAngleScale*gTimeScale);			
-		else
-			mCamera.RotateLR(-gShiftScale*gAngleScale*gTimeScale);			
-	}
-
-	if( gKeys[VK_UP])
-	{								
-		if (gKeys[VK_SHIFT])
-			mCamera.RotateUpDown(gAngleScale*gTimeScale);
-		else
-			mCamera.RotateUpDown(gShiftScale*gAngleScale*gTimeScale);
-	}
-
-	if( gKeys[VK_DOWN])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.RotateUpDown(-gAngleScale*gTimeScale);
-		else
-			mCamera.RotateUpDown(-gShiftScale*gAngleScale*gTimeScale);
-	}
-
-	if( gKeys['W'])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(-gMoveScale*gTimeScale);
-		else
-			mCamera.MoveCamera(-gShiftScale*gMoveScale*gTimeScale);
-	}
-
-	if( gKeys['S']) 
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(gMoveScale*gTimeScale);
-		else
-			mCamera.MoveCamera(gShiftScale*gMoveScale*gTimeScale);
-	}
-
-	if( gKeys['A'])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(gMoveScale*gTimeScale);
-		else
-			mCamera.MoveLRCamera(gShiftScale*gMoveScale*gTimeScale);
-	}
-
-	if( gKeys['D'])
-	{
-		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(-gMoveScale*gTimeScale);
-		else
-			mCamera.MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
-	}
-
-	if (gKeys[VK_TAB] && !gShowDebugInfoKey)
-	{
-		gShowDebugInfoKey = true;
-		gShowDebugInfo = !gShowDebugInfo;
-	}
-
-	if (!gKeys[VK_TAB])
-		gShowDebugInfoKey = false;
-
-	if ( gKeys[VK_SHIFT] && gKeys[VK_ADD] )
-	{
-		gTimeScale += 0.1f*gTimeScale;
-	}
-
-	else if ( gKeys[VK_ADD] )
-	{
-		gTimeScale += 0.01f;
-	}
-
-	if ( gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
-	{
-		gTimeScale -= 0.1f*gTimeScale;
-	}
-
-	else if ( gKeys[VK_SUBTRACT] )
-	{
-		gTimeScale -= 0.01f;
-	}
-
-	if (gKeys[VK_SHIFT] && gKeys['0'])
-	{
-		gTimeScale = -1.0f;
-	}
-
-	else if (gKeys['0'])
-	{
-		gTimeScale = 0.0f;
-	}
-
-	if( gKeys['R'])
-	{
-		gTimeScale = 1.0f;
-	}
-
-	if( gKeys['Q'] && !gReverseKeyPress)
-	{
-		gTimeScale = -gTimeScale;
-		gReverseKeyPress = true;
-	}
-	if (!gKeys['Q'] && gReverseKeyPress )
-	{
-		gReverseKeyPress = false;
-	}
-
-	return true;
+	return mInput->UpdateKeys();
 }
 
 long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
 						 UINT  uMsg,				// Сообщение для этого окна
 						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam)            // Дополнительная информация
-{
-	switch (uMsg)                // Проверка сообщения для окна
-	{
-	case WM_ACTIVATE:            // Проверка сообщения активности окна
-		{
-			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
-			{
-				gActive = true;					// Программа активна
-			}
-			else
-			{
-				gActive = false;					// Программа теперь не активна
-			}
-
-			return 0;						// Возвращаемся в цикл обработки сообщений
-		}
-	case WM_SYSCOMMAND:            // Перехватываем системную команду
-		{
-			switch ( wParam )            // Останавливаем системный вызов
-			{
-			case SC_SCREENSAVE:				// Пытается ли запустится скринсейвер?
-			case SC_MONITORPOWER:			// Пытается ли монитор перейти в режим сбережения энергии?
-				return 0;						// Предотвращаем это
-			}
-			break;              // Выход
-		}
-	case WM_CLOSE:              // Мы получили сообщение о закрытие?
-		{
-			PostQuitMessage( 0 );			// Отправить сообщение о выходе
-			return 0;							// Вернуться назад
-		}
-
-	case WM_KEYDOWN:            // Была ли нажата кнопка?
-		{
-			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
-			return 0;							// Возвращаемся
-		}
-	case WM_KEYUP:              // Была ли отпущена клавиша?
-		{
-			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
-			return 0;						// Возвращаемся
-		}
-	case WM_SIZE:              // Изменены размеры OpenGL окна
-		{
-			mRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
-			return 0;											// Возвращаемся
-		}
-	}
-	// пересылаем все необработанные сообщения DefWindowProc
-	return DefWindowProc( hWnd, uMsg, wParam, lParam );
-}
-
+						 LPARAM  lParam);            // Дополнительная информация
 
 //int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 //					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
@@ -454,6 +227,8 @@ long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
 int main()
 {
 	int t = float(0);
+
+
 	std::cout << "Hello" << std::endl;
 	std::cerr << "And Your Hello" << std::endl;
 
@@ -565,4 +340,60 @@ int main()
 	mRender->Release();						// Разрушаем окно
 	
 	return ( int(msg.wParam) );              // Выходим из программы
+}
+
+long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+						 UINT  uMsg,				// Сообщение для этого окна
+						 WPARAM  wParam,            // Дополнительная информация
+						 LPARAM  lParam)            // Дополнительная информация
+{
+	switch (uMsg)                // Проверка сообщения для окна
+	{
+	case WM_ACTIVATE:            // Проверка сообщения активности окна
+		{
+			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
+			{
+				gActive = true;					// Программа активна
+			}
+			else
+			{
+				gActive = false;					// Программа теперь не активна
+			}
+
+			return 0;						// Возвращаемся в цикл обработки сообщений
+		}
+	case WM_SYSCOMMAND:            // Перехватываем системную команду
+		{
+			switch ( wParam )            // Останавливаем системный вызов
+			{
+			case SC_SCREENSAVE:				// Пытается ли запустится скринсейвер?
+			case SC_MONITORPOWER:			// Пытается ли монитор перейти в режим сбережения энергии?
+				return 0;						// Предотвращаем это
+			}
+			break;              // Выход
+		}
+	case WM_CLOSE:              // Мы получили сообщение о закрытие?
+		{
+			PostQuitMessage( 0 );			// Отправить сообщение о выходе
+			return 0;							// Вернуться назад
+		}
+
+	case WM_KEYDOWN:            // Была ли нажата кнопка?
+		{
+			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
+			return 0;							// Возвращаемся
+		}
+	case WM_KEYUP:              // Была ли отпущена клавиша?
+		{
+			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
+			return 0;						// Возвращаемся
+		}
+	case WM_SIZE:              // Изменены размеры OpenGL окна
+		{
+			mRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
+			return 0;											// Возвращаемся
+		}
+	}
+	// пересылаем все необработанные сообщения DefWindowProc
+	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }

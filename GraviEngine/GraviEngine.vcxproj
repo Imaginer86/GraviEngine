@@ -88,6 +88,7 @@
     <ClCompile Include="..\src\Entities\Wave.cpp" />
     <ClCompile Include="..\src\Entities\WaveOut.cpp" />
     <ClCompile Include="..\src\Game.cpp" />
+    <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\RenderGL.cpp" />
   </ItemGroup>
@@ -102,6 +103,7 @@
     <ClInclude Include="..\src\Entities\Wave.h" />
     <ClInclude Include="..\src\Entities\WaveOut.h" />
     <ClInclude Include="..\src\Game.h" />
+    <ClInclude Include="..\src\Input.h" />
     <ClInclude Include="..\src\Math\Line.h" />
     <ClInclude Include="..\src\Math\Math.h" />
     <ClInclude Include="..\src\Math\Matrix3.h" />

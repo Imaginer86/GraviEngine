@@ -1,5 +1,6 @@
 ﻿//#pragma once
-#include <Windows.h>
+//#include <Windows.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -15,6 +16,7 @@
 
 #include "RenderGL.h"
 #include "Input.h"
+#include "Platform.h"
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 
@@ -58,6 +60,7 @@ Game mGame;
 Camera mCamera;
 Render* mRender = new RenderGL;
 Input* mInput = new Input;
+Platform mPlatform;
 
 
 void Draw()                // Здесь будет происходить вся прорисовка
@@ -273,7 +276,7 @@ int main()
 	unsigned long tickCount = 0;
 	unsigned long lastTickCount = 0;
 
-	lastTickCount = GetTickCount ();		// Get Tick Count
+	lastTickCount = mPlatform.GetTickCount();		// Get Tick Count
 
 	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
@@ -282,7 +285,7 @@ int main()
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{
-		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )    // Есть ли в очереди какое-нибудь сообщение?
+		if( mPlatform.PeekMessage( msg ) )    // Есть ли в очереди какое-нибудь сообщение?
 		{
 			if( msg.message == WM_QUIT )						// Мы поучили сообщение о выходе?
 			{
@@ -290,8 +293,8 @@ int main()
 			}
 			else												// Если нет, обрабатывает сообщения
 			{
-				TranslateMessage( &msg );							// Переводим сообщение
-				DispatchMessage( &msg );							// Отсылаем сообщение
+				mPlatform.TranslateMessage( msg );							// Переводим сообщение
+				mPlatform.DispatchMessage( msg );							// Отсылаем сообщение
 			}
 		}
 		else	// Если нет сообщений

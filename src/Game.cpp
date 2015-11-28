@@ -220,7 +220,7 @@ void Game::Collision(float dt)
 						//std::cout  << " distance i " << i << ": " << d << std::endl;
 						if (d < rm)
 						{
-							std::cout << "Collosion M (" << pm.x << ", " << pm.y << ", " << pm.z << ") and Plane " << i << std::endl;
+							//std::cout << "Collosion M (" << pm.x << ", " << pm.y << ", " << pm.z << ") and Plane " << i << std::endl;
 							if (InterPlanePoint(pr, P[PI[i][0]], P[PI[i][1]], P[PI[i][2]], P[PI[i][3]]))
 							{					
 								Vector3 n(PL[i].a, PL[i].b, PL[i].c);
@@ -237,10 +237,10 @@ void Game::Collision(float dt)
 									Quaternion q;
 									q.fromAxisAngle(axic, -2.0f*angle);
 									q.normalize();
-									std::cout << "angle" << angle << std::endl;
-									std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
+									//std::cout << "angle" << angle << std::endl;
+									//std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
 									vm = q.rotate(vm);
-									std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
+									//std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
 								}
 								//else
 								//{

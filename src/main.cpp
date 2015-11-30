@@ -1,9 +1,9 @@
 ﻿//#pragma once
-//#include <Windows.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include <Windows.h>
 
 					   
 
@@ -15,15 +15,10 @@
 
 #include "RenderGL.h"
 #include "Input.h"
-#include "Platform.h"
-
-
-//Error
-typedef long (long)(HWND,UINT,WPARAM,LPARAM);
+//#include "Platform.h"
 
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
-#define VK_ESCAPE         0x1B
 
 const int gWidth = 1600;
 const int gHeight = 900;
@@ -89,7 +84,7 @@ bool LoadData(unsigned fileNum)
 	gSceneNum = fileNum;
 
 	std::string fileNumstr = std::to_string(fileNum);
-	std::string fileName = "data//data" + fileNumstr + ".dat";
+	std::string fileName = "..//data//data" + fileNumstr + ".dat";
 	std::ifstream dataFile(fileName, std::ios::in);
 	if (!dataFile)
 		return false;
@@ -214,10 +209,11 @@ bool LoadData(unsigned fileNum)
 
 
 //LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
-//long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 //UINT  uMsg,				// Сообщение для этого окна
-						 //WPARAM  wParam,            // Дополнительная информация
-						 //LPARAM  lParam);            // Дополнительная информация
+
+long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+						 UINT  uMsg,				// Сообщение для этого окна
+						 WPARAM  wParam,            // Дополнительная информация
+						 LPARAM  lParam);            // Дополнительная информация
 
 
 
@@ -235,9 +231,6 @@ bool UpdateKeys()
 
 int main()
 {
-	int t = float(0);
-
-
 	std::cout << "Hello" << std::endl;
 	std::cerr << "And Your Hello" << std::endl;
 
@@ -260,7 +253,7 @@ int main()
 	}
 
 	// Создать наше OpenGL окно
-	if (!mRender->CreateWin(&Platform::Instance().WndProc, "Gravi Engine", gWidth, gHeight, 32))
+	if (!mRender->CreateWin(long(WndProc), "Gravi Engine", gWidth, gHeight, 32))
 	{
 		//MessageBox (NULL, "CreateWin Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
 		std::cerr << "CreateWin Failed!" << std::endl;
@@ -282,7 +275,7 @@ int main()
 	unsigned long tickCount = 0;
 	unsigned long lastTickCount = 0;
 
-	lastTickCount = mPlatform.GetTickCount();		// Get Tick Count
+	lastTickCount = GetTickCount();		// Get Tick Count
 
 	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
@@ -291,7 +284,7 @@ int main()
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{
-		if( mPlatform.PeekMessage( msg ) )    // Есть ли в очереди какое-нибудь сообщение?
+		if( PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) )    // Есть ли в очереди какое-нибудь сообщение?
 		{
 			if( msg.message == WM_QUIT )						// Мы поучили сообщение о выходе?
 			{
@@ -299,8 +292,8 @@ int main()
 			}
 			else												// Если нет, обрабатывает сообщения
 			{
-				mPlatform.TranslateMessage( msg );							// Переводим сообщение
-				mPlatform.DispatchMessage( msg );							// Отсылаем сообщение
+				TranslateMessage( &msg );							// Переводим сообщение
+				DispatchMessage( &msg );							// Отсылаем сообщение
 			}
 		}
 		else	// Если нет сообщений
@@ -351,3 +344,59 @@ int main()
 	return ( int(msg.wParam) );              // Выходим из программы
 }
 
+
+long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+						 UINT  uMsg,				// Сообщение для этого окна
+						 WPARAM  wParam,            // Дополнительная информация
+						 LPARAM  lParam)            // Дополнительная информация
+{
+	switch (uMsg)                // Проверка сообщения для окна
+	{
+	case WM_ACTIVATE:            // Проверка сообщения активности окна
+		{
+			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
+			{
+				gActive = true;					// Программа активна
+			}
+			else
+			{
+				gActive = false;					// Программа теперь не активна
+			}
+
+			return 0;						// Возвращаемся в цикл обработки сообщений
+		}
+	case WM_SYSCOMMAND:            // Перехватываем системную команду
+		{
+			switch ( wParam )            // Останавливаем системный вызов
+			{
+			case SC_SCREENSAVE:				// Пытается ли запустится скринсейвер?
+			case SC_MONITORPOWER:			// Пытается ли монитор перейти в режим сбережения энергии?
+				return 0;						// Предотвращаем это
+			}
+			break;              // Выход
+		}
+	case WM_CLOSE:              // Мы получили сообщение о закрытие?
+		{
+			PostQuitMessage( 0 );			// Отправить сообщение о выходе
+			return 0;							// Вернуться назад
+		}
+
+	case WM_KEYDOWN:            // Была ли нажата кнопка?
+		{
+			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
+			return 0;							// Возвращаемся
+		}
+	case WM_KEYUP:              // Была ли отпущена клавиша?
+		{
+			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
+			return 0;						// Возвращаемся
+		}
+	case WM_SIZE:              // Изменены размеры OpenGL окна
+		{
+			mRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
+			return 0;											// Возвращаемся
+		}
+	}
+	// пересылаем все необработанные сообщения DefWindowProc
+	return DefWindowProc( hWnd, uMsg, wParam, lParam );
+}

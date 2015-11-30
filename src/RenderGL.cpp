@@ -222,7 +222,7 @@ void RenderGL::SetGLLight()
 		glEnable(GL_LIGHTING);
 }
 
-bool RenderGL::CreateWin(long*  WndProc, const char *title, unsigned width, unsigned height, int bits)
+bool RenderGL::CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits)
 {
 	GLuint		PixelFormat;			    // Хранит результат после поиска
 	WNDCLASS	wc;						   // Структура класса окна

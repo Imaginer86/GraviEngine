@@ -1,5 +1,7 @@
 ﻿#include "Render.h"
 
+
+
 class RenderGL : public Render
 {	
 public:

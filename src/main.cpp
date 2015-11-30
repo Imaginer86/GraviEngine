@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 
-
 					   
 
 #include "Game.h"
@@ -18,7 +17,13 @@
 #include "Input.h"
 #include "Platform.h"
 
+
+//Error
+typedef long (long)(HWND,UINT,WPARAM,LPARAM);
+
+
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
+#define VK_ESCAPE         0x1B
 
 const int gWidth = 1600;
 const int gHeight = 900;
@@ -60,7 +65,7 @@ Game mGame;
 Camera mCamera;
 Render* mRender = new RenderGL;
 Input* mInput = new Input;
-Platform mPlatform;
+//Platform mPlatform;
 
 
 void Draw()                // Здесь будет происходить вся прорисовка
@@ -209,6 +214,11 @@ bool LoadData(unsigned fileNum)
 
 
 //LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
+//long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+						 //UINT  uMsg,				// Сообщение для этого окна
+						 //WPARAM  wParam,            // Дополнительная информация
+						 //LPARAM  lParam);            // Дополнительная информация
+
 
 
 bool UpdateKeys()
@@ -216,10 +226,6 @@ bool UpdateKeys()
 	return mInput->UpdateKeys();
 }
 
-long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 UINT  uMsg,				// Сообщение для этого окна
-						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam);            // Дополнительная информация
 
 //int WINAPI WinMain(	HINSTANCE  hInstance,				// Дескриптор приложения
 //					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
@@ -254,7 +260,7 @@ int main()
 	}
 
 	// Создать наше OpenGL окно
-	if (!mRender->CreateWin(long(WndProc), "Gravi Engine", gWidth, gHeight, 32))
+	if (!mRender->CreateWin(&Platform::Instance().WndProc, "Gravi Engine", gWidth, gHeight, 32))
 	{
 		//MessageBox (NULL, "CreateWin Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
 		std::cerr << "CreateWin Failed!" << std::endl;
@@ -345,58 +351,3 @@ int main()
 	return ( int(msg.wParam) );              // Выходим из программы
 }
 
-long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 UINT  uMsg,				// Сообщение для этого окна
-						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam)            // Дополнительная информация
-{
-	switch (uMsg)                // Проверка сообщения для окна
-	{
-	case WM_ACTIVATE:            // Проверка сообщения активности окна
-		{
-			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
-			{
-				gActive = true;					// Программа активна
-			}
-			else
-			{
-				gActive = false;					// Программа теперь не активна
-			}
-
-			return 0;						// Возвращаемся в цикл обработки сообщений
-		}
-	case WM_SYSCOMMAND:            // Перехватываем системную команду
-		{
-			switch ( wParam )            // Останавливаем системный вызов
-			{
-			case SC_SCREENSAVE:				// Пытается ли запустится скринсейвер?
-			case SC_MONITORPOWER:			// Пытается ли монитор перейти в режим сбережения энергии?
-				return 0;						// Предотвращаем это
-			}
-			break;              // Выход
-		}
-	case WM_CLOSE:              // Мы получили сообщение о закрытие?
-		{
-			PostQuitMessage( 0 );			// Отправить сообщение о выходе
-			return 0;							// Вернуться назад
-		}
-
-	case WM_KEYDOWN:            // Была ли нажата кнопка?
-		{
-			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
-			return 0;							// Возвращаемся
-		}
-	case WM_KEYUP:              // Была ли отпущена клавиша?
-		{
-			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
-			return 0;						// Возвращаемся
-		}
-	case WM_SIZE:              // Изменены размеры OpenGL окна
-		{
-			mRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
-			return 0;											// Возвращаемся
-		}
-	}
-	// пересылаем все необработанные сообщения DefWindowProc
-	return DefWindowProc( hWnd, uMsg, wParam, lParam );
-}

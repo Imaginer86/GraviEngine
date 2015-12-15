@@ -1,22 +1,21 @@
-﻿//#pragma once
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <string>
 
-#include <Windows.h>
+//#include <Windows.h>
 
-					   
-
-#include "Game.h"
-#include "Camera.h"
-#include "Color.h"
+#include "main.h"
 
 #include "Math\Math.h"
-
+#include "Color.h"
+#include "Game.h"
+#include "Camera.h"
 #include "RenderGL.h"
 #include "Input.h"
-//#include "Platform.h"
 
+#include "Platform.h"
+
+Platform GggPlatform;
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 
@@ -60,7 +59,9 @@ Game mGame;
 Camera mCamera;
 Render* mRender = new RenderGL;
 Input* mInput = new Input;
-//Platform mPlatform;
+
+
+
 
 
 void Draw()                // Здесь будет происходить вся прорисовка
@@ -83,9 +84,12 @@ bool LoadData(unsigned fileNum)
 {
 	gSceneNum = fileNum;
 
-	std::string fileNumstr = std::to_string(fileNum);
+	//std::string fileNumstr = std::to_string(fileNum);
+	char* fileNameCharPtr = "0";
+	std::string fileNumstr = itoa(fileNum, fileNameCharPtr,1);//!!!
 	std::string fileName = "..//data//data" + fileNumstr + ".dat";
-	std::ifstream dataFile(fileName, std::ios::in);
+	//std::ifstream dataFile(fileName, std::ios::in);
+	std::ifstream dataFile(fileNameCharPtr, std::ios::in);
 	if (!dataFile)
 		return false;
 
@@ -210,10 +214,17 @@ bool LoadData(unsigned fileNum)
 
 //LRESULT  CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );        // Прототип функции WndProc
 
-long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 UINT  uMsg,				// Сообщение для этого окна
-						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam);            // Дополнительная информация
+//long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
+						 //UINT  uMsg,				// Сообщение для этого окна
+						 //WPARAM  wParam,            // Дополнительная информация
+						 //LPARAM  lParam);            // Дополнительная информация
+
+
+long WndProc(  int  hWnd,				// Дескриптор нужного окна
+			 unsigned int  uMsg,				// Сообщение для этого окна
+			 unsigned int  wParam,            // Дополнительная информация
+			 unsigned int  lParam);            // Дополнительная информация
+
 
 
 
@@ -272,15 +283,15 @@ int main()
 
 	bool  done = false;	// Логическая переменная для выхода из цикла
 
-	unsigned long tickCount = 0;
-	unsigned long lastTickCount = 0;
+	long tickCount = 0;
+	long lastTickCount = 0;
 
 	lastTickCount = GetTickCount();		// Get Tick Count
 
 	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
 
-	MSG  msg;           // Структура для хранения сообщения Windows
+	MMMSG  msg;           // Структура для хранения сообщения Windows
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{
@@ -346,9 +357,9 @@ int main()
 
 
 long WndProc(  HWND  hWnd,				// Дескриптор нужного окна
-						 UINT  uMsg,				// Сообщение для этого окна
-						 WPARAM  wParam,            // Дополнительная информация
-						 LPARAM  lParam)            // Дополнительная информация
+						 unsigned int	uMsg,				// Сообщение для этого окна
+						 unsigned int	wParam,            // Дополнительная информация
+						 unsigned int	lParam)            // Дополнительная информация
 {
 	switch (uMsg)                // Проверка сообщения для окна
 	{

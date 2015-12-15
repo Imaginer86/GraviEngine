@@ -19,7 +19,7 @@ public:
 	{
 	}
 
-//	static Render& Instance() = 0;
+//	static Render& Instance()
 //	{
 //		static Render SingleRender;
 //		return SingleRender;

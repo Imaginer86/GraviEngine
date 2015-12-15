@@ -16,10 +16,18 @@
 #include "Math/Quaternion.h"
 #include "Math/Vector3.h"
 
-HDC		hDC = nullptr;              // Приватный контекст устройства GDI
-HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
-HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
-HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
+
+
+//HDC		hDC = nullptr;              // Приватный контекст устройства GDI
+//HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
+//HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
+//HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
+
+HDC		hDC = NULL;              // Приватный контекст устройства GDI
+HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
+HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
+HINSTANCE  rhInstance = NULL;              // Здесь будет хранится дескриптор приложения 
+
 
 //GLfloat gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 //GLfloat gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света

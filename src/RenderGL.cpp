@@ -209,7 +209,7 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 	glLoadIdentity();              // Сброс матрицы проекции
 
 	// Вычисление соотношения геометрических размеров для окна
-	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 400.0);
+	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 2000.0f);
 
 	// 	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
 	// 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 

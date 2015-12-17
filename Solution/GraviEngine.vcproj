@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OpenGL32.lib GLu32.lib GLaux.lib"
+				AdditionalDependencies="OpenGL32.lib GLu32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="D:\Work\Lab\GraviEngine\src\gl"
 				GenerateDebugInformation="true"

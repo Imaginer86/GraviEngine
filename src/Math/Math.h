@@ -1,6 +1,9 @@
 ﻿#pragma once
 //#define  _USE_MATH_DEFINES
-#include <math.h>
+#include <ctime>
+#include <cmath>
+
+
 
 
 
@@ -30,5 +33,15 @@ namespace Math
 	static float radiansToDegrees(float radians)
 	{
 		return (radians * 180.0f) / PI;
+	}
+
+	static float randf(float t)
+	{
+		return float( rand() / int(RAND_MAX));
+	}
+
+	static void randomize()	
+	{
+		srand(time(NULL));
 	}
 }

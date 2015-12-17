@@ -115,7 +115,7 @@ public:
 
     float length()								// length() returns the length of this Vector3
     {
-        return sqrt(x*x + y*y + z*z);
+        return sqrtf(x*x + y*y + z*z);
     };			   		
 
     float unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.

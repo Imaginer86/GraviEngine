@@ -13,6 +13,9 @@ public:
 	}
 	virtual ~RenderGL();
 
+	virtual bool Init();
+	virtual bool Release();
+
 	void BuildFont();
 	void KillFont();
 	int LoadGLTextures();
@@ -27,9 +30,6 @@ public:
 	virtual void DisableLight();
 
 	void SetFullScreen(bool Fullscreen_);
-
-	virtual bool Init();
-	virtual bool Release();
 
 	virtual void BeginDraw();
 	virtual void EndDraw();

@@ -33,8 +33,8 @@ struct MMMSG
 #define PM_NOYIELD          0x0002
 */
 
-typedef HWND HHHWND;
-typedef MSG MMMSG;
+//typedef HWND HHHWND;
+//typedef MSG MMMSG;
 //typedef *MSG (*MMMSG);
 
 
@@ -51,7 +51,7 @@ public:
 	}
 
 	long GetTickCount();
-	bool PeekMessageCCC(MMMSG &msg, HHHWND hWnd, unsigned int, unsigned int, unsigned int);
+	bool PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int, unsigned int, unsigned int);
 };
 
 //}

@@ -2,20 +2,32 @@
 #include <fstream>
 #include <string>
 
-//#include <Windows.h>
 
+
+#include "Platform.h"
 #include "main.h"
+#include "RenderGL.h"
 
-#include "Math\Math.h"
+//#include "Math\Math.h"
 #include "Color.h"
 #include "Game.h"
 #include "Camera.h"
-#include "RenderGL.h"
 #include "Input.h"
 
-#include "Platform.h"
+#include "Sky.h"
+
+
 
 Platform GggPlatform;
+
+Game mGame;
+Camera mCamera;
+Sky mSky;
+
+
+Render* mRender = new RenderGL;
+Input* mInput = new Input;
+
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 
@@ -55,18 +67,11 @@ bool gUpdateCamera = false;
 bool gFirstLoad = true;
 
 
-Game mGame;
-Camera mCamera;
-Render* mRender = new RenderGL;
-Input* mInput = new Input;
-
-
-
-
 
 void Draw()                // Здесь будет происходить вся прорисовка
 {
 	mRender->BeginDraw();
+	mSky.Draw();
 	mGame.Draw();
 	if (gShowDebugInfo)
 		mRender->DrawDebugInfo();
@@ -84,14 +89,26 @@ bool LoadData(unsigned fileNum)
 {
 	gSceneNum = fileNum;
 
-	//std::string fileNumstr = std::to_string(fileNum);
-	char* fileNameCharPtr = "0";
-	std::string fileNumstr = itoa(fileNum, fileNameCharPtr,1);//!!!
+	std::string fileNumstr = std::to_string(fileNum);
+
+	//!!!char* fileNameCharPtr = "0";
+	//!!!std::string fileNumstr = itoa(fileNum, fileNameCharPtr,1);
+
 	std::string fileName = "..//data//data" + fileNumstr + ".dat";
-	//std::ifstream dataFile(fileName, std::ios::in);
-	std::ifstream dataFile(fileNameCharPtr, std::ios::in);
+	std::ifstream dataFile(fileName, std::ios::in);
+
+	//!!!std::ifstream dataFile(fileNameCharPtr, std::ios::in);
+
 	if (!dataFile)
 		return false;
+
+	unsigned long numStars;
+	dataFile >> numStars;
+	if (!mSky.Init(numStars))
+	{
+		std::cerr << "Sky Init Falue...";
+		return false;
+	}
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;
@@ -220,10 +237,7 @@ bool LoadData(unsigned fileNum)
 						 //LPARAM  lParam);            // Дополнительная информация
 
 
-long WndProc(  int  hWnd,				// Дескриптор нужного окна
-			 unsigned int  uMsg,				// Сообщение для этого окна
-			 unsigned int  wParam,            // Дополнительная информация
-			 unsigned int  lParam);            // Дополнительная информация
+
 
 
 
@@ -238,8 +252,6 @@ bool UpdateKeys()
 //					HINSTANCE  hPrevInstance,			// Дескриптор родительского приложения
 //					LPSTR    lpCmdLine,					// Параметры командной строки
 //					int    nCmdShow */)					// Состояние отображения окна
-
-
 int main()
 {
 	std::cout << "Hello" << std::endl;
@@ -257,9 +269,7 @@ int main()
 	if (!LoadData(gSceneNum)) 
 	{
 		//MessageBox (NULL, "Load Data Failed!", "Error", MB_OK | MB_ICONEXCLAMATION);
-
 		std::cerr << "Load Data Failed!" << std::endl;
-
 		return 1;													// Return False (Failure)
 	}
 
@@ -291,7 +301,7 @@ int main()
 	float framesPerSecond = 0.0f;
 	float lastTime = 0.0f;
 
-	MMMSG  msg;           // Структура для хранения сообщения Windows
+	MSG  msg;           // Структура для хранения сообщения Windows
 
 	while( !done )							// Цикл продолжается, пока done не равно true
 	{

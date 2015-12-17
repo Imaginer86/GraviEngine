@@ -92,6 +92,8 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Platform.cpp" />
     <ClCompile Include="..\src\RenderGL.cpp" />
+    <ClCompile Include="..\src\Sky.cpp" />
+    <ClCompile Include="..\src\Star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
@@ -116,6 +118,8 @@
     <ClInclude Include="..\src\Platform.h" />
     <ClInclude Include="..\src\Render.h" />
     <ClInclude Include="..\src\RenderGL.h" />
+    <ClInclude Include="..\src\Sky.h" />
+    <ClInclude Include="..\src\Star.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

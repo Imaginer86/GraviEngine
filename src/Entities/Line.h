@@ -12,9 +12,9 @@ public:
 
 	virtual ~Line(){};
 
-	void SetR(float r)
+	void SetR(float r_)
 	{
-		this->r = r;
+		this->r = r_;
 	}
 
 	virtual float GetR()
@@ -22,9 +22,9 @@ public:
 		return r;
 	}
 
-	void SetH(float h)
+	void SetH(float h_)
 	{
-		this->h = h;
+		this->h = h_;
 	}
 
 	virtual float GetH()
@@ -32,9 +32,9 @@ public:
 		return h;
 	}
 
-	void SetQuaternion(Quaternion q)
+	void SetQuaternion(Quaternion q_)
 	{
-		this->q = q;
+		this->q = q_;
 	}
 
 	Quaternion GetQuaternion()
@@ -42,16 +42,16 @@ public:
 		return q;
 	}
 
-	virtual void applyForce(Vector3& force)
+	virtual void applyForce(Vector3& force_)
 	{
-		this->force += force;
+		this->force += force_;
 		return;
 	}
 
 	virtual void simulateForce(float dt)
 	{
-		float t = dt; // todo
-		t++;
+		//float t = dt; // todo
+		//t++;
 		return;
 	}
 
@@ -62,7 +62,7 @@ public:
 
 	virtual bool IsColisions(Entity& entity)
 	{
-		Vector3 pos = entity.GetPos(); //todo
+		Vector3 posss = entity.GetPos(); //todo
 		return false;
 	}
 

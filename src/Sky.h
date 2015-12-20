@@ -1,7 +1,9 @@
 #pragma once
+#include "Math/Quaternion.h"
+#include "Math/Vector3.h"
 //#include <vector>
 
-#include "Star.h"
+//#include "Star.h"
 
 class Sky
 {
@@ -12,10 +14,15 @@ public:
 	Sky(long numStars);
 	~Sky();	
 	
-	bool Init(long numStars);
+	void Init(unsigned long numStars);
+	void Randomize();
 	void Draw();
 
 //private:
 	//std::vector <Star> Stars;
-	Star *Stars;
+	//Star *Stars;
+
+protected:
+	Quaternion *q;
+	Vector3 *R;
 };

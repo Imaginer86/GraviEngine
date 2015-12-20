@@ -25,11 +25,11 @@ public:
 // 	{
 // 	}
 
-    void Set(float x, float y, float z)
+    void Set(float x_, float y_, float z_)
     {
-        this->x = x;
-        this->y = y;
-        this->z = z;
+        this->x = x_;
+        this->y = y_;
+        this->z = z_;
     }
 
     Vector3& operator= (Vector3 v)			// operator= sets values of v to this Vector3. example: v1 = v2 means that values of v2 are set onto v1

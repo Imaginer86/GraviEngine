@@ -90,6 +90,7 @@
     <ClCompile Include="..\src\Game.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Math\Random.cpp" />
     <ClCompile Include="..\src\Platform.cpp" />
     <ClCompile Include="..\src\RenderGL.cpp" />
     <ClCompile Include="..\src\Sky.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="..\src\Math\Matrix4.h" />
     <ClInclude Include="..\src\Math\Plane.h" />
     <ClInclude Include="..\src\Math\Quaternion.h" />
+    <ClInclude Include="..\src\Math\Random.h" />
     <ClInclude Include="..\src\Math\Vector3.h" />
     <ClInclude Include="..\src\Math\VectorField.h" />
     <ClInclude Include="..\src\Platform.h" />

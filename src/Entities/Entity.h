@@ -27,9 +27,9 @@ public:
 		return pos;
 	}
 
-	virtual void SetPos(const Vector3& pos)
+	virtual void SetPos(const Vector3& pos_)
 	{
-		this->pos = pos;
+		this->pos = pos_;
 	}
 
 	virtual Vector3 GetVel()
@@ -56,9 +56,9 @@ public:
 
 	virtual void SetColor(const Color4f& color) = 0;
 
-	void applyForce(Vector3& force)
+	void applyForce(Vector3& force_)
 	{
-		this->force += force;					// The external force is added to the force of the mass
+		this->force += force_;					// The external force is added to the force of the mass
 	}
 
 	void applyAcc(Vector3& acc, float dt)

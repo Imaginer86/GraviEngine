@@ -22,9 +22,9 @@ public:
 		return color;
 	}
 
-	void SetColor(const Color4f& color)
+	void SetColor(const Color4f& color_)
 	{
-		this->color = color;
+		this->color = color_;
 	}
 
 

@@ -9,12 +9,13 @@
 #include "RenderGL.h"
 
 //#include "Math\Math.h"
+#include "Sky.h"
 #include "Color.h"
 #include "Game.h"
 #include "Camera.h"
 #include "Input.h"
 
-#include "Sky.h"
+
 
 
 
@@ -104,11 +105,9 @@ bool LoadData(unsigned fileNum)
 
 	unsigned long numStars;
 	dataFile >> numStars;
-	if (!mSky.Init(numStars))
-	{
-		std::cerr << "Sky Init Falue...";
-		return false;
-	}
+	mSky.Randomize();
+	mSky.Init(numStars);
+	
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;

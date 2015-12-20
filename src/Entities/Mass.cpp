@@ -14,13 +14,13 @@ Mass::Mass(float m_, float r_, Vector3 pos_, Vector3 vel_)
 {
 }
 
-void Mass::Set(float m, float r, Vector3 p, Vector3 v, Color4f color)
+void Mass::Set(float m_, float r_, Vector3 p_, Vector3 vel_, Color4f color_)
 {
-	this->m = m;
-	this->r = r;
-	this->pos = p;
-	this->vel = v;	
-	this->color = color;
+	this->m = m_;
+	this->r = r_;
+	this->pos = p_;
+	this->vel = vel_;	
+	this->color = color_;
 }
 
 void Mass::Draw()

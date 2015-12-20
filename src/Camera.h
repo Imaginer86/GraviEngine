@@ -24,9 +24,9 @@ public:
 		return pos;
 	}
 
-	void SetPos(Vector3& pos)
+	void SetPos(Vector3& pos_)
 	{
-		this->pos = pos;
+		this->pos = pos_;
 	}
 
 	Vector3 GetView();
@@ -41,9 +41,9 @@ public:
 		return q;
 	}
 
-	void SetQuaternion(Quaternion& q)
+	void SetQuaternion(Quaternion& q_)
 	{
-		this->q = q;
+		this->q = q_;
 	}
 private:
 	Vector3 pos;

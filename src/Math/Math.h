@@ -1,17 +1,11 @@
 ﻿#pragma once
 //#define  _USE_MATH_DEFINES
-#include <ctime>
+//#include <ctime>
 #include <cmath>
-
-
-
-
 
 namespace Math
 {
-
 	static const float M_PI = 3.14159265358979323846f;
-
 	static const float PI = float(M_PI);
 	static const float HALF_PI = float(M_PI)/2.0f;
 	//static float EPSILON  = 0.00000000001f;;
@@ -21,7 +15,6 @@ namespace Math
 	{
 		// Determines whether the two floating-point values f1 and f2 are
 		// close enough together that they can be considered equal.
-
 		return fabsf((f1 - f2) / ((f2 == 0.0f) ? 1.0f : f2)) < EPSILON;
 	}
 
@@ -35,13 +28,13 @@ namespace Math
 		return (radians * 180.0f) / PI;
 	}
 
-	static float randf(float t)
-	{
-		return float( rand() / int(RAND_MAX));
-	}
+//	static float randf()
+//	{
+//		return float(rand()) / float(RAND_MAX);
+//	}
 
-	static void randomize()	
-	{
-		srand(time(NULL));
-	}
+//	static void randomize()
+//	{
+//		srand(static_cast<unsigned int>(time(NULL)));
+//	}
 }

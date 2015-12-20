@@ -16,9 +16,9 @@ public:
 		return size;
 	}
 
-	void SetSize(Vector3& size)
+	void SetSize(Vector3& size_)
 	{
-		this->size = size;
+		this->size = size_;
 	}
 
 	Quaternion GetAngleQ()
@@ -46,9 +46,9 @@ public:
 		return color;
 	}
 
-	void SetColor(const Color4f& color)
+	void SetColor(const Color4f& color_)
 	{
-		this->color = color;
+		this->color = color_;
 	}
 
 

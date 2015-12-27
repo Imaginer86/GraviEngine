@@ -14,8 +14,9 @@ static const float minDistG = 0.1f;
 
 Game::Game()
 : numEntitys(0)
+, bGraviMasses(false)
+, bGraviAcc(false)
 , graviAcc(0, 0, 0)
-, frame(0)
 {
 }
 
@@ -69,6 +70,44 @@ void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f
 	Entities.push_back(line);
 }
 */
+
+void Game::Update(float dt)
+{
+	//static unsigned int iteration = 0;
+	this->Init();										// Step 1: reset forces to zero	
+	if (bGraviMasses)
+	{
+		this->Solve();									// Step 2: apply forces		
+	}
+	if (bGraviAcc)
+	{
+		this->AddGraviAcc(dt);
+		this->Collision(dt);
+	}
+	this->Simulate(dt);								// Step 3: iterate the masses by the change in time
+}
+
+void Game::Init() /* this method will call the init() method of every mass */
+{
+	for (unsigned i = 0; i < Entities.size(); i++)		// We will init() every mass
+		Entities[i]->init();						// call init() method of the mass
+}
+
+void Game::AddGraviAcc(float dt)
+{
+	for (unsigned i = 0; i < Entities.size(); i++)
+	{
+		if (typeid(*Entities[i]) == typeid(Mass))
+			Entities[i]->applyAcc(graviAcc, dt);
+	}
+}
+
+void Game::Simulate(float dt) /* Iterate the masses by the change in time */
+{
+	for (unsigned i = 0; i < Entities.size(); i++)		// We will iterate every mass
+		Entities[i]->simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
+}
+
 
 void Game::Collision(float dt)
 {
@@ -289,7 +328,7 @@ void Game::Draw()
 	}
 }
 
-/*
+
 Vector3 Game::GraviForce( int a, int b )
 {
 	Vector3 f;
@@ -325,35 +364,10 @@ Vector3 Game::GraviForce( int a, int b )
 
 	return f;
 }
-*/
 
-void Game::Update(float dt)
-{
-	if (dt == 0.0f)
-		return;
-	else if (dt > 0.0f)
-		frame++;
-	else if (dt < 0.0f)
-		frame--;
-
-
-	//static unsigned int iteration = 0;
-	this->Init();										// Step 1: reset forces to zero	
-	this->AddGraviAcc(dt);
-	//this->Solve();									// Step 2: apply forces
-	this->Simulate(dt);								// Step 3: iterate the masses by the change in time
-
-	this->Collision(dt);
-}
-
-void Game::Init() /* this method will call the init() method of every mass */
-{
-	for(unsigned i = 0; i < Entities.size(); i++)		// We will init() every mass
-		Entities[i]->init();						// call init() method of the mass
-}
 
 /* no implementation because no forces are wanted in this basic container */
-/*
+
 void Game::Solve() 
 {
 	for(unsigned a = 0; a < Entities.size(); a++)
@@ -368,20 +382,4 @@ void Game::Solve()
 		}
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses
-}
-*/
-
-void Game::AddGraviAcc(float dt)
-{
-	for (unsigned i = 0; i < Entities.size(); i++)
-	{
-		if (typeid(*Entities[i]) == typeid(Mass))
-			Entities[i]->applyAcc(graviAcc, dt);
-	}
-}
-
-void Game::Simulate( float dt ) /* Iterate the masses by the change in time */
-{
-	for(unsigned i = 0; i < Entities.size(); i++)		// We will iterate every mass
-		Entities[i]->simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
 }

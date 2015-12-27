@@ -105,8 +105,19 @@ bool LoadData(unsigned fileNum)
 
 	unsigned long numStars;
 	dataFile >> numStars;
-	mSky.Randomize();
-	mSky.Init(numStars);
+	if (numStars)
+	{
+		mSky.Randomize();
+		mSky.Init(numStars);
+	}
+
+	bool bGraviMasses;
+	dataFile >> bGraviMasses;
+	mGame.SetBGraviMasses(bGraviMasses);
+
+	bool bGraviAcc;
+	dataFile >> bGraviAcc;
+	mGame.SetBGraviAcc(bGraviAcc);
 	
 
 	Vector3 cameraPos;

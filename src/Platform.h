@@ -51,6 +51,7 @@ public:
 	}
 
 	long GetTickCount();
+	//bool PeekMessageCCC(void *msg, void* hWnd, unsigned int, unsigned int, unsigned int);
 	bool PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int, unsigned int, unsigned int);
 };
 

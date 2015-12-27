@@ -21,6 +21,7 @@ long Platform::GetTickCount()
 	return ::GetTickCount();
 }
 
+//bool Platform::PeekMessageCCC(void *msg, void *hWnd, unsigned int wParam, unsigned lParam, unsigned int XZ)
 bool Platform::PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int wParam, unsigned lParam, unsigned int XZ)
 {
 	return ::PeekMessage(&msg, hWnd, wParam, lParam, XZ);

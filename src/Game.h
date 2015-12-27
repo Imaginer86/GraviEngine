@@ -29,6 +29,16 @@ public:
 
 //	void SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
+	void SetBGraviMasses(bool bGraviMasses_)
+	{
+		bGraviMasses = bGraviMasses_;
+	}
+
+	void SetBGraviAcc(bool bGraviAcc_)
+	{
+		bGraviAcc = bGraviAcc_;
+	}
+
 	void Game::SetGraviAcc(Vector3 graviAcc_)
 	{
 		this->graviAcc = graviAcc_;
@@ -38,10 +48,10 @@ public:
 
 	void Draw();
 	
-	//Vector3 GraviForce(int a, int b);
+	Vector3 GraviForce(int a, int b);
 
 	void Init();								// this method will call the init() method of every mass;
- 	//void Solve();							// no implementation because no forces are wanted in this basic container;
+ 	void Solve();							// no implementation because no forces are wanted in this basic container;
  	void Simulate(float dt);					// Iterate the masses by the change in time;
 	void AddGraviAcc(float dt);
 
@@ -53,6 +63,7 @@ private:
 	int numEntitys;
 	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
+	bool bGraviMasses;
+	bool bGraviAcc;	
 	Vector3 graviAcc;
-	int frame;
 };

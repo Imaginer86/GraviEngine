@@ -12,7 +12,7 @@ public:
 
 	Sky();
 	Sky(long numStars);
-	~Sky();	
+	virtual ~Sky();	
 	
 	void Init(unsigned long numStars);
 	void Randomize();
@@ -23,6 +23,7 @@ public:
 	//Star *Stars;
 
 protected:
-	Quaternion *q;
+	//Quaternion *q;
 	Vector3 *R;
+	float *r;
 };

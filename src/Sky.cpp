@@ -28,7 +28,9 @@ Sky::Sky(long numStars_)
 
 Sky::~Sky()
 {
-
+	//delete[] q;
+	delete[] R;
+	delete[] r;
 }
 
 void Sky::Init(unsigned long numStars_)
@@ -37,15 +39,18 @@ void Sky::Init(unsigned long numStars_)
 	//Stars = new Star[numStars];
 	//return Stars != nullptr;
 
-	this->q = new Quaternion[numStars];
-	this->R = new Vector3[numStars];
+	//q = new Quaternion[numStars];
+	R = new Vector3[numStars];
+	r = new float[numStars];
+
 
 	for (unsigned long i = 0; i < this->numStars; i++)
 	{
-		q[i].fromAxisAngle(Vector3(dist * (-1.0f + Random::Instance().randf() * 2) , dist * (-1.0f + Random::Instance().randf() * 2), dist * (-1.0f + Random::Instance().randf() * 2)),
-			360.0f * Random::Instance().randf() * 2);
-		q[i].normalize();
+		//q[i].fromAxisAngle(Vector3(dist * (-1.0f + Random::Instance().randf() * 2) , dist * (-1.0f + Random::Instance().randf() * 2), dist * (-1.0f + Random::Instance().randf() * 2)),
+			//360.0f * Random::Instance().randf() * 2);
+		//q[i].normalize();
 		R[i] = Vector3(dist * (-1.0f + Random::Instance().randf() * 2), dist * (-1.0f + Random::Instance().randf() * 2), dist * (-1.0f + Random::Instance().randf() * 2));
+		r[i] = Random::Instance().randf() * 3.0f;
 
 		//std::cout << R[i].x << " " << R[i].y << " " << R[i].z << " " << std::endl;
 	}
@@ -68,7 +73,7 @@ void Sky::Draw()
 	{
 		//Stars[i].Draw();
 		//Color4f color = Color4f(float(rand()) / float(RAND_MAX), float(rand()) / float(RAND_MAX), float(rand()) / float(RAND_MAX), float(rand()) / float(RAND_MAX));
-		Color4f color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-		RenderGL::Instance().DrawSphere(R[i] / 10.0f, 10.0f, color);
+		Color4f color = Color4f(Random::Instance().randf(), Random::Instance().randf(), Random::Instance().randf(), 1.0f);
+		RenderGL::Instance().DrawSphere(R[i] / 5.0f, r[i], color);
 	}
 }

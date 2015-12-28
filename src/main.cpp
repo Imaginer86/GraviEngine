@@ -8,7 +8,7 @@
 #include "main.h"
 #include "RenderGL.h"
 
-//#include "Math\Math.h"
+#include "Math/Math.h"
 #include "Sky.h"
 #include "Color.h"
 #include "Game.h"

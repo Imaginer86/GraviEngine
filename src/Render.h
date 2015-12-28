@@ -19,40 +19,40 @@ public:
 	{
 	}
 
-//	static Render& Instance()
+//	static Render& Instance() = 0;
 //	{
 //		static Render SingleRender;
 //		return SingleRender;
 //	}
 
-	virtual bool Init()
-	{
-		return false;
-	}
-	virtual bool Release()
-	{
-		return false;
-	}
+	virtual bool Init() = 0;
+	virtual bool Release() = 0;
 
-	virtual void BeginDraw() {}
-	virtual void EndDraw() {}
+	virtual void BeginDraw() = 0;
+	virtual void EndDraw() = 0;
 
-	virtual void DrawDebugInfo() {}
+	virtual void BuildFont() = 0;
+	virtual void KillFont() = 0;	
 
-	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const {}
-	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const {}
+	virtual void ReSizeGLScene(unsigned width, unsigned height)	= 0;
+	virtual void SetGLLight() = 0;
 
-	virtual void ReSizeGLScene(unsigned width, unsigned height)	{}
-	virtual void SetGLLight() {}
+	virtual int LoadGLTextures() = 0;
 
-	virtual void EnableLight() {}
-	virtual void DisableLight() {}
+	//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition) = 0;
+
+	virtual void EnableLight() = 0;
+	virtual void DisableLight() = 0;
+
+	virtual void SetFullScreen(bool Fullscreen_) = 0;
 
 	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits) = 0;
-//	{
-//		return false;
-//	}
 
+	virtual void glPrint(const char *fmt, ...) = 0;
+
+	virtual void DrawDebugInfo() = 0;
+	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const = 0;
+	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const = 0;
 public:
 
 	Camera *rCamera;

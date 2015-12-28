@@ -16,26 +16,29 @@ public:
 	virtual bool Init();
 	virtual bool Release();
 
-	void BuildFont();
-	void KillFont();
-	int LoadGLTextures();
-	void glPrint(const char *fmt, ...);
+	virtual void BeginDraw();
+	virtual void EndDraw();
+
+	virtual void BuildFont();
+	virtual void KillFont();
+	
 	virtual void ReSizeGLScene(unsigned width, unsigned height);
 	virtual void SetGLLight();
-	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits);
 
-	void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
+	virtual int LoadGLTextures();
+	
+	//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
 
 	virtual void EnableLight();
 	virtual void DisableLight();
 
-	void SetFullScreen(bool Fullscreen_);
+	virtual void SetFullScreen(bool Fullscreen_);
 
-	virtual void BeginDraw();
-	virtual void EndDraw();
+	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits);
+
+	virtual void glPrint(const char *fmt, ...);
 
 	virtual void DrawDebugInfo();
-
 	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const;
 	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const;
 };

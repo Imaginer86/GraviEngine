@@ -1,13 +1,14 @@
 ﻿#pragma once
+#include "BaseEntity.h"
 #include "../Math/Vector3.h"
 #include "../Color.h"
 
-class Entity
+class Entity: public BaseEntity
 {
 public:
 	Entity();
 
-	Entity(float m, Vector3 pos, Vector3 vel, Color4f color);
+	Entity(Vector3 pos_, float m_, Vector3 vel_, Color4f color_);
 
 	virtual ~Entity();
 
@@ -79,26 +80,25 @@ public:
 
 protected:
 	float m;
-	Vector3 pos;
 	Vector3 vel;
 	Vector3 force;
 	Color4f color;
 };
 
 inline Entity::Entity()
-: m(1.0f)
-, pos(0.0f, 0.0f, 0.0f)
+: BaseEntity(Vector3(0.0f, 0.0f, 0.0f))
+, m(1.0f)
 , vel(0.0f, 0.0f, 0.0f)	
 , force(0.0f, 0.0f, 0.0f)
 , color(1.0f, 1.0f, 1.0f, 1.0f)
 {
 }
 
-inline Entity::Entity(float m, Vector3 pos, Vector3 vel, Color4f color)
-	: m(m)
-	, pos(pos)
-	, vel(vel)
-	, force(0.0f, 0.0f, 0.0f)
+inline Entity::Entity(Vector3 pos_, float m_, Vector3 vel_, Color4f color_)
+: BaseEntity(pos_)
+, m(m_)
+, vel(vel_)
+, force(0.0f, 0.0f, 0.0f)
 {}
 
 inline Entity::~Entity()

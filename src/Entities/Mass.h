@@ -10,7 +10,7 @@ public:
 
 	virtual ~Mass(){};	
 
-	void Set(float m, float r, Vector3 p, Vector3 v, Color4f color);
+	void Set(float m_, float r_, Vector3 pos_, Vector3 v_, Color4f color_);
 
 	virtual float GetR()
 	{

@@ -8,18 +8,18 @@ Mass::Mass()
 
 
 Mass::Mass(float m_, float r_, Vector3 pos_, Vector3 vel_)
-: Entity(m_, pos_, vel_, Color4f(0.0f, 0.0f, 0.0f, 0.0f))
+: Entity(pos_, m_, vel_, Color4f(0.0f, 0.0f, 0.0f, 0.0f))
 , r(r_)
 {
 }
 
-void Mass::Set(float m_, float r_, Vector3 p_, Vector3 vel_, Color4f color_)
+void Mass::Set(float m_, float r_, Vector3 pos_, Vector3 vel_, Color4f color_)
 {
-	this->m = m_;
-	this->r = r_;
-	this->pos = p_;
-	this->vel = vel_;	
-	this->color = color_;
+	m = m_;
+	r = r_;
+	pos = pos_;
+	vel = vel_;	
+	color = color_;
 }
 
 void Mass::Draw()

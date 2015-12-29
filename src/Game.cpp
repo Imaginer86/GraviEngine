@@ -59,10 +59,10 @@ void Game::AddBox(float m, const Vector3& size, const Vector3& pos, const Vector
 	Entities.push_back(box);
 }
 
-void Game::AddSmoker(const Vector3& w, const Vector3& pos, const Vector3& rand, const Color4f& color, unsigned long numEntitys)
+void Game::AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numEntitys)
 {
 	Smoke *smoke = new Smoke;
-	smoke->Init(pos, rand, w, color, numEntitys);
+	smoke->Init(pos, rand, vel0, vel, color, numEntitys);
 	Entities.push_back(smoke);
 }
 

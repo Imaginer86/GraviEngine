@@ -51,7 +51,7 @@ float gShiftScale = 0.1f;
 float gfps = 0.0f;
 float gups = 0.0f;
 
-unsigned gSceneNum = 2;
+unsigned gSceneNum = 1;
 unsigned gSceneNumMax = 9;
 
 float gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
@@ -217,20 +217,22 @@ bool LoadData(unsigned fileNum)
 
 	unsigned numSmokers = 0;
 	unsigned long numParticless = 0;
-	Vector3 w;
 	Vector3 pos;
 	Vector3 rand;
+	Vector3 vel0;
+	Vector3 vel;
 	Color4f color;
 	dataFile >> numSmokers ;
 	for (unsigned i = 0; i < numSmokers; i++)
 	{
 		dataFile >> numParticless
-		>> w.x >> w.y >> w.z
 		>> pos.x >> pos.y >> pos.z
 		>> rand.x >> rand.y >> rand.z
+		>> vel0.x >> vel0.y >> vel0.z
+		>> vel.x >> vel.y >> vel.z
 		>> color.r >> color.g >> color.b >> color.a;
 
-		mGame.AddSmoker(w, pos, rand, color, numParticless);
+		mGame.AddSmoker( pos, rand, vel0, vel, color, numParticless);
 	}
 		
 

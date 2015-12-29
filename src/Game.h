@@ -27,7 +27,7 @@ public:
 
 	void AddBox(float m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
 
-	void AddSmoker(const Vector3& w, const Vector3& pos, const Vector3& rand, const Color4f& color, unsigned long numParticles);
+	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles);
 
 //	void SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 

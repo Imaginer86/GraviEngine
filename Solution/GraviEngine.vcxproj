@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Color.h" />
+    <ClInclude Include="..\src\Entities\BaseEntity.h" />
     <ClInclude Include="..\src\Entities\Box.h" />
     <ClInclude Include="..\src\Entities\Entity.h" />
     <ClInclude Include="..\src\Entities\Line.h" />

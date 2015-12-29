@@ -17,7 +17,7 @@ public:
 		return E[i];
 	}
 
-	virtual void Init( const Vector3& Pos_, const Vector3& rand_, const Vector3& w_, const Color4f& color_, unsigned long numParticles_);
+	virtual void Init( const Vector3& Pos_, const Vector3& rand_, const Vector3& vel0_, const Vector3& vel_, const Color4f& color_, unsigned long numParticles_);
 	virtual void Draw();
 
 	virtual void applyAcc(Vector3& acc, float dt);
@@ -26,6 +26,7 @@ public:
 	void ApplyWind(float dt);
 private:
 	Entity *E;	
-	Vector3 rand;	
+	Vector3 rand;
+	Vector3 vel0;
 	unsigned long numParticles;
 };

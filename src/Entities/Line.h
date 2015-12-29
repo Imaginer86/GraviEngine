@@ -50,8 +50,6 @@ public:
 
 	virtual void simulateForce(float dt)
 	{
-		//float t = dt; // todo
-		//t++;
 		return;
 	}
 

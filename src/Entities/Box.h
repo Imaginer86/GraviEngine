@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "../Math/Vector3.h"
 #include "../Math/Quaternion.h"
-#include "../Color.h"
 
 class Box: public Entity
 {
@@ -16,7 +15,7 @@ public:
 		return size;
 	}
 
-	void SetSize(Vector3& size_)
+	void SetSize(const Vector3& size_)
 	{
 		this->size = size_;
 	}
@@ -26,7 +25,7 @@ public:
 		return q;
 	}
 
-	void SetAngleQ(Quaternion q_)
+	void SetAngleQ(const Quaternion& q_)
 	{
 		q = q_;
 	}
@@ -36,21 +35,10 @@ public:
 		return qVel;
 	}
 
-	void SetAngleVelQ(Quaternion qVel_)
+	void SetAngleVelQ(const Quaternion& qVel_)
 	{
 		qVel = qVel_;
 	}
-
-	virtual Color4f GetColor()
-	{
-		return color;
-	}
-
-	void SetColor(const Color4f& color_)
-	{
-		this->color = color_;
-	}
-
 
 	virtual void simulateForce(float dt);	
 
@@ -60,5 +48,4 @@ private:
 	Vector3 size;
 	Quaternion q;
 	Quaternion qVel;
-	Color4f color;
 };

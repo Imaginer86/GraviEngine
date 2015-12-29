@@ -2,22 +2,16 @@
 #include <fstream>
 #include <string>
 
-
-
 #include "Platform.h"
 #include "main.h"
 #include "RenderGL.h"
 
 #include "Math/Math.h"
-#include "Sky.h"
+#include "Entities/Sky.h"
 #include "Color.h"
 #include "Game.h"
 #include "Camera.h"
 #include "Input.h"
-
-
-
-
 
 Platform GggPlatform;
 
@@ -25,10 +19,8 @@ Game mGame;
 Camera mCamera;
 Sky mSky;
 
-
 Render* mRender = new RenderGL;
 Input* mInput = new Input;
-
 
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 
@@ -40,6 +32,8 @@ bool gShowDebugInfo = true;
 bool gShowDebugInfoKey = false;		// TAB нажат?
 //bool gShowResetKey = false;			// R нажат?
 bool gReverseKeyPress = false;		// Q нажат?
+bool gUpdateKeyPress = false;
+bool gSaveKeyPress = false;
 
 bool gKeys[256];					// Массив, используемый для операций с клавиатурой
 
@@ -58,7 +52,7 @@ float gfps = 0.0f;
 float gups = 0.0f;
 
 unsigned gSceneNum = 2;
-unsigned gSceneNumMax = 8;
+unsigned gSceneNumMax = 9;
 
 float gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 float gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
@@ -118,7 +112,14 @@ bool LoadData(unsigned fileNum)
 	bool bGraviAcc;
 	dataFile >> bGraviAcc;
 	mGame.SetBGraviAcc(bGraviAcc);
-	
+
+	bool bWindAcc;
+	dataFile >> bWindAcc;
+	mGame.SetBWindAcc(bWindAcc);
+
+	bool bCollisions;
+	dataFile >> bCollisions;
+	mGame.SetBCollisions(bCollisions);
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;
@@ -166,9 +167,8 @@ bool LoadData(unsigned fileNum)
 
 	dataFile >> numMass;
 
-	//mGame.SetNumMasses(numMass);
-
-	for (int i = 0; i < numMass; i++) {
+	for (int i = 0; i < numMass; i++)
+	{
 		float m = 0.0f, r = 0.0f;
 		Vector3 pos, vel;
 		//bool isLight = false;
@@ -178,14 +178,14 @@ bool LoadData(unsigned fileNum)
 			>> vel.x >> vel.y >> vel.z
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
-		mGame.SetMass(m, r, pos, vel, /*isLight,*/ color);
+		mGame.AddMass(m, r, pos, vel, /*isLight,*/ color);
 	}
 
 	int numBoxs = 0;
 	dataFile >> numBoxs;
 
-	//mGame.SetNumBoxes(numBoxs);
-	for (int i = 0; i < numBoxs; i++) {
+	for (int i = 0; i < numBoxs; i++)
+	{
 		float m = 0.0;
 		Vector3 pos, size, vel;
 		Color4f color;
@@ -212,13 +212,33 @@ bool LoadData(unsigned fileNum)
 		qVel.y *= sinf(angleVel / 2.0f);
 		qVel.z *= sinf(angleVel / 2.0f);
 
-		mGame.SetBox(m, size, pos, vel, q, qVel, color);
+		mGame.AddBox(m, size, pos, vel, q, qVel, color);
 	}
+
+	unsigned numSmokers = 0;
+	unsigned long numParticless = 0;
+	Vector3 w;
+	Vector3 pos;
+	Vector3 rand;
+	Color4f color;
+	dataFile >> numSmokers ;
+	for (unsigned i = 0; i < numSmokers; i++)
+	{
+		dataFile >> numParticless
+		>> w.x >> w.y >> w.z
+		>> pos.x >> pos.y >> pos.z
+		>> rand.x >> rand.y >> rand.z
+		>> color.r >> color.g >> color.b >> color.a;
+
+		mGame.AddSmoker(w, pos, rand, color, numParticless);
+	}
+		
 
 	/*	int numLines = 0;
 	//dataFile >> numLines;
 	//mGame.SetNumLines(numLines);
-	for(int i = 0; i < numLines; i++) {
+	for(int i = 0; i < numLines; i++)
+	{
 	float m = 0.0f, r = 0.0f, h = 0.0f;
 	Vector3 pos;
 	Color4f color;
@@ -235,6 +255,11 @@ bool LoadData(unsigned fileNum)
 	*/
 
 	dataFile.close();
+	return true;
+}
+
+bool SaveData(const std::string& fileName)
+{
 	return true;
 }
 

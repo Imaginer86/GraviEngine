@@ -1,6 +1,6 @@
 ﻿#pragma once
-//#include "Math.h"
-//#include <vector>
+#include "Math.h"
+#include "Vector3.h"
 
 class VectorField
 {

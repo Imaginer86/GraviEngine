@@ -5,22 +5,11 @@
 class Entity
 {
 public:
-	Entity()
-	: m(1.0f)
-	, pos(0.0f, 0.0f, 0.0f)
-	, vel(0.0f, 0.0f, 0.0f)	
-	, force(0.0f, 0.0f, 0.0f)
-	{
-	}
+	Entity();
 
-	Entity(float m, Vector3 pos, Vector3 vel, Color4f color)
-	: m(m)
-	, pos(pos)
-	, vel(vel)
-	, force(0.0f, 0.0f, 0.0f)
-	{}
+	Entity(float m, Vector3 pos, Vector3 vel, Color4f color);
 
-	virtual ~Entity(){}
+	virtual ~Entity();
 
 	virtual Vector3 GetPos()
 	{
@@ -52,16 +41,22 @@ public:
 		this->m = mass;
 	}
 
-	virtual Color4f GetColor() = 0;
+	virtual Color4f GetColor()
+	{
+		return color;
+	}
 
-	virtual void SetColor(const Color4f& color) = 0;
+	void SetColor(const Color4f& color_)
+	{
+		this->color = color_;
+	}
 
 	void applyForce(Vector3& force_)
 	{
 		this->force += force_;					// The external force is added to the force of the mass
 	}
 
-	void applyAcc(Vector3& acc, float dt)
+	virtual void applyAcc(Vector3& acc, float dt)
 	{
 		vel += acc*dt;
 	}
@@ -80,11 +75,33 @@ public:
 		force = Vector3(0.0f, 0.0f, 0.0f);
 	}
 
-	virtual void Draw() = 0;
+	virtual void Draw() {}
 
 protected:
 	float m;
 	Vector3 pos;
 	Vector3 vel;
 	Vector3 force;
+	Color4f color;
 };
+
+inline Entity::Entity()
+: m(1.0f)
+, pos(0.0f, 0.0f, 0.0f)
+, vel(0.0f, 0.0f, 0.0f)	
+, force(0.0f, 0.0f, 0.0f)
+, color(1.0f, 1.0f, 1.0f, 1.0f)
+{
+}
+
+inline Entity::Entity(float m, Vector3 pos, Vector3 vel, Color4f color)
+	: m(m)
+	, pos(pos)
+	, vel(vel)
+	, force(0.0f, 0.0f, 0.0f)
+{}
+
+inline Entity::~Entity()
+{
+
+}

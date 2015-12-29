@@ -19,6 +19,12 @@ D		: move right	not work
 
 data.dat:
 
+numStars
+
+GraviMode
+GraviAccMode
+CollissionMode
+
 CameraPos
 Camera Axic Angle
 UpdateCamera
@@ -35,19 +41,27 @@ numMas
 
 m
 r
-pos
-vel
-color
+Pos
+Vel
+Color
 
 numBox
 
 m
-size
-pos
-vel
-angleQ
-angleVelQ
-color
+Size
+Pos
+Vel
+AngleQ
+AngleVelQ
+Color
+
+numSmoke
+
+numParticle
+Wind
+Pos
+Rand
+Color
 
 numWave
 

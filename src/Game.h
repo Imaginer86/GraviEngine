@@ -13,7 +13,7 @@ public:
 
 	void Release();							// delete the entities created;
 
-	void SetNumEntities(int entities)
+	void SetNumEntities(unsigned entities)
 	{
 		numEntitys = entities;
 	}
@@ -23,9 +23,11 @@ public:
 		return numEntitys;
 	}
 
-    void SetMass(float m, float r,  Vector3 pos, Vector3 vel, Color4f color);
+    void AddMass(float m, float r, const Vector3& pos, const Vector3& vel, const Color4f& color);
 
-	void SetBox(float m, Vector3 size, Vector3 pos, Vector3 vel, Quaternion q, Quaternion qVel, Color4f color);
+	void AddBox(float m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
+
+	void AddSmoker(const Vector3& w, const Vector3& pos, const Vector3& rand, const Color4f& color, unsigned long numParticles);
 
 //	void SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color);
 
@@ -37,6 +39,16 @@ public:
 	void SetBGraviAcc(bool bGraviAcc_)
 	{
 		bGraviAcc = bGraviAcc_;
+	}
+
+	void SetBWindAcc(bool bWindAcc_)
+	{
+		bWindAcc = bWindAcc_;
+	}
+
+	void SetBCollisions(bool bCollisions_)
+	{
+		bCollisions = bCollisions_;
 	}
 
 	void Game::SetGraviAcc(Vector3 graviAcc_)
@@ -54,16 +66,19 @@ public:
  	void Solve();							// no implementation because no forces are wanted in this basic container;
  	void Simulate(float dt);					// Iterate the masses by the change in time;
 	void AddGraviAcc(float dt);
-
+	void AddWindAcc(float dt);
 	void Collision(float dt);
 
-private:
 	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
+
+private:	
 	//vector<Vector3> globalForces;
-	int numEntitys;
+	unsigned numEntitys;
 	std::vector<Entity*> Entities;
 	//list<Entity> Entities;
 	bool bGraviMasses;
-	bool bGraviAcc;	
+	bool bGraviAcc;
+	bool bWindAcc;
+	bool bCollisions;
 	Vector3 graviAcc;
 };

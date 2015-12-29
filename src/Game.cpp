@@ -1,9 +1,10 @@
 ﻿#include "Game.h"
-#include "Entities\Mass.h"
-#include "Entities\Box.h"
+#include "Entities/Mass.h"
+#include "Entities/Box.h"
+#include "Entities/Smoke.h"
 //#include "Entities\Line.h"
-#include "Math\Plane.h"
-#include "Math\Math.h"
+#include "Math/Plane.h"
+#include "Math/Math.h"
 
 #include <typeinfo.h>
 #include <iostream>
@@ -16,6 +17,8 @@ Game::Game()
 : numEntitys(0)
 , bGraviMasses(false)
 , bGraviAcc(false)
+, bWindAcc(false)
+, bCollisions(false)
 , graviAcc(0, 0, 0)
 {
 }
@@ -36,14 +39,14 @@ void Game::Release() /* delete the masses created */
 	Entities.clear();
 }
 
-void Game::SetMass( float m, float r, Vector3 pos, Vector3 vel, Color4f color )
+void Game::AddMass( float m, float r, const Vector3& pos, const Vector3& vel, const Color4f& color )
 {	
 	Mass* mass = new Mass;	
 	mass->Set(m, r, pos, vel, color);
 	Entities.push_back(mass);
 }
 
-void Game::SetBox(float m, Vector3 size, Vector3 pos, Vector3 vel, Quaternion q, Quaternion qVel, Color4f color)
+void Game::AddBox(float m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color)
 {
 	Box *box = new Box;	
 	box->SetMass(m);
@@ -54,6 +57,13 @@ void Game::SetBox(float m, Vector3 size, Vector3 pos, Vector3 vel, Quaternion q,
 	box->SetAngleVelQ(qVel);
 	box->SetColor(color);
 	Entities.push_back(box);
+}
+
+void Game::AddSmoker(const Vector3& w, const Vector3& pos, const Vector3& rand, const Color4f& color, unsigned long numEntitys)
+{
+	Smoke *smoke = new Smoke;
+	smoke->Init(pos, rand, w, color, numEntitys);
+	Entities.push_back(smoke);
 }
 
 /*
@@ -74,17 +84,24 @@ void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f
 void Game::Update(float dt)
 {
 	//static unsigned int iteration = 0;
-	this->Init();										// Step 1: reset forces to zero	
+	Init();										// Step 1: reset forces to zero	
 	if (bGraviMasses)
 	{
-		this->Solve();									// Step 2: apply forces		
+		Solve();									// Step 2: apply forces		
 	}
 	if (bGraviAcc)
 	{
-		this->AddGraviAcc(dt);
-		this->Collision(dt);
+		AddGraviAcc(dt);		
 	}
-	this->Simulate(dt);								// Step 3: iterate the masses by the change in time
+	if (bWindAcc)
+	{
+		AddWindAcc(dt);
+	}
+	if (bCollisions)
+	{
+		Collision(dt);
+	}
+	Simulate(dt);								// Step 3: iterate the masses by the change in time
 }
 
 void Game::Init() /* this method will call the init() method of every mass */
@@ -98,9 +115,30 @@ void Game::AddGraviAcc(float dt)
 	for (unsigned i = 0; i < Entities.size(); i++)
 	{
 		if (typeid(*Entities[i]) == typeid(Mass))
+		{
 			Entities[i]->applyAcc(graviAcc, dt);
+		}
+		if (typeid(*Entities[i]) == typeid(Smoke))
+		{
+			Entities[i]->applyAcc(graviAcc, dt);
+			Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);
+			
+		}
 	}
 }
+
+void Game::AddWindAcc(float dt)
+{
+	for (unsigned i = 0; i < Entities.size(); i++)
+	{
+		if (typeid(*Entities[i]) == typeid(Smoke))
+		{
+			Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);
+			smoke->ApplyWind(dt);
+		}
+	}
+}
+
 
 void Game::Simulate(float dt) /* Iterate the masses by the change in time */
 {
@@ -377,7 +415,8 @@ void Game::Solve()
 			if (a != b)
 			{
 				Vector3 force(GraviForce(a,b));
-				Entities[a]->applyForce(force); //Gravi Force
+				if ( force.unitize() > Math::EPSILON )
+				 Entities[a]->applyForce(force); //Gravi Force
 			}
 		}
 	}

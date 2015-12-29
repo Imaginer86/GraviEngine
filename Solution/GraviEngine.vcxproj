@@ -84,6 +84,9 @@
     <ClCompile Include="..\src\Entities\Box.cpp" />
     <ClCompile Include="..\src\Entities\Line.cpp" />
     <ClCompile Include="..\src\Entities\Mass.cpp" />
+    <ClCompile Include="..\src\Entities\Sky.cpp" />
+    <ClCompile Include="..\src\Entities\Smoke.cpp" />
+    <ClCompile Include="..\src\Entities\Star.cpp" />
     <ClCompile Include="..\src\Entities\Video.cpp" />
     <ClCompile Include="..\src\Entities\Wave.cpp" />
     <ClCompile Include="..\src\Entities\WaveOut.cpp" />
@@ -91,10 +94,9 @@
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Math\Random.cpp" />
+    <ClCompile Include="..\src\Math\Tensus.cpp" />
     <ClCompile Include="..\src\Platform.cpp" />
     <ClCompile Include="..\src\RenderGL.cpp" />
-    <ClCompile Include="..\src\Sky.cpp" />
-    <ClCompile Include="..\src\Star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
@@ -103,6 +105,9 @@
     <ClInclude Include="..\src\Entities\Entity.h" />
     <ClInclude Include="..\src\Entities\Line.h" />
     <ClInclude Include="..\src\Entities\Mass.h" />
+    <ClInclude Include="..\src\Entities\Sky.h" />
+    <ClInclude Include="..\src\Entities\Smoke.h" />
+    <ClInclude Include="..\src\Entities\Star.h" />
     <ClInclude Include="..\src\Entities\Video.h" />
     <ClInclude Include="..\src\Entities\Wave.h" />
     <ClInclude Include="..\src\Entities\WaveOut.h" />
@@ -115,13 +120,12 @@
     <ClInclude Include="..\src\Math\Plane.h" />
     <ClInclude Include="..\src\Math\Quaternion.h" />
     <ClInclude Include="..\src\Math\Random.h" />
+    <ClInclude Include="..\src\Math\Tensus.h" />
     <ClInclude Include="..\src\Math\Vector3.h" />
     <ClInclude Include="..\src\Math\VectorField.h" />
     <ClInclude Include="..\src\Platform.h" />
     <ClInclude Include="..\src\Render.h" />
     <ClInclude Include="..\src\RenderGL.h" />
-    <ClInclude Include="..\src\Sky.h" />
-    <ClInclude Include="..\src\Star.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

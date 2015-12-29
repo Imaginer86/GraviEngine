@@ -4,7 +4,6 @@
 Mass::Mass()
 : Entity()
 , r(0.0f)
-, color(1.0f, 1.0f, 1.0f, 1.0f)
 {}
 
 

@@ -1,5 +1,6 @@
 #include "Input.h"
 
+#include <string>
 #include <Windows.h>
 
 #include "RenderGL.h"
@@ -19,11 +20,14 @@ extern float gShiftScale;
 extern bool gShowDebugInfoKey;		// TAB нажат?
 extern bool gShowDebugInfo;
 extern bool gReverseKeyPress;		// Q нажат?
+extern bool gUpdateKeyPress;
+extern bool gSaveKeyPress;
 
 extern unsigned gSceneNum;
 extern unsigned gSceneNumMax;
 
 extern bool LoadData(unsigned fileNum);
+extern bool SaveData(const std::string& str);
 extern void Release();
 
 
@@ -67,13 +71,28 @@ bool Input::UpdateKeys()
 		gLightOnKey=false;						// Если так, то lp равно FALSE
 	}
 
-	if( gKeys[VK_F5])
+	if(gUpdateKeyPress && gKeys[VK_F5] == true)
 	{
 		gKeys[VK_F5] = false;
+		gUpdateKeyPress = true;
 		Release();		
 		if (!LoadData(gSceneNum))
 			return false;
 		mRender->SetGLLight();
+	}
+
+	if (gUpdateKeyPress && gKeys[VK_F6] == true)
+	{
+		gKeys[VK_F5] = false;
+		gUpdateKeyPress = false;
+		Release();
+		if (!SaveData("dataSave"))
+			return false;	
+	}
+
+	if (!gUpdateKeyPress && gKeys[VK_F6] == false)
+	{
+		gUpdateKeyPress = true;
 	}
 
 	for (unsigned i = 0; i < gSceneNumMax; i++)

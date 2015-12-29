@@ -17,20 +17,8 @@ public:
 		return r;
 	}
 
-	virtual Color4f GetColor()
-	{
-		return color;
-	}
-
-	void SetColor(const Color4f& color_)
-	{
-		this->color = color_;
-	}
-
-
 	virtual void Draw();
 
 private:
 	float r;
-	Color4f color;
 };

@@ -5,13 +5,15 @@
 
 #include <windows.h>
 
+#include "Math/Color.h"
+
 #include "RenderGL.h"
-#include "Platform.h"
 #include "Input.h"
 #include "Game.h"
-
 #include "Camera.h"
-#include "Sky.h"
+
+#include "Constans.h"
+
 
 extern bool gActive;
 extern float gfps;
@@ -24,12 +26,9 @@ extern bool gFirstLoad;
 extern unsigned gSceneNum;
 extern bool gUpdateCamera;
 
-//extern Camera mCamera;
-//extern Sky mSky;
-
-extern float gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-extern float gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-extern float gLightPosition[4];//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
+extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
+extern Color4f gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 
 float framesPerSecond = 0.0f;
@@ -95,13 +94,28 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 	return DefWindowProc( (HWND) hWnd, uMsg, wParam, lParam );
 }
 
+void Master::Init()
+{
+	if (!Master::Instance().LoadData(gSceneNum)) 
+	{
+		std::cerr << "Load Data Failed!" << std::endl;
+		return;													// Return False (Failure)
+	}
+	// Создать наше OpenGL окно	
+	if (!RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gWidth, gHeight, 32))
+	{
+		std::cerr << "CreateWin Failed!" << std::endl;
+		return;              // Выйти, если окно не может быть создано
+	}
+}
+
 void Master::Run()
 {
 
 	bool  done = false;	// Логическая переменная для выхода из цикла
 
 
-	lastTickCount = Platform::Instance().GetTickCount();		// Get Tick Count
+	lastTickCount = ::GetTickCount();		// Get Tick Count
 
 
 	MSG  msg;           // Структура для хранения сообщения Windows
@@ -244,13 +258,13 @@ bool Master::LoadData(unsigned fileNum)
 		Camera::Instance().SetQuaternion(q);
 	}
 
-	dataFile >> gLightAmbient[0] >> gLightAmbient[1] >> gLightAmbient[2] >> gLightAmbient[3];
-	dataFile >> gLightDiffuse[0] >> gLightDiffuse[1] >> gLightDiffuse[2] >> gLightDiffuse[3];
-	dataFile >> gLightPosition[0] >> gLightPosition[1] >> gLightPosition[2] >> gLightPosition[3];
+	dataFile >> gLightAmbient.r >> gLightAmbient.g >> gLightAmbient.b >> gLightAmbient.a;
+	dataFile >> gLightDiffuse.r >> gLightDiffuse.g >> gLightDiffuse.b >> gLightDiffuse.a;
+	dataFile >> gLightPosition.r >> gLightPosition.g >> gLightPosition.b >> gLightPosition.a;
 
-	RenderGL::Instance().rLightAmbient = gLightAmbient;
-	RenderGL::Instance().rLightDiffuse = gLightDiffuse;
-	RenderGL::Instance().rLightPosition = gLightPosition;
+	//RenderGL::Instance().rLightAmbient = gLightAmbient;
+	//RenderGL::Instance().rLightDiffuse = gLightDiffuse;
+	//RenderGL::Instance().rLightPosition = gLightPosition;
 
 
 	Vector3 graviAcc;
@@ -366,6 +380,7 @@ void Master::Release()
 	Game::Instance().Release();
 	gTime = 0.0f;
 	gTimeScale = 1.0f;
+	RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 bool Master::SaveData(const std::string& fileName)

@@ -2,7 +2,7 @@
 #include "Entity.h"
 #include "../Math/Vector3.h"
 #include "../Math/Quaternion.h"
-#include "../Color.h"
+#include "../Math/Color.h"
 
 class Line: public Entity
 {
@@ -44,18 +44,17 @@ public:
 
 	virtual void applyForce(Vector3& force_)
 	{
-		this->force += force_;
-		return;
+		this->force += force_;		
 	}
 
 	virtual void simulateForce(float dt)
 	{
-		return;
+
 	}
 
 	virtual void init()
 	{
-		return;
+		
 	}	
 
 	virtual bool IsColisions(Entity& entity)
@@ -79,4 +78,3 @@ private:
 	Quaternion q;
 	Color4f color;
 };
-

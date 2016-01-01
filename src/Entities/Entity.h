@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "BaseEntity.h"
 #include "../Math/Vector3.h"
-#include "../Color.h"
+#include "../Math/Color.h"
 
 class Entity: public BaseEntity
 {

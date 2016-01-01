@@ -1,16 +1,16 @@
 ﻿#include "Render.h"
 
-
-
 class RenderGL : public Render
 {	
 public:
 	RenderGL();
+
 	static RenderGL& Instance()
 	{
 		static RenderGL SingleRender;
 		return SingleRender;
 	}
+
 	virtual ~RenderGL();
 
 	virtual bool Init();
@@ -39,6 +39,8 @@ public:
 	virtual void glPrint(const char *fmt, ...);
 
 	virtual void DrawDebugInfo();
+
 	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const;
+
 	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const;
 };

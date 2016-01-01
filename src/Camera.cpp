@@ -2,6 +2,20 @@
 #include "Math/Matrix3.h"
 //#include "Math/Matrix3.h"
 
+
+Camera::Camera()
+: pos(0,0,0)
+, q(0, 1, 1, 1)
+{
+
+}
+
+Camera::~Camera()
+{
+
+}
+
+
 //void Camera::SetQuaternion(Quaternion q)
 //{
 //	this->q = q;

@@ -2,8 +2,8 @@
 #include "Entities/Mass.h"
 #include "Entities/Box.h"
 #include "Entities/Smoke.h"
-#include "Entities\Sky.h"
-//#include "Entities\Line.h"
+#include "Entities/Sky.h"
+//#include "Entities/Line.h"
 #include "Math/Plane.h"
 #include "Math/Math.h"
 
@@ -123,8 +123,7 @@ void Game::AddGraviAcc(float dt)
 		if (typeid(*Entities[i]) == typeid(Smoke))
 		{
 			Entities[i]->applyAcc(graviAcc, dt);
-			Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);
-			
+			//Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);			
 		}
 	}
 }

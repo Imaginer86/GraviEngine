@@ -25,16 +25,23 @@ HGLRC	hRC	 = NULL;              // Постоянный контекст рен�
 HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
 HINSTANCE  rhInstance = NULL;              // Здесь будет хранится дескриптор приложения 
 
-
-//GLfloat gLightAmbient[4];//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-//GLfloat gLightDiffuse[4];//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-//GLfloat gLightPosition[4];//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
-
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
+
 //GLuint		texture[4];									// 3 Textures				 
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //WNDPROC *WndProc;					  // Процедура обработки сообщений					 
+
+extern float gfps;
+extern float gups;
+
+extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
+extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
+extern Color4f gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+
+extern unsigned gSceneNum;
+extern float gTimeScale;
+extern float gTime;
 
 
 /*
@@ -219,6 +226,9 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 
 void RenderGL::SetGLLight()
 {
+	GLfloat rLightAmbient[4] = {gLightAmbient.r, gLightAmbient.g, gLightAmbient.b, gLightAmbient.a};
+	GLfloat rLightDiffuse[4] = {gLightDiffuse.r, gLightDiffuse.g, gLightDiffuse.b, gLightDiffuse.a};
+	GLfloat rLightPosition[4] = {gLightPosition.r, gLightPosition.g, gLightPosition.b, gLightPosition.a};
 	glLightfv(GL_LIGHT0, GL_AMBIENT, rLightAmbient);    // Установка Фонового Света
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, rLightDiffuse);    // Установка Диффузного Света
 	glLightfv(GL_LIGHT0, GL_POSITION, rLightPosition);   // Позиция света
@@ -526,15 +536,15 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(1, 1, 1);
 	glTranslatef(-5.0f, 3.6f, -10.0f);
 	glScalef(0.2f, 0.2f, 0.2f);
-	glPrint("Scene #: %d", *rSceneNum);
+	glPrint("Scene #: %d", gSceneNum);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("FPS: %2.2f", *rfps);						// Print GL Text To The Screen
+	glPrint("FPS: %2.2f", gfps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("UPS: %2.2f", *rups);
+	glPrint("UPS: %2.2f", gups);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time: %2.2f", *rTime);
+	glPrint("Time: %2.2f", gTime);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time Scale: %2.2f", *rTimeScale);
+	glPrint("Time Scale: %2.2f", gTimeScale);
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	glTranslatef(0.0f, -1.0f, 0);

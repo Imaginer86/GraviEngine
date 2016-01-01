@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "..\Math\Vector3.h"
-#include "..\Color.h"
+#include "../Math/Vector3.h"
+#include "../Math/Color.h"
 
 class Wave
 {

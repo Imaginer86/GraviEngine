@@ -1,19 +1,11 @@
-#include "sky.h"
+﻿#include "sky.h"
 //#include <iostream>
-#include "../Color.h"
-#include "../RenderGL.h"
+#include "../Math/Color.h"
 #include "../Math/Random.h"
-//#include "Math/Math.h"
-//#include "Math/Quaternion.h"
+#include "../RenderGL.h"
 
-//#include <conio.h>
-//#include <stdio.h>
-//#include <time.h>
 
 const float dist = 1000;
-
-//#include <cstdlib>
-//#include <ctime>
 
 Sky::Sky()
 {

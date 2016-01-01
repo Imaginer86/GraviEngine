@@ -1,4 +1,4 @@
-#include "Input.h"
+п»ї#include "Input.h"
 
 #include <string>
 #include <Windows.h>
@@ -18,9 +18,9 @@ extern float gTimeScale;
 extern float gAngleScale;
 extern float gMoveScale;
 extern float gShiftScale;
-extern bool gShowDebugInfoKey;		// TAB нажат?
+extern bool gShowDebugInfoKey;		// TAB РЅР°Р¶Р°С‚?
 extern bool gShowDebugInfo;
-extern bool gReverseKeyPress;		// Q нажат?
+extern bool gReverseKeyPress;		// Q РЅР°Р¶Р°С‚?
 extern bool gUpdateKeyPress;
 extern bool gSaveKeyPress;
 
@@ -30,15 +30,15 @@ extern unsigned gSceneNumMax;
 bool Input::UpdateKeys()
 {
 	/*
-	if( gKeys[VK_F1] )				// Была ли нажата F1?
+	if( gKeys[VK_F1] )				// Р‘С‹Р»Р° Р»Рё РЅР°Р¶Р°С‚Р° F1?
 	{
-		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
-		mRender->Release();					// Разрушаем текущее окно
-		mRender->Fullscreen = !mRender->Fullscreen;		// Переключаем режим
-		// Пересоздаём наше OpenGL окно
-		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL структура"), gWidth, gHeight, 32 ))
+		gKeys[VK_F1] = false;			// Р•СЃР»Рё С‚Р°Рє, РјРµРЅСЏРµРј Р·РЅР°С‡РµРЅРёРµ СЏС‡РµР№РєРё РјР°СЃСЃРёРІР° РЅР° false
+		mRender->Release();					// Р Р°Р·СЂСѓС€Р°РµРј С‚РµРєСѓС‰РµРµ РѕРєРЅРѕ
+		mRender->Fullscreen = !mRender->Fullscreen;		// РџРµСЂРµРєР»СЋС‡Р°РµРј СЂРµР¶РёРј
+		// РџРµСЂРµСЃРѕР·РґР°С‘Рј РЅР°С€Рµ OpenGL РѕРєРЅРѕ
+		if (!mRender->CreateWin(WndProc, ("NeHe OpenGL СЃС‚СЂСѓРєС‚СѓСЂР°"), gWidth, gHeight, 32 ))
 		{
-			return false;						// Выходим, если это невозможно
+			return false;						// Р’С‹С…РѕРґРёРј, РµСЃР»Рё СЌС‚Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 		}
 	} 
 	*/
@@ -48,22 +48,22 @@ bool Input::UpdateKeys()
 		gKeys[VK_SPACE] = false;
 	}
 
-	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
+	if (gKeys['L'] && !gLightOnKey)			// РљР»Р°РІРёС€Р° 'L' РЅР°Р¶Р°С‚Р° Рё РЅРµ СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ?
 	{
-		gLightOnKey=true;						// lp присвоили TRUE
-		RenderGL::Instance().LightOn=!RenderGL::Instance().LightOn;				// Переключение света TRUE/FALSE
-		if (RenderGL::Instance().LightOn)					// Если не свет
+		gLightOnKey=true;						// lp РїСЂРёСЃРІРѕРёР»Рё TRUE
+		RenderGL::Instance().LightOn=!RenderGL::Instance().LightOn;				// РџРµСЂРµРєР»СЋС‡РµРЅРёРµ СЃРІРµС‚Р° TRUE/FALSE
+		if (RenderGL::Instance().LightOn)					// Р•СЃР»Рё РЅРµ СЃРІРµС‚
 		{
 			RenderGL::Instance().EnableLight();
 		}
-		else							// В противном случае
+		else							// Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 		{
 			RenderGL::Instance().DisableLight();
 		}
 	}
-	if (!gKeys['L'])					// Клавиша 'L' Отжата?
+	if (!gKeys['L'])					// РљР»Р°РІРёС€Р° 'L' РћС‚Р¶Р°С‚Р°?
 	{
-		gLightOnKey=false;						// Если так, то lp равно FALSE
+		gLightOnKey=false;						// Р•СЃР»Рё С‚Р°Рє, С‚Рѕ lp СЂР°РІРЅРѕ FALSE
 	}
 
 	if(gUpdateKeyPress && gKeys[VK_F5] == true)
@@ -90,9 +90,9 @@ bool Input::UpdateKeys()
 		gUpdateKeyPress = true;
 	}
 
-	for (unsigned i = 0; i < gSceneNumMax; i++)
+	for (unsigned char i = 0; i < gSceneNumMax; i++)
 	{
-		char c = '1' + i;
+		unsigned char c = '1' + i;
 		if (gKeys[c])
 		{
 			gKeys[c] = false;

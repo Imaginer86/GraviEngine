@@ -5,16 +5,16 @@
 class Camera
 {
 public:
-	Camera()
-	: pos(0,0,0)
-	, q(0, 1, 1, 1)
-	{}
+
+	Camera();
+
+	virtual  ~Camera();
+
 	static Camera& Instance()
 	{
 		static Camera SingleCamera;
 		return SingleCamera;
 	}
-	virtual  ~Camera() {};
 
 	void RotateUpDown(float anglef);
 
@@ -24,14 +24,14 @@ public:
 
 	void MoveLRCamera(float speed);
 
-	Vector3 GetPos()
-	{
-		return pos;
-	}
-
 	void SetPos(Vector3& pos_)
 	{
 		this->pos = pos_;
+	}
+
+	Vector3& GetPos()
+	{
+		return pos;
 	}
 
 	Vector3 GetView();

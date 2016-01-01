@@ -93,6 +93,7 @@
     <ClCompile Include="..\src\Game.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Master.cpp" />
     <ClCompile Include="..\src\Math\Random.cpp" />
     <ClCompile Include="..\src\Math\Tensus.cpp" />
     <ClCompile Include="..\src\Platform.cpp" />
@@ -114,6 +115,8 @@
     <ClInclude Include="..\src\Entities\WaveOut.h" />
     <ClInclude Include="..\src\Game.h" />
     <ClInclude Include="..\src\Input.h" />
+    <ClInclude Include="..\src\main.h" />
+    <ClInclude Include="..\src\Master.h" />
     <ClInclude Include="..\src\Math\Line.h" />
     <ClInclude Include="..\src\Math\Math.h" />
     <ClInclude Include="..\src\Math\Matrix3.h" />

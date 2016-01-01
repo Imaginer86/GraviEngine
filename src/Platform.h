@@ -1,5 +1,5 @@
-#pragma once
-#include <Windows.h>
+﻿#pragma once
+//#include <Windows.h>
 
 //namespace win{
 
@@ -44,7 +44,7 @@ public:
 	Platform(){}
 	virtual ~Platform(){}
 
-	static const Platform& Instance()
+	static Platform& Instance()
 	{
 		static Platform TheSingleInstance;
 		return TheSingleInstance;
@@ -52,7 +52,7 @@ public:
 
 	long GetTickCount();
 	//bool PeekMessageCCC(void *msg, void* hWnd, unsigned int, unsigned int, unsigned int);
-	bool PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int, unsigned int, unsigned int);
+	//bool PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int, unsigned int, unsigned int);
 };
 
 //}

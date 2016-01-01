@@ -1,22 +1,19 @@
 ﻿#include "RenderGL.h"
-
-//#pragma comment(lib, "opengl32.lib")
-//#pragma comment(lib, "glu32.lib")
-
 #include <string>
+#include <windows.h>
 
-#include <Windows.h>
 #include <GL\gl.h>
 #include <GL\glu.h>
-
-
-
-//#include "Camera.h"
 
 #include "Math/Quaternion.h"
 #include "Math/Vector3.h"
 
 
+#include "Master.h"
+#include "Camera.h"
+
+//#pragma comment(lib, "opengl32.lib")
+//#pragma comment(lib, "glu32.lib")
 
 //HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 //HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
@@ -230,7 +227,7 @@ void RenderGL::SetGLLight()
 		glEnable(GL_LIGHTING);
 }
 
-bool RenderGL::CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits)
+bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsigned height, int bits)
 {
 	GLuint		PixelFormat;			    // Хранит результат после поиска
 	WNDCLASS	wc;						   // Структура класса окна
@@ -503,13 +500,13 @@ void RenderGL::BeginDraw()
 	//mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
 	//mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
-	Quaternion q = rCamera->GetQuaternion();
+	Quaternion q = Camera::Instance().GetQuaternion();
 	Vector3 cameraAxic;
 	float cameraAngle;
 	q.toAxisAngle(cameraAxic, cameraAngle);
 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
-	Vector3 cameraPos = rCamera->GetPos();
+	Vector3 cameraPos = Camera::Instance().GetPos();
 	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
@@ -539,10 +536,10 @@ void RenderGL::DrawDebugInfo()
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Time Scale: %2.2f", *rTimeScale);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Pos: %2.2f %2.2f %2.2f", rCamera->GetPos().x, rCamera->GetPos().y, rCamera->GetPos().z);
+	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera View: %2.2f %2.2f %2.2f", rCamera->GetView().x, rCamera->GetView().y, rCamera->GetView().z);
-	Quaternion q = rCamera->GetQuaternion();
+	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
+	Quaternion q = Camera::Instance().GetQuaternion();
 	Vector3 axic;
 	float angle;
 	q.toAxisAngle(axic, angle);

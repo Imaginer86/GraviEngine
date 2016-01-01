@@ -5,13 +5,14 @@
 
 #include "RenderGL.h"
 #include "Camera.h"
+#include "Master.h"
 
 extern bool gKeys[256];
 extern bool gPause;
 extern bool gLightOnKey;
 
-extern Render* mRender;
-extern Camera mCamera;
+//extern RenderGL* mRender;
+//extern Camera mCamera;
 
 extern float gTimeScale;
 extern float gAngleScale;
@@ -25,12 +26,6 @@ extern bool gSaveKeyPress;
 
 extern unsigned gSceneNum;
 extern unsigned gSceneNumMax;
-
-extern bool LoadData(unsigned fileNum);
-extern bool SaveData(const std::string& str);
-extern void Release();
-
-
 
 bool Input::UpdateKeys()
 {
@@ -56,14 +51,14 @@ bool Input::UpdateKeys()
 	if (gKeys['L'] && !gLightOnKey)			// Клавиша 'L' нажата и не удерживается?
 	{
 		gLightOnKey=true;						// lp присвоили TRUE
-		mRender->LightOn=!mRender->LightOn;				// Переключение света TRUE/FALSE
-		if (mRender->LightOn)					// Если не свет
+		RenderGL::Instance().LightOn=!RenderGL::Instance().LightOn;				// Переключение света TRUE/FALSE
+		if (RenderGL::Instance().LightOn)					// Если не свет
 		{
-			mRender->EnableLight();
+			RenderGL::Instance().EnableLight();
 		}
 		else							// В противном случае
 		{
-			mRender->DisableLight();
+			RenderGL::Instance().DisableLight();
 		}
 	}
 	if (!gKeys['L'])					// Клавиша 'L' Отжата?
@@ -75,18 +70,18 @@ bool Input::UpdateKeys()
 	{
 		gKeys[VK_F5] = false;
 		gUpdateKeyPress = true;
-		Release();		
-		if (!LoadData(gSceneNum))
+		Master::Instance().Release();		
+		if (!Master::Instance().LoadData(gSceneNum))
 			return false;
-		mRender->SetGLLight();
+		RenderGL::Instance().SetGLLight();
 	}
 
 	if (gUpdateKeyPress && gKeys[VK_F6] == true)
 	{
 		gKeys[VK_F5] = false;
 		gUpdateKeyPress = false;
-		Release();
-		if (!SaveData("dataSave"))
+		Master::Instance().Release();
+		if (!Master::Instance().SaveData("dataSave"))
 			return false;	
 	}
 
@@ -101,75 +96,75 @@ bool Input::UpdateKeys()
 		if (gKeys[c])
 		{
 			gKeys[c] = false;
-			Release();
-			if (!LoadData(i + 1))
+			Master::Instance().Release();
+			if (!Master::Instance().LoadData(i + 1))
 				return false;
-			mRender->SetGLLight();
+			RenderGL::Instance().SetGLLight();
 		}
 	}
 
 	if( gKeys[VK_RIGHT])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateLR(gAngleScale*gTimeScale);
+			Camera::Instance().RotateLR(gAngleScale*gTimeScale);
 		else
-			mCamera.RotateLR(gShiftScale*gAngleScale*gTimeScale);				
+			Camera::Instance().RotateLR(gShiftScale*gAngleScale*gTimeScale);				
 	}
 
 	if( gKeys[VK_LEFT])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateLR(-gAngleScale*gTimeScale);			
+			Camera::Instance().RotateLR(-gAngleScale*gTimeScale);			
 		else
-			mCamera.RotateLR(-gShiftScale*gAngleScale*gTimeScale);			
+			Camera::Instance().RotateLR(-gShiftScale*gAngleScale*gTimeScale);			
 	}
 
 	if( gKeys[VK_UP])
 	{								
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateUpDown(gAngleScale*gTimeScale);
+			Camera::Instance().RotateUpDown(gAngleScale*gTimeScale);
 		else
-			mCamera.RotateUpDown(gShiftScale*gAngleScale*gTimeScale);
+			Camera::Instance().RotateUpDown(gShiftScale*gAngleScale*gTimeScale);
 	}
 
 	if( gKeys[VK_DOWN])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.RotateUpDown(-gAngleScale*gTimeScale);
+			Camera::Instance().RotateUpDown(-gAngleScale*gTimeScale);
 		else
-			mCamera.RotateUpDown(-gShiftScale*gAngleScale*gTimeScale);
+			Camera::Instance().RotateUpDown(-gShiftScale*gAngleScale*gTimeScale);
 	}
 
 	if( gKeys['W'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(-gMoveScale*gTimeScale);
+			Camera::Instance().MoveCamera(-gMoveScale*gTimeScale);
 		else
-			mCamera.MoveCamera(-gShiftScale*gMoveScale*gTimeScale);
+			Camera::Instance().MoveCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
 
 	if( gKeys['S']) 
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveCamera(gMoveScale*gTimeScale);
+			Camera::Instance().MoveCamera(gMoveScale*gTimeScale);
 		else
-			mCamera.MoveCamera(gShiftScale*gMoveScale*gTimeScale);
+			Camera::Instance().MoveCamera(gShiftScale*gMoveScale*gTimeScale);
 	}
 
 	if( gKeys['A'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(gMoveScale*gTimeScale);
+			Camera::Instance().MoveLRCamera(gMoveScale*gTimeScale);
 		else
-			mCamera.MoveLRCamera(gShiftScale*gMoveScale*gTimeScale);
+			Camera::Instance().MoveLRCamera(gShiftScale*gMoveScale*gTimeScale);
 	}
 
 	if( gKeys['D'])
 	{
 		if (gKeys[VK_SHIFT])
-			mCamera.MoveLRCamera(-gMoveScale*gTimeScale);
+			Camera::Instance().MoveLRCamera(-gMoveScale*gTimeScale);
 		else
-			mCamera.MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
+			Camera::Instance().MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
 
 	if (gKeys[VK_TAB] && !gShowDebugInfoKey)

@@ -2,6 +2,7 @@
 #include "Entities/Mass.h"
 #include "Entities/Box.h"
 #include "Entities/Smoke.h"
+#include "Entities\Sky.h"
 //#include "Entities\Line.h"
 #include "Math/Plane.h"
 #include "Math/Math.h"
@@ -11,6 +12,7 @@
 
 static const float G = 0.01f;
 static const float minDistG = 0.1f;
+static Sky mSky;
 
 
 Game::Game()
@@ -360,6 +362,7 @@ bool Game::InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vecto
 
 void Game::Draw()
 {
+	mSky.Draw();
 	for(int i = 0; i < GetNumEntities(); i++) 
 	{
 		Entities[i]->Draw();
@@ -421,4 +424,13 @@ void Game::Solve()
 		}
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses
+}
+
+void Game::SetNumStars(unsigned long numStars, bool randomize /* = true */)
+{
+	if (randomize)
+	{
+		mSky.Randomize();
+	}
+	mSky.Init(numStars);
 }

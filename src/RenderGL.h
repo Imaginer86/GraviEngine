@@ -34,7 +34,7 @@ public:
 
 	virtual void SetFullScreen(bool Fullscreen_);
 
-	virtual bool CreateWin(long WndProc, const char *title, unsigned width, unsigned height, int bits);
+	virtual bool CreateWin(long* WndProc, const char *title, unsigned width, unsigned height, int bits);
 
 	virtual void glPrint(const char *fmt, ...);
 

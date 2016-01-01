@@ -1,8 +1,9 @@
-﻿numStars
+﻿GraviMasses
+GraviAcc
+Wind
+Collissions
 
-GraviMode
-GraviAccMode
-CollissionMode
+numStars
 
 CameraPos
 Camera Axic Angle

@@ -1,6 +1,7 @@
 #pragma once
-#include "Math/Quaternion.h"
 #include "Math/Vector3.h"
+//#include "Math/Quaternion.h"
+
 //#include <vector>
 
 //#include "Star.h"
@@ -8,7 +9,7 @@
 class Sky
 {
 public:
-	unsigned long numStars;
+	
 
 	Sky();
 	Sky(long numStars);
@@ -26,4 +27,6 @@ protected:
 	//Quaternion *q;
 	Vector3 *R;
 	float *r;
+
+	unsigned long numStars;
 };

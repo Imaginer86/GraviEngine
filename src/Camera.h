@@ -9,6 +9,11 @@ public:
 	: pos(0,0,0)
 	, q(0, 1, 1, 1)
 	{}
+	static Camera& Instance()
+	{
+		static Camera SingleCamera;
+		return SingleCamera;
+	}
 	virtual  ~Camera() {};
 
 	void RotateUpDown(float anglef);

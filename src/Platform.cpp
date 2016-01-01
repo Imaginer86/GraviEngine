@@ -1,5 +1,5 @@
 #include "Platform.h"
-//#include <Windows.h>
+#include <Windows.h>
 
 
 //using namespace win;
@@ -22,7 +22,9 @@ long Platform::GetTickCount()
 }
 
 //bool Platform::PeekMessageCCC(void *msg, void *hWnd, unsigned int wParam, unsigned lParam, unsigned int XZ)
-bool Platform::PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int wParam, unsigned lParam, unsigned int XZ)
-{
-	return ::PeekMessage(&msg, hWnd, wParam, lParam, XZ);
-}
+//bool Platform::PeekMessageCCC(MSG &msg, HWND hWnd, unsigned int wParam, unsigned lParam, unsigned int XZ)
+//{
+//	HWND* hWnd_ = (HWND*) hWnd;
+//	MSG& msg_ = (MSG&) msg;
+//	return ::PeekMessage(&msg_, *hWnd_, wParam, lParam, XZ);
+//}

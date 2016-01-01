@@ -3,6 +3,7 @@
 #include "Entities\Entity.h"
 #include "Math\Quaternion.h"
 
+
 class Game
 {
 public:
@@ -10,6 +11,12 @@ public:
 	Game();
 
 	virtual ~Game(void);
+
+	static Game& Instance()
+	{
+		static Game SingleGame;
+		return SingleGame;
+	}
 
 	void Release();							// delete the entities created;
 
@@ -70,6 +77,8 @@ public:
 	void Collision(float dt);
 
 	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
+
+	void SetNumStars(unsigned long numStars, bool randomize = true);
 
 private:	
 	//vector<Vector3> globalForces;

@@ -1,15 +1,17 @@
-tab		: show/hide debug info
-space	: pause
-+		: time speed-up
--		: time slowdown
+ESC		: exit
 F1		: info
 F5		: reload
+F6		: save
+space	: pause
 1-9		: load Scene
 0		: time scale 0.0
+-		: time slowdown
++		: time speed-up
+tab		: show/hide debug info
 L		: light on/off
 shift	: speed rotate/move
-right	: rotate right
 left	: rotate left
+right	: rotate right
 up		: rotate up
 down	: rotate down
 W		: move forward

@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Sources\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\Input.cpp" />
+    <ClCompile Include="..\Sources\Core\Master.cpp" />
+    <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
+    <ClCompile Include="..\Sources\Entities\Box.cpp" />
+    <ClCompile Include="..\Sources\Entities\Line.cpp" />
+    <ClCompile Include="..\Sources\Entities\Mass.cpp" />
+    <ClCompile Include="..\Sources\Entities\Sky.cpp" />
+    <ClCompile Include="..\Sources\Entities\Smoke.cpp" />
+    <ClCompile Include="..\Sources\Entities\Star.cpp" />
+    <ClCompile Include="..\Sources\Entities\Video.cpp" />
+    <ClCompile Include="..\Sources\Entities\Wave.cpp" />
+    <ClCompile Include="..\Sources\Entities\WaveOut.cpp" />
+    <ClCompile Include="..\Sources\GameBase.cpp" />
+    <ClCompile Include="..\Sources\main.cpp" />
+    <ClCompile Include="..\Sources\Math\Random.cpp" />
+    <ClCompile Include="..\Sources\Math\Tensus.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Sources\Camera.h" />
+    <ClInclude Include="..\Sources\Constans.h" />
+    <ClInclude Include="..\Sources\Core\Camera.h" />
+    <ClInclude Include="..\Sources\Core\Defines.h" />
+    <ClInclude Include="..\Sources\Core\Input.h" />
+    <ClInclude Include="..\Sources\Core\Master.h" />
+    <ClInclude Include="..\Sources\Core\Render.h" />
+    <ClInclude Include="..\Sources\Core\RenderGL.h" />
+    <ClInclude Include="..\Sources\Entities\BaseEntity.h" />
+    <ClInclude Include="..\Sources\Entities\Box.h" />
+    <ClInclude Include="..\Sources\Entities\Entity.h" />
+    <ClInclude Include="..\Sources\Entities\Line.h" />
+    <ClInclude Include="..\Sources\Entities\Mass.h" />
+    <ClInclude Include="..\Sources\Entities\Sky.h" />
+    <ClInclude Include="..\Sources\Entities\Smoke.h" />
+    <ClInclude Include="..\Sources\Entities\Star.h" />
+    <ClInclude Include="..\Sources\Entities\Video.h" />
+    <ClInclude Include="..\Sources\Entities\Wave.h" />
+    <ClInclude Include="..\Sources\Entities\WaveOut.h" />
+    <ClInclude Include="..\Sources\GameBase.h" />
+    <ClInclude Include="..\Sources\Math\Color.h" />
+    <ClInclude Include="..\Sources\Math\Line.h" />
+    <ClInclude Include="..\Sources\Math\Math.h" />
+    <ClInclude Include="..\Sources\Math\Matrix3.h" />
+    <ClInclude Include="..\Sources\Math\Matrix4.h" />
+    <ClInclude Include="..\Sources\Math\Plane.h" />
+    <ClInclude Include="..\Sources\Math\Quaternion.h" />
+    <ClInclude Include="..\Sources\Math\Random.h" />
+    <ClInclude Include="..\Sources\Math\Tensus.h" />
+    <ClInclude Include="..\Sources\Math\Vector3.h" />
+    <ClInclude Include="..\Sources\Math\VectorField.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{79508FD0-94D2-48BB-994B-080F40938F69}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GraviEngine</RootNamespace>
+    <ProjectName>GraviEngine</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MinSpace</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>OpenGL32.Lib;GLU32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenGL32.lib;GLU32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

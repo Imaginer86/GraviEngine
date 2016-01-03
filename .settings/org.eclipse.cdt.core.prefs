@@ -1,6 +1,0 @@
-eclipse.preferences.version=1
-environment/project/org.eclipse.cdt.msvc.toolchain.dll.debug.1789583690/INCLUDE/delimiter=;
-environment/project/org.eclipse.cdt.msvc.toolchain.dll.debug.1789583690/INCLUDE/operation=replace
-environment/project/org.eclipse.cdt.msvc.toolchain.dll.debug.1789583690/INCLUDE/value=C\:\\Program Files (x86)\\Windows Kits\\8.1\\Include;C\:\\Program Files (x86)\\Windows Kits\\8.1\\Include\\um;C\:\\Program Files (x86)\\Windows Kits\\8.1\\Include\\gl;C\:\\Program Files (x86)\\Microsoft Visual Studio 11.0\\VC\\Include;
-environment/project/org.eclipse.cdt.msvc.toolchain.dll.debug.1789583690/append=true
-environment/project/org.eclipse.cdt.msvc.toolchain.dll.debug.1789583690/appendContributed=false

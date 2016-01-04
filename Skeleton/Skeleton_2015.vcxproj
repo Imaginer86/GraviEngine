@@ -14,6 +14,7 @@
     <ProjectGuid>{4FF1287F-C08F-4F86-AF62-C170DC239140}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Skeleton</RootNamespace>
+    <ProjectName>Skeleton</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

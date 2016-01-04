@@ -49,10 +49,14 @@ public:
 //	Matrix4 toMatrix4() const;
 };
 
-
 inline Quaternion operator*(float lhs, const Quaternion &rhs)
 {
     return rhs * lhs;
+}
+
+inline Quaternion operator*(Quaternion &q1, const Quaternion &q2)
+{
+	return q1.operator*(q2);
 }
 
 inline Quaternion::Quaternion(float w_, float x_, float y_, float z_)

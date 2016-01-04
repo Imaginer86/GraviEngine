@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 
+//#include "Camera.h"
+
 extern unsigned gSceneNum;
 
 GameBase::GameBase()
@@ -22,7 +24,8 @@ void GameBase::Release() /* delete the masses created */
 
 void GameBase::Init() /* this method will call the init() method of every mass */
 {
-
+	//Ahtung
+	//Camera::Instance().Init();
 }
 
 void GameBase::Update(float dt)

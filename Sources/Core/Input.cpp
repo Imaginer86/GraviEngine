@@ -1,11 +1,11 @@
 ﻿#include "Input.h"
 #include "Defines.h"
 
+#include "../Constans.h"
+//#include "../Camera.h"
+
 #include "Render.h"
 #include "Master.h"
-
-#include "../Camera.h"
-#include "../Constans.h"
 
 using namespace Core;
 
@@ -79,6 +79,7 @@ void Input::UpdateKeys()
 		gKeys[VK_SPACE] = false;
 	}
 
+	/*
 	if( gKeys[VK_RIGHT] )
 	{
 		if (gKeys[VK_SHIFT])
@@ -110,6 +111,7 @@ void Input::UpdateKeys()
 		else
 			Camera::Instance().RotateUpDown(-gShiftScale*gAngleScale*gTimeScale);
 	}
+	*/
 
 	if ( gKeys[VK_TAB] && !gShowDebugInfoKey )
 	{
@@ -152,6 +154,7 @@ void Input::UpdateKeys()
 		gTimeScale = 0.0f;
 	}
 
+	/*
 	if( gKeys['W'] )
 	{
 		if (gKeys[VK_SHIFT])
@@ -183,6 +186,7 @@ void Input::UpdateKeys()
 		else
 			Camera::Instance().MoveLRCamera(-gShiftScale*gMoveScale*gTimeScale);
 	}
+	*/
 
 	if ( gKeys['L'] && !gLightOnKey )			// Клавиша 'L' нажата и не удерживается?
 	{

@@ -11,6 +11,7 @@
 
 #include "../Constans.h"
 #include "../GameBase.h"
+//#include "../Camera.h"
 #include "../Math/Color.h"
 
 using namespace Core;
@@ -116,6 +117,8 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 void Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
+
+	//Camera::Init();
 	//if (!LoadData(gSceneNum)) 
 	//{
 		//std::cerr << "Load Data Failed!" << std::endl;

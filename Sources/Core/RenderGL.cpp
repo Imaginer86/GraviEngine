@@ -7,13 +7,14 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
+
+//#include "../Camera.h"
+
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3.h"
 
-#include "../Camera.h"
-
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.lib")
 
 //HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 //HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
@@ -500,18 +501,24 @@ void RenderGL::BeginDraw()
 	glMatrixMode(GL_MODELVIEW);								  // Выбор матрицы вида модели
 	glLoadIdentity();										 // Сбросить текущую матрицу
 
+
+	gluLookAt(	11.0f, 11.0f, 0.0f,
+				10.0f, 10.0f, 0.0f,
+				0.0f, 1.0f, 0.0f	);
+
 	//gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
 	//mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
 	//mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
-	Quaternion q = Camera::Instance().GetQuaternion();
-	Vector3 cameraAxic;
-	float cameraAngle;
-	q.toAxisAngle(cameraAxic, cameraAngle);
-	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
-
-	Vector3 cameraPos = Camera::Instance().GetPos();
-	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+//Ahtung
+// 	Quaternion q = Camera::Instance().q;
+// 	Vector3 cameraAxic;
+// 	float cameraAngle;
+// 	q.toAxisAngle(cameraAxic, cameraAngle);
+// 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
+// 
+// 	Vector3 cameraPos = Camera::Instance().pos;
+// 	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
 	SetGLLight();

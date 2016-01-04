@@ -1,10 +1,11 @@
 ﻿#include "Camera.h"
 
-Camera::Camera()
-: pos(0,0,0)
-, q(0, 1, 1, 1)
-{
 
+Camera::Camera()
+//:pos(0.0f, 0.0f, 0.0f)
+//,Q(1.0f, 1.0f, 1.0f, 0.0f)
+{
+	Init();
 }
 
 Camera::~Camera()
@@ -29,11 +30,10 @@ Camera::~Camera()
 
 void Camera::RotateUpDown(float anglef)
 {
-	Vector3 axic(-1, 0, 0);
 	Quaternion qn;
-	qn.fromAxisAngle(axic, anglef);
-	q *= qn;
-	q.normalize();
+	qn.fromAxisAngle(Vector3(-1, 0, 0), anglef);
+	Q *= qn;
+	Q.normalize();
 }
 
 void Camera::RotateLR(float anglef)
@@ -41,16 +41,16 @@ void Camera::RotateLR(float anglef)
 	Vector3 axic(0, 1, 0);
 	Quaternion qn;
 	qn.fromAxisAngle(axic, anglef);
-	q *= qn;
-	q.normalize();
+	Q *= qn;
+	Q.normalize();
 }
 
-Vector3 Camera::GetView()
-{
-	Vector3 view(0,0,1);	
-	view = q.rotate(view);
-	view.unitize();		  
-	return view;
+ Vector3 Camera::GetView()
+ {
+ 	Vector3 view(0,0,1);	
+ 	view = Q.rotate(view);
+ 	view.unitize();		  
+ 	return view;
 }
 
 void Camera::MoveCamera(float speed)

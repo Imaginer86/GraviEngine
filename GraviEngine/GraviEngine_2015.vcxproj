@@ -10,36 +10,25 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\Constans.h" />
-    <ClInclude Include="..\src\Core\Camera.h" />
-    <ClInclude Include="..\src\Core\Game.h" />
-    <ClInclude Include="..\src\Core\Input.h" />
-    <ClInclude Include="..\src\Core\Master.h" />
-    <ClInclude Include="..\src\Core\Render.h" />
-    <ClInclude Include="..\src\Core\RenderGL.h" />
-    <ClInclude Include="..\src\Entities\BaseEntity.h" />
-    <ClInclude Include="..\src\Entities\Box.h" />
-    <ClInclude Include="..\src\Entities\Entity.h" />
-    <ClInclude Include="..\src\Entities\Line.h" />
-    <ClInclude Include="..\src\Entities\Mass.h" />
-    <ClInclude Include="..\src\Entities\Sky.h" />
-    <ClInclude Include="..\src\Entities\Smoke.h" />
-    <ClInclude Include="..\src\Entities\Star.h" />
-    <ClInclude Include="..\src\Entities\Video.h" />
-    <ClInclude Include="..\src\Entities\Wave.h" />
-    <ClInclude Include="..\src\Entities\WaveOut.h" />
-    <ClInclude Include="..\src\Math\Color.h" />
-    <ClInclude Include="..\src\Math\Line.h" />
-    <ClInclude Include="..\src\Math\Math.h" />
-    <ClInclude Include="..\src\Math\Matrix3.h" />
-    <ClInclude Include="..\src\Math\Matrix4.h" />
-    <ClInclude Include="..\src\Math\Plane.h" />
-    <ClInclude Include="..\src\Math\Quaternion.h" />
-    <ClInclude Include="..\src\Math\Random.h" />
-    <ClInclude Include="..\src\Math\Tensus.h" />
-    <ClInclude Include="..\src\Math\Vector3.h" />
-    <ClInclude Include="..\src\Math\VectorField.h" />
+<ItemGroup>
+    <ClCompile Include="..\Sources\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\Input.cpp" />
+    <ClCompile Include="..\Sources\Core\Master.cpp" />
+    <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
+    <ClCompile Include="..\Sources\Entities\Box.cpp" />
+    <ClCompile Include="..\Sources\Entities\Line.cpp" />
+    <ClCompile Include="..\Sources\Entities\Mass.cpp" />
+    <ClCompile Include="..\Sources\Entities\Sky.cpp" />
+    <ClCompile Include="..\Sources\Entities\Smoke.cpp" />
+    <ClCompile Include="..\Sources\Entities\Star.cpp" />
+    <ClCompile Include="..\Sources\Entities\Video.cpp" />
+    <ClCompile Include="..\Sources\Entities\Wave.cpp" />
+    <ClCompile Include="..\Sources\Entities\WaveOut.cpp" />
+    <ClCompile Include="..\Sources\GameBase.cpp" />
+    <ClCompile Include="..\Sources\main.cpp" />
+    <ClCompile Include="..\Sources\Math\Random.cpp" />
+    <ClCompile Include="..\Sources\Math\Tensus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Core\Camera.cpp" />
@@ -64,6 +53,7 @@
     <ProjectGuid>{79508FD0-94D2-48BB-994B-080F40938F69}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GraviEngine</RootNamespace>
+	<ProjectName>GraviEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

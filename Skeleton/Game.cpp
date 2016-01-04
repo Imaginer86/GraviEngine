@@ -5,7 +5,7 @@
 #include <fstream>
 #include <typeinfo.h>
 
-#include "../Sources/Camera.h"
+//#include "../Sources/Camera.h"
 
 #include "../Sources/Entities/Mass.h"
 #include "../Sources/Entities/Box.h"
@@ -28,9 +28,9 @@ static Sky mSky;
 bool gUpdateCamera = false;
 bool gFirstLoad = false;
 
-
-
 extern unsigned gSceneNum;
+
+//Camera gcCamera = Camera::Instance();
 
 Game::Game()
 : numEntitys(0)
@@ -499,14 +499,14 @@ bool Game::LoadData(unsigned fileNum)
 	if (gUpdateCamera || gFirstLoad)
 	{
 		gFirstLoad = false;
-		Camera::Instance().SetPos(cameraPos);
+		//gcCamera.SetPos(cameraPos);
 		Quaternion q;
 		q.fromAxisAngle(cameraAxic, cameraAngle);
 		if (cameraAngle > 0.0f)
 		{
 			q.normalize();
 		}
-		Camera::Instance().SetQuaternion(q);
+		//Camera::Instance().SetQuaternion(q);
 	}
 
 	dataFile >> gLightAmbient.r >> gLightAmbient.g >> gLightAmbient.b >> gLightAmbient.a;

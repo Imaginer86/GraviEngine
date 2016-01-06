@@ -35,7 +35,7 @@ void Line::Draw()
 // 	float angle_y = atan2(h.x, h.z);
 // 	angle_y = Math::ToDegree(angle_y);
 // 
-// 	float angle_z = atan2(h.x, h.y);
+// 	float64 angle_z = atan2(h.x, h.y);
 // 	angle_z = Math::ToDegree(angle_z);
 
 	//glRotatef(-45, 1, 0, 0);
@@ -49,12 +49,12 @@ void Line::Draw()
 	//glRotatef(90, 0, 1, 0);
 	//temp_angle += 0.5;
 
-	glTranslatef(pos.x, pos.y, pos.z - h/2.0f);
-	float headDegrees = 0.0f, pitchDegrees = 0.0f, rollDegrees = 0.0f;
+	glTranslated(pos.x, pos.y, pos.z - h/2.0);
+	float64 headDegrees = 0.0, pitchDegrees = 0.0, rollDegrees = 0.0;
 //	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
-	glRotatef(headDegrees, 1, 0, 0);
-	glRotatef(pitchDegrees, 0, 1, 0);
-	glRotatef(rollDegrees, 0, 0, 1);
+	glRotated(headDegrees, 1, 0, 0);
+	glRotated(pitchDegrees, 0, 1, 0);
+	glRotated(rollDegrees, 0, 0, 1);
 	//q.y += 1;				  
 	glColor3f(color.r, color.g, color.b );
 	gluCylinder(quadratic, r, r, h, 32, 32);
@@ -67,7 +67,7 @@ void Line::Draw()
 // 	glEnd();
 
 	glPushMatrix();
-	glTranslatef(0, 0, h);
+	glTranslated(0, 0, h);
 	gluSphere(quadratic, r , 32, 32);
 	glPopMatrix();
 

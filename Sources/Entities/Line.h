@@ -12,22 +12,22 @@ public:
 
 	virtual ~Line(){};
 
-	void SetR(float r_)
+	void SetR(float64 r_)
 	{
 		this->r = r_;
 	}
 
-	virtual float GetR()
+	virtual float64 GetR()
 	{
 		return r;
 	}
 
-	void SetH(float h_)
+	void SetH(float64 h_)
 	{
 		this->h = h_;
 	}
 
-	virtual float GetH()
+	virtual float64 GetH()
 	{
 		return h;
 	}
@@ -47,7 +47,7 @@ public:
 		this->force += force_;		
 	}
 
-	virtual void simulateForce(float dt)
+	virtual void simulateForce(float64 dt)
 	{
 
 	}
@@ -63,7 +63,7 @@ public:
 		return false;
 	}
 
-	//virtual float ProcessColisions(Entity& entity)
+	//virtual float64 ProcessColisions(Entity& entity)
 	//{
 		//Vector3 pos = entity.GetPos(); //todo
 		//return 0.f;
@@ -72,8 +72,8 @@ public:
 	virtual void Draw();
 
 private:
-	float h;
-	float r;
+	float64 h;
+	float64 r;
 	Vector3 force;
 	Quaternion q;
 	Color4f color;

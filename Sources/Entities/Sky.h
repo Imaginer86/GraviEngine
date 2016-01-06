@@ -25,5 +25,5 @@ public:
 protected:
 	//Quaternion *q;
 	Vector3 *R;
-	float *r;
+	float64 *r;
 };

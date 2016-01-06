@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Sources\Core\Camera.cpp" />
     <ClCompile Include="..\Sources\Core\Input.cpp" />
     <ClCompile Include="..\Sources\Core\Master.cpp" />
     <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
@@ -95,6 +96,7 @@
     <ClCompile Include="Skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sources\Core\Camera.h" />
     <ClInclude Include="..\Sources\Core\Defines.h" />
     <ClInclude Include="..\Sources\Core\Input.h" />
     <ClInclude Include="..\Sources\Core\Master.h" />

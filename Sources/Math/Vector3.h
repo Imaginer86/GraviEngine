@@ -11,7 +11,7 @@ public:
     {
     }
 
-    Vector3(float x, float y, float z)			// Constructor that initializes this Vector3 to the intended values of x, y and z
+    Vector3(float64 x, float64 y, float64 z)			// Constructor that initializes this Vector3 to the intended values of x, y and z
 	: x(x)
 	, y(y)
 	, z(z)
@@ -25,11 +25,11 @@ public:
 // 	{
 // 	}
 
-    void Set(float x_, float y_, float z_)
+    void Set(float64 x_, float64 y_, float64 z_)
     {
-        this->x = x_;
-        this->y = y_;
-        this->z = z_;
+        x = x_;
+        y = y_;
+        z = z_;
     }
 
     Vector3& operator= (Vector3 v)			// operator= sets values of v to this Vector3. example: v1 = v2 means that values of v2 are set onto v1
@@ -50,12 +50,12 @@ public:
         return Vector3(x - v.x, y - v.y, z - v.z);
     }
 
-    Vector3 operator* (float value)			// operator* is used to scale a Vector3 by a value. This value multiplies the Vector3's x, y and z.
+    Vector3 operator* (float64 value)			// operator* is used to scale a Vector3 by a value. This value multiplies the Vector3's x, y and z.
     {
         return Vector3(x * value, y * value, z * value);
     }
 
-    Vector3 operator/ (float value)			// operator/ is used to scale a Vector3 by a value. This value divides the Vector3's x, y and z.
+    Vector3 operator/ (float64 value)			// operator/ is used to scale a Vector3 by a value. This value divides the Vector3's x, y and z.
     {
         return Vector3(x / value, y / value, z / value);
     }
@@ -76,7 +76,7 @@ public:
         return *this;
     }
 
-    Vector3& operator*= (float value)			// operator*= is used to scale this Vector3 by a value.
+    Vector3& operator*= (float64 value)			// operator*= is used to scale this Vector3 by a value.
     {
         x *= value;
         y *= value;
@@ -84,7 +84,7 @@ public:
         return *this;
     }
 
-    Vector3& operator/= (float value)			// operator/= is used to scale this Vector3 by a value.
+    Vector3& operator/= (float64 value)			// operator/= is used to scale this Vector3 by a value.
     {
         x /= value;
         y /= value;
@@ -108,22 +108,22 @@ public:
 		return res;
 	}
 
-	float dotProduct(Vector3 v)
+	float64 dotProduct(Vector3 v)
 	{
 		return this->x*v.x + this->y*v.y + this->z*v.z;
 	}
 
-    float length()								// length() returns the length of this Vector3
+    float64 length()								// length() returns the length of this Vector3
     {
-        return sqrtf(x*x + y*y + z*z);
+        return sqrt(x*x + y*y + z*z);
     };			   		
 
-    float unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
+    float64 unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
     {
-        float length = this->length();
+        float64 length = this->length();
 
         if (length == 0)
-            return 0.0f;
+            return 0.0;
 
         x /= length;
         y /= length;
@@ -133,7 +133,7 @@ public:
 
     Vector3 unit()								// unit() returns a new Vector3. The returned value is a unitized version of this Vector3.
     {
-        float length = this->length();
+        float64 length = this->length();
 
         if (length == 0)
             return *this;
@@ -142,9 +142,9 @@ public:
     }
 
 //private:
-    float x;									// the x value of this Vector3
-    float y;									// the y value of this Vector3
-    float z;									// the z value of this Vector3
+    float64 x;									// the x value of this Vector3
+    float64 y;									// the y value of this Vector3
+    float64 z;									// the z value of this Vector3
 };
 
 // float DistanceV3(Vector3 v1, Vector3 v2)

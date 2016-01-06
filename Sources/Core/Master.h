@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+//#include "../Camera.h"
 #include "../GameBase.h"
 
 namespace Core
@@ -8,8 +9,8 @@ namespace Core
 	class Master
 	{
 	public:
-		Master(){}
-		virtual ~Master(){}
+		Master();
+		virtual ~Master();
 
 		static Master& Instance()
 		{
@@ -22,6 +23,7 @@ namespace Core
 		void Update();
 		void Draw();
 		void Release();
+		void UpdateKeys();
 
 		static long WndProc(void*  hWnd,	// Дескриптор нужного окна
 			unsigned int  uMsg,				// Сообщение для этого окна
@@ -30,6 +32,8 @@ namespace Core
 
 		bool Master::LoadData(unsigned fileNum);
 		bool SaveData(const std::string& fileName);
+	private:
+		//Camera mCamera;		
 	};
 
 }

@@ -10,7 +10,7 @@ public:
 	{}
 	virtual ~Wave(){}
 
-	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, const Color4f& _color)
+	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float64 w_, const Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -18,12 +18,12 @@ public:
 		w = w_;
 		color = _color;
 	}
-	virtual void Update(float dt_);
+	virtual void Update(float64 dt_);
 	virtual void Draw();
 private:
-	float tGame;
+	float64 tGame;
 	Vector3 pos;
 	unsigned numR, numRo;
-	float w;
+	float64 w;
 	Color4f color;
 };

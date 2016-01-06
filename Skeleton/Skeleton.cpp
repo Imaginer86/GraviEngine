@@ -1,13 +1,13 @@
 ﻿#include "Game.h"
 #include "../Sources/Core/Master.h"
 
+
 void main()
 {
 	Game gGame = Game::Instance();
-	gGame.LoadData(1);
+	gGame.LoadData(3);
 
-	Core::Master gMaster = Core::Master::Instance();
-	gMaster.Init((GameBase*) &gGame);
-	gMaster.Run();
-	gMaster.Release();
+	Core::Master::Instance().Init((GameBase*) &gGame);
+	Core::Master::Instance().Run();
+	Core::Master::Instance().Release();
 }

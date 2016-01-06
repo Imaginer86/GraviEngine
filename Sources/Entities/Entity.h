@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "BaseEntity.h"
+#include "../Constans.h"
 #include "../Math/Vector3.h"
 #include "../Math/Color.h"
 
@@ -8,7 +9,7 @@ class Entity: public BaseEntity
 public:
 	Entity();
 
-	Entity(Vector3 pos_, float m_, Vector3 vel_, Color4f color_);
+	Entity(Vector3 pos_, float64 m_, Vector3 vel_, Color4f color_);
 
 	virtual ~Entity();
 
@@ -32,12 +33,12 @@ public:
 		this->vel = v;
 	}
 
-	virtual float GetMass()
+	virtual float64 GetMass()
 	{
 		return m;
 	}
 
-	virtual void SetMass(const float& mass)
+	virtual void SetMass(const float64& mass)
 	{
 		this->m = mass;
 	}
@@ -57,12 +58,12 @@ public:
 		this->force += force_;					// The external force is added to the force of the mass
 	}
 
-	virtual void applyAcc(Vector3& acc, float dt)
+	virtual void applyAcc(Vector3& acc, float64 dt)
 	{
 		vel += acc*dt;
 	}
 
-	virtual void simulateForce(float dt)
+	virtual void simulateForce(float64 dt)
 	{
 		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
 		// The change is proportinal with the acceleration (force / m) and change in time
@@ -79,22 +80,22 @@ public:
 	virtual void Draw() {}
 
 protected:
-	float m;
+	float64 m;
 	Vector3 vel;
 	Vector3 force;
 	Color4f color;
 };
 
 inline Entity::Entity()
-: BaseEntity(Vector3(0.0f, 0.0f, 0.0f))
-, m(1.0f)
-, vel(0.0f, 0.0f, 0.0f)	
-, force(0.0f, 0.0f, 0.0f)
-, color(1.0f, 1.0f, 1.0f, 1.0f)
+: BaseEntity(Vector3(0.0, 0.0, 0.0))
+, m(1.0)
+, vel(0.0f, 0.0f, 0.0)	
+, force(0.0f, 0.0f, 0.0)
+, color(1.0f, 1.0f, 1.0f, 1.0)
 {
 }
 
-inline Entity::Entity(Vector3 pos_, float m_, Vector3 vel_, Color4f color_)
+inline Entity::Entity(Vector3 pos_, float64 m_, Vector3 vel_, Color4f color_)
 : BaseEntity(pos_)
 , m(m_)
 , vel(vel_)

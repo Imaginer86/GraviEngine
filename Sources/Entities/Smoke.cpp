@@ -48,7 +48,7 @@ void Smoke::Draw()
 	}
 }
 
-void Smoke::applyAcc(Vector3& acc, float dt)
+void Smoke::applyAcc(Vector3& acc, float64 dt)
 {
 	for (unsigned long i = 0; i < numParticles; i++)
 	{
@@ -58,7 +58,7 @@ void Smoke::applyAcc(Vector3& acc, float dt)
 }
 
 
-void Smoke::simulateForce(float dt)
+void Smoke::simulateForce(float64 dt)
 {
 	for (unsigned long i = 0; i < numParticles; i++)
 	{
@@ -66,7 +66,7 @@ void Smoke::simulateForce(float dt)
 	}
 }
 
-void Smoke::ApplyWind(float dt)
+void Smoke::ApplyWind(float64 dt)
 {
 	applyAcc(vel, dt);
 }

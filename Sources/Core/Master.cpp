@@ -7,11 +7,9 @@
 #include <windows.h>
 
 #include "RenderGL.h"
-#include "Input.h"
+#include "Camera.h"
 
 #include "../Constans.h"
-#include "../GameBase.h"
-//#include "../Camera.h"
 #include "../Math/Color.h"
 
 using namespace Core;
@@ -22,13 +20,13 @@ bool gShowDebugInfoKey = false;		// TAB нажат?
 bool gReverseKeyPress = false;		// Q нажат?
 bool gUpdateKeyPress = false;
 
-unsigned gSceneNum = 0;
+unsigned gSceneNum = 1;
 unsigned gSceneNumMax = 9;
 
-float gTimeScale = 1.0f;
-float gAngleScale = 1.0f;
-float gMoveScale = 1.0f;
-float gShiftScale = 0.1f;
+float64 gTimeScale = 1.0f;
+float64 gAngleScale = 1.0f;
+float64 gMoveScale = 1.0f;
+float64 gShiftScale = 0.1f;
 
 bool  done = false;	// Логическая переменная для выхода из цикла
 
@@ -39,8 +37,8 @@ bool gShowDebugInfo = true;
 //bool gFirstLoad = false;
 
 
-float gfps = 0.0f;
-float gTime = 0.0f;
+float64 gfps = 0.0f;
+float64 gTime = 0.0f;
 
 
 Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
@@ -48,15 +46,23 @@ Color4f gLightDiffuse( 1.0f, 1.0f, 1.0f, 1.0f );//= { 1.0f, 1.0f, 1.0f, 1.0f }; 
 Vector3 gLightPosition( 3.0f, 3.0f, 4.0f );//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 
-float framesPerSecond = 0.0f;
-float lastTime = 0.0f;
+float64 framesPerSecond = 0.0f;
+float64 lastTime = 0.0f;
 
 long tickCount = 0;
 long lastTickCount = 0;
 
 GameBase *gmGame;
 
-Render* gmRender = new RenderGL;
+Master::Master()
+{
+}
+
+Master::~Master()
+{
+
+}
+
 
 long Master::WndProc(  void*  hWnd,				// Дескриптор нужного окна
 			 unsigned int	uMsg,				// Сообщение для этого окна
@@ -106,7 +112,7 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 		}
 	case WM_SIZE:              // Изменены размеры OpenGL окна
 		{
-			gmRender->ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
+			RenderGL::Instance().ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
 			return 0;											// Возвращаемся
 		}
 	}
@@ -118,14 +124,16 @@ void Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
 
-	//Camera::Init();
+	//Camera::Instance().Init();
+	
 	//if (!LoadData(gSceneNum)) 
 	//{
 		//std::cerr << "Load Data Failed!" << std::endl;
 		//return;													// Return False (Failure)
 	//}
+
 	// Создать наше OpenGL окно	
-	if (!gmRender->CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32))
+	if (!RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32))
 	{
 		std::cerr << "CreateWin Failed!" << std::endl;
 		return;              // Выйти, если окно не может быть создано
@@ -161,7 +169,7 @@ void Master::Run()
 				Draw();						// Рисуем сцену
 			}
 
-			Input::Instance().UpdateKeys();
+			UpdateKeys();
 		}
 	}
 }
@@ -194,13 +202,13 @@ void Master::Update()
 
 void Master::Draw()                // Здесь будет происходить вся прорисовка
 {
-	gmRender->BeginDraw();	
+	RenderGL::Instance().BeginDraw();	
 	gmGame->Draw();
 	if (gShowDebugInfo)
 	{
-		gmRender->DrawDebugInfo();
+		RenderGL::Instance().DrawDebugInfo();
 	}
-	gmRender->EndDraw();
+	RenderGL::Instance().EndDraw();
 }
 
 bool Master::LoadData(unsigned fileNum)
@@ -222,7 +230,7 @@ void Master::Release()
 	gmGame->Release();
 	gTime = 0.0f;
 	gTimeScale = 1.0f;
-	gmRender->Release();						// Разрушаем окно
+	RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 bool Master::SaveData(const std::string& fileName)
@@ -236,4 +244,207 @@ bool Master::SaveData(const std::string& fileName)
 	dataFile.close();
 
 	return true;
+}
+
+
+void Master::UpdateKeys()
+{
+	
+	if( gKeys[VK_F1] )				// Была ли нажата F1?
+	{
+		gKeys[VK_F1] = false;			// Если так, меняем значение ячейки массива на false
+		RenderGL::Instance().Release();					// Разрушаем текущее окно
+		RenderGL::Instance().SetFullScreen( !RenderGL::Instance().GetFullScreen() );		// Переключаем режим
+		// Пересоздаём наше OpenGL окно
+		done = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
+	}
+
+	if( gUpdateKeyPress && gKeys[VK_F5] == true )
+	{
+		gKeys[VK_F5] = false;
+		gUpdateKeyPress = true;
+		Master::Instance().Release();		
+		done = !Master::Instance().LoadData(gSceneNum);
+		RenderGL::Instance().SetGLLight();
+	}
+
+	if ( gUpdateKeyPress && gKeys[VK_F6] == true )
+	{
+		gKeys[VK_F6] = false;
+		gUpdateKeyPress = false;
+		Master::Instance().Release();
+		done = !Master::Instance().SaveData("dataSave");
+	}
+
+	if ( !gUpdateKeyPress && gKeys[VK_F6] == false )
+	{
+		gUpdateKeyPress = true;
+	}
+
+	if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
+	{
+		done = true;							// ESC говорит об останове выполнения программы
+	}
+	
+	if ( gKeys[VK_SPACE] )
+	{
+		gPause = !gPause;
+		gKeys[VK_SPACE] = false;
+	}
+
+	
+	if( gKeys[VK_RIGHT] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().RotateLR(gAngleScale);
+		else
+			Camera::Instance().RotateLR(gShiftScale*gAngleScale);				
+	}
+
+	if( gKeys[VK_LEFT] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().RotateLR(-gAngleScale);			
+		else
+			Camera::Instance().RotateLR(-gShiftScale*gAngleScale);			
+	}
+
+	if( gKeys[VK_UP] )
+	{								
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().RotateUpDown(gAngleScale);
+		else
+			Camera::Instance().RotateUpDown(gShiftScale*gAngleScale);
+	}
+
+	if( gKeys[VK_DOWN] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().RotateUpDown(-gAngleScale);
+		else
+			Camera::Instance().RotateUpDown(-gShiftScale*gAngleScale);
+	}
+	
+
+	if ( gKeys[VK_TAB] && !gShowDebugInfoKey )
+	{
+		gShowDebugInfoKey = true;
+		gShowDebugInfo = !gShowDebugInfo;		
+	}
+
+	if ( !gKeys[VK_TAB] &&gShowDebugInfo )
+	{
+		gShowDebugInfoKey = false;
+		gShowDebugInfo = !gShowDebugInfo;		
+	}
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_ADD] )
+	{
+		gTimeScale += 0.1f*gTimeScale;
+	}
+
+	if ( !gKeys[VK_SHIFT] && gKeys[VK_ADD] )
+	{
+		gTimeScale += 0.01f;
+	}
+
+	if ( !gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
+	{
+		gTimeScale -= 0.01f;
+	}
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
+	{
+		gTimeScale -= 0.1f*gTimeScale;
+	}	
+
+	if ( gKeys[VK_SHIFT] && gKeys['0'] )
+	{
+		gTimeScale = -1.0f;
+	}
+	else if ( gKeys['0'] )
+	{
+		gTimeScale = 0.0f;
+	}
+
+	
+	if( gKeys['W'] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().MoveCamera(-gMoveScale);
+		else
+			Camera::Instance().MoveCamera(-gShiftScale*gMoveScale);
+	}
+
+	if( gKeys['S'] ) 
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().MoveCamera(gMoveScale);
+		else
+			Camera::Instance().MoveCamera(gShiftScale*gMoveScale);
+	}
+
+	if( gKeys['A'] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().MoveLRCamera(gMoveScale);
+		else
+			Camera::Instance().MoveLRCamera(gShiftScale*gMoveScale);
+	}
+
+	if( gKeys['D'] )
+	{
+		if (gKeys[VK_SHIFT])
+			Camera::Instance().MoveLRCamera(-gMoveScale);
+		else
+			Camera::Instance().MoveLRCamera(-gShiftScale*gMoveScale);
+	}
+	
+
+	if ( gKeys['L'] && !gLightOnKey )			// Клавиша 'L' нажата и не удерживается?
+	{
+		gLightOnKey=true;						// lp присвоили TRUE
+		RenderGL::Instance().SetLightOn(!RenderGL::Instance().GetLightOn());				// Переключение света TRUE/FALSE
+		if (RenderGL::Instance().GetLightOn())					// Если не свет
+		{
+			RenderGL::Instance().EnableLight();
+		}
+		else							// В противном случае
+		{
+			RenderGL::Instance().DisableLight();
+		}
+	}
+
+	if ( !gKeys['L'] )					// Клавиша 'L' Отжата?
+	{
+		gLightOnKey=false;						// Если так, то lp равно FALSE
+	}
+
+	if( gKeys['R'] )
+	{
+		gTimeScale = 1.0f;
+	}
+
+	if( gKeys['Q'] && !gReverseKeyPress )
+	{
+		gTimeScale = -gTimeScale;
+		gReverseKeyPress = true;
+	}
+
+	if ( !gKeys['Q'] && gReverseKeyPress )
+	{
+		gReverseKeyPress = false;
+	}
+	
+	for (unsigned char i = 0; i < gSceneNumMax; i++)
+	{
+		unsigned char c = '1' + i;
+		if ( gKeys[c] )
+		{
+			gKeys[c] = false;
+			Master::Instance().Release();
+			done = !Master::Instance().LoadData(i + 1);
+			RenderGL::Instance().SetGLLight();
+		}
+	}
 }

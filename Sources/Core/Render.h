@@ -38,7 +38,7 @@ public:
 	virtual void SetGLLight() = 0;
 	virtual int LoadGLTextures() = 0;
 
-	//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition) = 0;
+	//virtual void SetLight(const float64 *LightAmbient, const float64 *gLightDiffuse, const float64 *gLightPosition) = 0;
 
 	virtual void EnableLight() = 0;
 	virtual void DisableLight() = 0;
@@ -49,8 +49,8 @@ public:
 	virtual void glPrint(const char *fmt, ...) = 0;
 
 	virtual void DrawDebugInfo() = 0;
-	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const  = 0;
-	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const  = 0;
+	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const  = 0;
+	virtual void DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const  = 0;
 
 	void SetLightOn(bool LightOn_) { LightOn = LightOn_; }
 	bool GetLightOn() { return LightOn; }

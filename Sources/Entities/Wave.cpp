@@ -4,7 +4,7 @@
 #include <GL\gl.h>
 #include <GL\glu.h>
 
-void Wave::Update(float dt_)
+void Wave::Update(float64 dt_)
 {
 	this->tGame += 5*dt_;
 }
@@ -13,7 +13,7 @@ void Wave::Draw()
 {
 	glPushMatrix();
 
-	float hangle = 360.0f/float(numRo);
+	float64 hangle = 360.0f/float64(numRo);
 
 	glTranslatef(0.0f, 4.0f, 0.0f);
 
@@ -32,17 +32,16 @@ void Wave::Draw()
 	{
 		for (unsigned ro = 0; ro < numRo; ro++)
 		{
-			float angle0 = Math::degreesToRadians(hangle*ro);
-			float angle1 = Math::degreesToRadians(hangle*(ro + 1));
-			float dist0 = r*w;
-			float dist1 = (r + 1)*w;
+			float64 angle0 = Math::degreesToRadians(hangle*ro);
+			float64 angle1 = Math::degreesToRadians(hangle*(ro + 1));
+			float64 dist0 = r*w;
+			float64 dist1 = (r + 1)*w;
 
-			pos0 = Vector3(dist0*cosf(angle0), 3 * sqrtf(tGame) * sinf(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sinf(angle0));
-			pos1 = Vector3(dist1*cosf(angle0), 3 * sqrtf(tGame) * sinf(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sinf(angle0));
-			pos2 = Vector3(dist1*cosf(angle1), 3 * sqrtf(tGame) * sinf(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sinf(angle1));
-			pos3 = Vector3(dist0*cosf(angle1), 3 * sqrtf(tGame) * sinf(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sinf(angle1));
-
-			
+			pos0 = Vector3(dist0*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle0));
+			pos1 = Vector3(dist1*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle0));
+			pos2 = Vector3(dist1*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle1));
+			pos3 = Vector3(dist0*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle1));
+						
 			//Vector3 pos2d = Vector3(dist*cosf(Math::degreesToRadians(angle)), 10 * sqrtf(tGame)*sinf(dist - tGame) / (dist + tGame), dist*sinf(Math::degreesToRadians(angle)));
 			//Vector3 pos3d = Vector3(dist0*cosf(Math::degreesToRadians(angle)), 10 * sqrtf(tGame)*sinf(dist0 - tGame) / (dist0 + tGame), dist0*sinf(Math::degreesToRadians(angle)));
 
@@ -53,11 +52,11 @@ void Wave::Draw()
 			//pos3 = pos + pos3d;
 			normal = (pos1 - pos0)*(pos3 - pos0);
 
-			glNormal3f(normal.x, normal.y, normal.z);
-			glVertex3f(pos0.x, pos0.y, pos0.z);
-			glVertex3f(pos1.x, pos1.y, pos1.z);
-			glVertex3f(pos2.x, pos2.y, pos2.z);			
-			glVertex3f(pos3.x, pos3.y, pos3.z);
+			glNormal3d(normal.x, normal.y, normal.z);
+			glVertex3d(pos0.x, pos0.y, pos0.z);
+			glVertex3d(pos1.x, pos1.y, pos1.z);
+			glVertex3d(pos2.x, pos2.y, pos2.z);			
+			glVertex3d(pos3.x, pos3.y, pos3.z);
 			pos0 = pos3;
 			pos1 = pos2;
 		}		 

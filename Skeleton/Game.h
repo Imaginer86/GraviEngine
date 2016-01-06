@@ -26,7 +26,7 @@ public:
 
 	virtual void Init();								// this method will call the init() method of every mass;
 
-	virtual void Update(float dt);
+	virtual void Update(float64 dt);
 
 	virtual void Draw();
 
@@ -67,19 +67,19 @@ public:
 
 	void SetNumStars(unsigned long numStars, bool randomize = true);
 
-    void AddMass(float m, float r, const Vector3& pos, const Vector3& vel, const Color4f& color);
+    void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
 
-	void AddBox(float m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
+	void AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
 
 	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles);
 
 	Vector3 GraviForce(int a, int b);
 
 	void Solve();							// no implementation because no forces are wanted in this basic container;
- 	void Simulate(float dt);					// Iterate the masses by the change in time;
-	void AddGraviAcc(float dt);
-	void AddWindAcc(float dt);
-	void Collision(float dt);
+ 	void Simulate(float64 dt);					// Iterate the masses by the change in time;
+	void AddGraviAcc(float64 dt);
+	void AddWindAcc(float64 dt);
+	void Collision(float64 dt);
 
 	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
 

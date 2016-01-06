@@ -10,11 +10,12 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
-//#include "../Camera.h"
+#include "Camera.h"
 
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3.h"
 
+using namespace Core;
 
 //HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 //HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
@@ -33,15 +34,15 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //WNDPROC *WndProc;					  // Процедура обработки сообщений					 
 
-extern float gfps;
+extern float64 gfps;
 
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 extern unsigned gSceneNum;
-extern float gTimeScale;
-extern float gTime;
+extern float64 gTimeScale;
+extern float64 gTime;
 
 
 /*
@@ -136,7 +137,7 @@ void RenderGL::KillFont()									// Delete The Font
 
 void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 {
-	float		length = 0;								// Used To Find The Length Of The Text
+	float64		length = 0;								// Used To Find The Length Of The Text
 	char		text[256];								// Holds Our String
 	va_list		ap;										// Pointer To List Of Arguments
 
@@ -228,7 +229,7 @@ void RenderGL::SetGLLight()
 {
 	GLfloat rLightAmbient[4] = {gLightAmbient.r, gLightAmbient.g, gLightAmbient.b, gLightAmbient.a};
 	GLfloat rLightDiffuse[4] = {gLightDiffuse.r, gLightDiffuse.g, gLightDiffuse.b, gLightDiffuse.a};
-	GLfloat rLightPosition[4] = {gLightPosition.x, gLightPosition.y, gLightPosition.z, 1.0f};
+	GLfloat rLightPosition[4] = {float(gLightPosition.x), float(gLightPosition.y), float(gLightPosition.z), 1.0f};
 	glLightfv(GL_LIGHT0, GL_AMBIENT, rLightAmbient);    // Установка Фонового Света
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, rLightDiffuse);    // Установка Диффузного Света
 	glLightfv(GL_LIGHT0, GL_POSITION, rLightPosition);   // Позиция света
@@ -313,7 +314,7 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 
 	AdjustWindowRectEx(&WindowRect, dwStyle, false, dwExStyle);      // Подбирает окну подходящие размеры
 
-	if (!(hWnd = CreateWindowEx(
+	hWnd = CreateWindowEx(
 		dwExStyle,										// Расширенный стиль для окна
 		("OpenGL"),									   // Имя класса
 		title,										  // Заголовок окна
@@ -326,7 +327,8 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 		NULL,								   // Нет родительского
 		NULL,								  // Нет меню
 		rhInstance,							 // Дескриптор приложения
-		NULL)))							// Не передаём ничего до WM_CREATE (???)
+		NULL);
+	if (!hWnd)							// Не передаём ничего до WM_CREATE (???)
 	{
 		Release();                // Восстановить экран
 		MessageBox(NULL, "Window Creation Error.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -355,14 +357,16 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 		0, 0, 0                  // Маски слоя игнорируются
 	};
 
-	if (!(hDC = GetDC(hWnd)))              // Можем ли мы получить Контекст Устройства?
+	hDC = GetDC(hWnd);
+	if (!hDC)              // Можем ли мы получить Контекст Устройства?
 	{
 		Release();                // Восстановить экран
 		MessageBox(NULL, "Can't Create A GL Device Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return false;                // Вернуть false
 	}
 
-	if (!(PixelFormat = ChoosePixelFormat(hDC, &pfd)))        // Найден ли подходящий формат пикселя?
+	PixelFormat = ChoosePixelFormat(hDC, &pfd);
+	if (!PixelFormat)        // Найден ли подходящий формат пикселя?
 	{
 		Release();                // Восстановить экран
 		MessageBox(NULL, "Can't Find A Suitable PixelFormat.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -376,7 +380,8 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 		return false;                // Вернуть false
 	}
 
-	if (!(hRC = wglCreateContext(hDC))) // Возможно ли установить Контекст Рендеринга?
+	hRC = wglCreateContext(hDC);
+	if (!hRC) // Возможно ли установить Контекст Рендеринга?
 	{
 		Release();                // Восстановить экран
 		MessageBox(NULL, "Can't Create A GL Rendering Context.", "ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -502,23 +507,18 @@ void RenderGL::BeginDraw()
 	glLoadIdentity();										 // Сбросить текущую матрицу
 
 
-	gluLookAt(	11.0f, 11.0f, 0.0f,
-				10.0f, 10.0f, 0.0f,
-				0.0f, 1.0f, 0.0f	);
-
 	//gluLookAt(mCamera.GetPos().x, mCamera.GetPos().y, mCamera.GetPos().z, 
 	//mCamera.GetView().x, mCamera.GetView().y, mCamera.GetView().z, 
-	//mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
+	////mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
-//Ahtung
-// 	Quaternion q = Camera::Instance().q;
-// 	Vector3 cameraAxic;
-// 	float cameraAngle;
-// 	q.toAxisAngle(cameraAxic, cameraAngle);
-// 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
-// 
-// 	Vector3 cameraPos = Camera::Instance().pos;
-// 	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+	Quaternion q = Camera::Instance().GetQuaternion();
+	Vector3 cameraAxic;
+	float64 cameraAngle;
+	q.toAxisAngle(cameraAxic, cameraAngle);
+	glRotated(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
+
+	Vector3 cameraPos = Camera::Instance().GetPos();
+	glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
 	SetGLLight();
@@ -550,7 +550,7 @@ void RenderGL::DrawDebugInfo()
 	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
 	//Quaternion q = Camera::Instance().GetQuaternion();
 	//Vector3 axic;
-	//float angle;
+	//float64 angle;
 	//q.toAxisAngle(axic, angle);
 	//glTranslatef(0.0f, -1.0f, 0);
 	//glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
@@ -559,13 +559,13 @@ void RenderGL::DrawDebugInfo()
 	glPopMatrix();
 }
 
-void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const
+void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const
 {
 	glPushMatrix();
 
-	glTranslatef(pos_.x, pos_.y, pos_.z);
+	glTranslated(pos_.x, pos_.y, pos_.z);
 
-	glRotatef(angle, axic.x, axic.y, axic.z);
+	glRotated(angle, axic.x, axic.y, axic.z);
 
 	glColor3f(color.r, color.g, color.b);
 
@@ -574,47 +574,47 @@ void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 	// Передняя грань
 	//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 1 (Перед)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Перед)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Перед)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Перед)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 1 (Перед)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Перед)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Перед)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Перед)
 	// Задняя грань
 	//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Зад)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Зад)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 3 (Зад)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Зад)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Зад)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Зад)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 3 (Зад)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Зад)
 	// Верхняя грань
 	// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
 
 	// Нижняя грань
 	//glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
 	// Правая грань
 	//glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
 	// Левая грань
 	//glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
 	glEnd();
 
 	glPopMatrix();
 }
 
-void RenderGL::DrawSphere(const Vector3& pos, const float r, const Color4f& color) const
+void RenderGL::DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const
 {
 	GLUquadricObj *quadratic;
 	quadratic = gluNewQuadric();
@@ -625,7 +625,7 @@ void RenderGL::DrawSphere(const Vector3& pos, const float r, const Color4f& colo
 
 	glPushMatrix();
 
-	glTranslatef(pos.x, pos.y, pos.z);
+	glTranslated(pos.x, pos.y, pos.z);
 
 	//glRotatef(-90.0f, 1, 0, 0);
 	//glRotatef(rt, 0, 0, 1);

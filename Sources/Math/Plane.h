@@ -6,7 +6,7 @@
 
 struct Plane
 {
-	float a, b, c, d;
+	float64 a, b, c, d;
 	Plane()
 	: a(0.0f)
 	, b(0.0f)
@@ -14,7 +14,7 @@ struct Plane
 	, d(0.0f)
 	{}
 	
-	Plane(float a_, float b_, float c_, float d_)
+	Plane(float64 a_, float64 b_, float64 c_, float64 d_)
 	: a(a_)
 	, b(b_)
 	, c(c_)
@@ -24,7 +24,7 @@ struct Plane
 	Plane(Vector3 p1, Vector3 p2, Vector3 p3);
 
 	Vector3 proj(Vector3 p);
-	float distance(Vector3 p);
+	float64 distance(Vector3 p);
 };
 
 inline Plane::Plane(Vector3 p1, Vector3 p2, Vector3 p3)
@@ -50,7 +50,7 @@ inline Plane::Plane(Vector3 p1, Vector3 p2, Vector3 p3)
 
 inline Vector3 Plane::proj(Vector3 p)
 {
-	float nn = a*a + b*b + c*c;
+	float64 nn = a*a + b*b + c*c;
 	Vector3 pr;
 	pr.x = (b*b*p.x + c*c*p.x - a*b*p.y - a*c*p.z - a*d) / nn;
 	pr.y = (a*a*p.y + c*c*p.y - a*b*p.x - b*c*p.z - b*d) / nn;
@@ -58,7 +58,7 @@ inline Vector3 Plane::proj(Vector3 p)
 	return pr;
 }
 
-inline float Plane::distance(Vector3 p)
+inline float64 Plane::distance(Vector3 p)
 {
-	return fabsf((a*p.x + b*p.y + c*p.z - d) / sqrtf(a*a + b*b + c*c));
+	return abs((a*p.x + b*p.y + c*p.z - d) / sqrt(a*a + b*b + c*c));
 }

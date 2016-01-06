@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Constans.h"
 
 class Random
 {
@@ -14,5 +15,6 @@ public:
 
 
 	float randf();
+	float64 randf64();
 	void randomize();
 };

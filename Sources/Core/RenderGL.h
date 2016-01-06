@@ -29,7 +29,7 @@ public:
 
 	virtual int LoadGLTextures();
 	
-	//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
+	//virtual void SetLight(const float64 *LightAmbient, const float64 *gLightDiffuse, const float64 *gLightPosition);
 
 	virtual void EnableLight();
 	virtual void DisableLight();
@@ -40,7 +40,7 @@ public:
 
 	virtual void DrawDebugInfo();
 
-	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float angle, const Color4f& color) const;
+	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const;
 
-	virtual void DrawSphere(const Vector3& pos, const float r, const Color4f& color) const;
+	virtual void DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const;
 };

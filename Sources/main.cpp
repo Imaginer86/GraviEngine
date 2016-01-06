@@ -18,7 +18,7 @@
 int main()
 {
 
-	GameBase::Instance().LoadData(1);
+	GameBase::Instance().LoadData(3);
 	// Init
 	Core::Master::Instance().Init(&GameBase::Instance());
 

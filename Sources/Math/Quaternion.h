@@ -1,19 +1,20 @@
 ﻿#pragma once
+#include "../Constans.h"
 #include "Math.h"
 #include "Vector3.h"
 #include "Matrix3.h"
 
 class Quaternion
 {
-	friend Quaternion operator*(float lhs, const Quaternion &rhs);
+	friend Quaternion operator*(float64 lhs, const Quaternion &rhs);
 
 public:
 	static const Quaternion IDENTITY;
 
-	float w, x, y, z;
+	float64 w, x, y, z;
 
 	Quaternion() {}
-	Quaternion(float w_, float x_, float y_, float z_);
+	Quaternion(float64 w_, float64 x_, float64 y_, float64 z_);
 	~Quaternion() {}
 
 	bool operator==(const Quaternion &rhs) const;
@@ -22,34 +23,34 @@ public:
 	Quaternion &operator+=(const Quaternion &rhs);
 	Quaternion &operator-=(const Quaternion &rhs);
 	Quaternion &operator*=(const Quaternion &rhs);		
-	Quaternion &operator*=(float scalar);
-	Quaternion &operator/=(float scalar);
+	Quaternion &operator*=(float64 scalar);
+	Quaternion &operator/=(float64 scalar);
 
 	Quaternion operator+(const Quaternion &rhs) const;
 	Quaternion operator-(const Quaternion &rhs) const;
 	Quaternion operator*(const Quaternion &rhs) const;
-	Quaternion operator*(float scalar) const;
-	Quaternion operator/(float scalar) const;
+	Quaternion operator*(float64 scalar) const;
+	Quaternion operator/(float64 scalar) const;
 
 //	void rotate(Vector3 &v) const;
 
 	Quaternion conjugate() const;
-	void fromAxisAngle(const Vector3 &axis, float degrees);
-//	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
+	void fromAxisAngle(const Vector3 &axis, float64 degrees);
+//	void fromHeadPitchRoll(float64 headDegrees, float64 pitchDegrees, float64 rollDegrees);
 	void fromAngleXYZ(const Vector3 &angle);
 //	void fromMatrix(const Matrix4 &m);
 	void identity();
 	Quaternion inverse() const;
-	float magnitude() const;
+	float64 magnitude() const;
 	Vector3 rotate(Vector3 p);
 	void normalize();
-	void set(float w_, float x_, float y_, float z_);
-	void toAxisAngle(Vector3 &axis, float &degrees) const;
-//	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
+	void set(float64 w_, float64 x_, float64 y_, float64 z_);
+	void toAxisAngle(Vector3 &axis, float64 &degrees) const;
+//	void toHeadPitchRoll(float64 &headDegrees, float64 &pitchDegrees, float64 &rollDegrees) const;
 //	Matrix4 toMatrix4() const;
 };
 
-inline Quaternion operator*(float lhs, const Quaternion &rhs)
+inline Quaternion operator*(float64 lhs, const Quaternion &rhs)
 {
     return rhs * lhs;
 }
@@ -59,7 +60,7 @@ inline Quaternion operator*(Quaternion &q1, const Quaternion &q2)
 	return q1.operator*(q2);
 }
 
-inline Quaternion::Quaternion(float w_, float x_, float y_, float z_)
+inline Quaternion::Quaternion(float64 w_, float64 x_, float64 y_, float64 z_)
 : w(w_), x(x_), y(y_), z(z_) {}
 
 inline bool Quaternion::operator==(const Quaternion &rhs) const
@@ -107,13 +108,13 @@ inline Quaternion &Quaternion::operator*=(const Quaternion &rhs)
     return *this;
 }
 
-inline Quaternion &Quaternion::operator*=(float scalar)
+inline Quaternion &Quaternion::operator*=(float64 scalar)
 {
     w *= scalar, x *= scalar, y *= scalar, z *= scalar;
     return *this;
 }
 
-inline Quaternion &Quaternion::operator/=(float scalar)
+inline Quaternion &Quaternion::operator/=(float64 scalar)
 {
     w /= scalar, x /= scalar, y /= scalar, z /= scalar;
     return *this;
@@ -140,14 +141,14 @@ inline Quaternion Quaternion::operator*(const Quaternion &rhs) const
     return tmp;
 }
 
-inline Quaternion Quaternion::operator*(float scalar) const
+inline Quaternion Quaternion::operator*(float64 scalar) const
 {
     Quaternion tmp(*this);
     tmp *= scalar;
     return tmp;
 }
 
-inline Quaternion Quaternion::operator/(float scalar) const
+inline Quaternion Quaternion::operator/(float64 scalar) const
 {
     Quaternion tmp(*this);
     tmp /= scalar;
@@ -157,7 +158,7 @@ inline Quaternion Quaternion::operator/(float scalar) const
 //inline void Quaternion::rotate(Vector3 &v) const
 //{
 //	Vector3 u(x,y,z);
-//	float sinHalfAlpha = u.unitize();
+//	float64 sinHalfAlpha = u.unitize();
 //	v = v*(w*w) + (u*v-v*u)*sinHalfAlpha*w-u*v*u*(sinHalfAlpha*sinHalfAlpha);
 //}
 
@@ -167,14 +168,14 @@ inline Quaternion Quaternion::conjugate() const
     return tmp;
 }
 
-inline void Quaternion::fromAxisAngle(const Vector3 &axis, float degrees)
+inline void Quaternion::fromAxisAngle(const Vector3 &axis, float64 degrees)
 {
-    float halfTheta = Math::degreesToRadians(degrees) * 0.5f;
-    float s = sinf(halfTheta);
-    w = cosf(halfTheta), x = axis.x * s, y = axis.y * s, z = axis.z * s;
+    float64 halfTheta = Math::degreesToRadians(degrees) * 0.5;
+    float64 s = sin(halfTheta);
+    w = cos(halfTheta), x = axis.x * s, y = axis.y * s, z = axis.z * s;
 }
 
- //inline void Quaternion::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
+ //inline void Quaternion::fromHeadPitchRoll(float64 headDegrees, float64 pitchDegrees, float64 rollDegrees)
 //{
      //Matrix4 m;
      //m.fromHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees);
@@ -208,13 +209,13 @@ inline void Quaternion::identity()
 
 inline Quaternion Quaternion::inverse() const
 {
-    float invMag = 1.0f / magnitude();
+    float64 invMag = 1.0f / magnitude();
     return conjugate() * invMag;
 }
 
-inline float Quaternion::magnitude() const
+inline float64 Quaternion::magnitude() const
 {
-    return sqrtf(w * w + x * x + y * y + z * z);
+    return sqrt(w * w + x * x + y * y + z * z);
 }
 
 inline Vector3 Quaternion::rotate(Vector3 p)
@@ -238,16 +239,16 @@ inline void Quaternion::normalize()
 {
 	if (w==0.0f&&x==0.0f&&y==0.0f&&z==0.0f)
 		identity();
-    float invMag = 1.0f / magnitude();
+    float64 invMag = 1.0f / magnitude();
     w *= invMag, x *= invMag, y *= invMag, z *= invMag;
 }
 
-inline void Quaternion::set(float w_, float x_, float y_, float z_)
+inline void Quaternion::set(float64 w_, float64 x_, float64 y_, float64 z_)
 {
     w = w_, x = x_, y = y_, z = z_;
 }
 
-//inline void Quaternion::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
+//inline void Quaternion::toHeadPitchRoll(float64 &headDegrees, float64 &pitchDegrees, float64 &rollDegrees) const
 //{
 //    Matrix4 m;
 //    m.toHeadPitchRoll(headDegrees, pitchDegrees, rollDegrees)
@@ -263,9 +264,9 @@ inline void Quaternion::set(float w_, float x_, float y_, float z_)
  	// The algorithm used is from Allan and Mark Watt's "Advanced 
  	// Animation and Rendering Techniques" (ACM Press 1992).
  
- 	float s = 0.0f;
- 	float q[4] = {0.0f};
- 	float trace = m[0][0] + m[1][1] + m[2][2];
+ 	float64 s = 0.0f;
+ 	float64 q[4] = {0.0f};
+ 	float64 trace = m[0][0] + m[1][1] + m[2][2];
  
  	if (trace > 0.0f)
  	{
@@ -301,11 +302,11 @@ inline void Quaternion::set(float w_, float x_, float y_, float z_)
  	x = q[0], y = q[1], z = q[2], w = q[3];
 }*/
 
-inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
+inline void Quaternion::toAxisAngle(Vector3 &axis, float64 &degrees) const
 {
 	// Converts this quaternion to an axis and an angle.
 
-	float sinHalfThetaSq = 1.0f - w * w;
+	float64 sinHalfThetaSq = 1.0f - w * w;
 
 	// Guard against numerical imprecision and identity quaternions.
 	if (sinHalfThetaSq <= 0.0f)
@@ -315,12 +316,12 @@ inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
 	}
 	else
 	{
-		float invSinHalfTheta = 1.0f / sqrtf(sinHalfThetaSq);
+		float64 invSinHalfTheta = 1.0 / sqrt(sinHalfThetaSq);
 
 		axis.x = x * invSinHalfTheta;
 		axis.y = y * invSinHalfTheta;
 		axis.z = z * invSinHalfTheta;
-		degrees = Math::radiansToDegrees(2.0f * acosf(w));
+		degrees = Math::radiansToDegrees(2.0 * acos(w));
 	}
 }
 
@@ -333,18 +334,18 @@ inline void Quaternion::toAxisAngle(Vector3 &axis, float &degrees) const
 	//  | 2(xz + wy)		2(yz - wx)			1 - 2(x^2 + y^2)	0  |
 	//  | 0					0					0					1  |
 
-	float x2 = x + x; 
-	float y2 = y + y; 
-	float z2 = z + z;
-	float xx = x * x2;
-	float xy = x * y2;
-	float xz = x * z2;
-	float yy = y * y2;
-	float yz = y * z2;
-	float zz = z * z2;
-	float wx = w * x2;
-	float wy = w * y2;
-	float wz = w * z2;
+	float64 x2 = x + x; 
+	float64 y2 = y + y; 
+	float64 z2 = z + z;
+	float64 xx = x * x2;
+	float64 xy = x * y2;
+	float64 xz = x * z2;
+	float64 yy = y * y2;
+	float64 yz = y * z2;
+	float64 zz = z * z2;
+	float64 wx = w * x2;
+	float64 wy = w * y2;
+	float64 wz = w * z2;
 
 	Matrix4 m;
 

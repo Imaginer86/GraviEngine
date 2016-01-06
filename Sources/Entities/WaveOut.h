@@ -9,7 +9,7 @@ public:
 	{}
 	virtual ~WaveOut(){}
 
-	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float w_, float width_, float height_, const Color4f& _color)
+	void Set(const Vector3& pos_, unsigned numR_, unsigned numRo_, float64 w_, float64 width_, float64 height_, const Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -23,7 +23,7 @@ public:
 private:
 	Vector3 pos, posW;
 	unsigned numR, numRo;
-	float w;
-	float width, height;
+	float64 w;
+	float64 width, height;
 	Color4f color;
 };

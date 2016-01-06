@@ -22,7 +22,7 @@ public:
 
 	virtual void Release();							// delete the entities created;
 
-	virtual void Update(float dt);
+	virtual void Update(float64 dt);
 
 	virtual void Draw();
 };

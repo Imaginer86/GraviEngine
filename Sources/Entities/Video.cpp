@@ -1,4 +1,5 @@
 ﻿#include "Video.h"
+#include "../Constans.h"
 
 //GL_Window*  g_window;
 //Video::Keys*      g_keys;

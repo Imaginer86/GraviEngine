@@ -25,4 +25,17 @@ public:
 	virtual void Update(float64 dt);
 
 	virtual void Draw();
+
+	void SetSceneNum(unsigned sceneNum)
+	{
+		gSceneNum = sceneNum;
+	}
+
+	unsigned GetSceneNum()
+	{
+		return gSceneNum;
+	}
+
+private:
+	unsigned gSceneNum;
 };

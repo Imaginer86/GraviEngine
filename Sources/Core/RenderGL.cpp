@@ -10,7 +10,9 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
+#include "Master.h"
 #include "Camera.h"
+
 
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3.h"
@@ -22,10 +24,10 @@ using namespace Core;
 //HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
 //HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
 
-HDC		hDC = NULL;              // Приватный контекст устройства GDI
-HGLRC	hRC	 = NULL;              // Постоянный контекст рендеринга
-HWND	hWnd = NULL;              // Здесь будет хранится дескриптор окна
-HINSTANCE  rhInstance = NULL;              // Здесь будет хранится дескриптор приложения 
+HDC		hDC = nullptr;              // Приватный контекст устройства GDI
+HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
+HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
+HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
 
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
@@ -34,15 +36,15 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //WNDPROC *WndProc;					  // Процедура обработки сообщений					 
 
-extern float64 gfps;
+//extern float64 gfps;
 
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
-extern unsigned gSceneNum;
-extern float64 gTimeScale;
-extern float64 gTime;
+//extern unsigned gSceneNum;
+//extern float64 gTimeScale;
+//extern float64 gTime;
 
 
 /*
@@ -537,13 +539,13 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(1, 1, 1);
 	glTranslatef(-5.0f, 3.6f, -10.0f);
 	glScalef(0.2f, 0.2f, 0.2f);
-	glPrint("Scene #: %d", gSceneNum);
+	glPrint("Scene #: %d", GameBase::Instance().GetSceneNum());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("FPS: %2.2f", gfps);						// Print GL Text To The Screen
+	glPrint("FPS: %2.2f", Master::gfps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time: %2.2f", gTime);
+	glPrint("Time: %2.2f", Master::gTime);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time Scale: %2.2f", gTimeScale);
+	glPrint("Time Scale: %2.2f", Master::gTimeScale);
 	glTranslatef(0.0f, -1.0f, 0);
 	//glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	//glTranslatef(0.0f, -1.0f, 0);

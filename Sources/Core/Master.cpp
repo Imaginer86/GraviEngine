@@ -14,31 +14,34 @@
 
 using namespace Core;
 
-bool gKeys[256];					// Массив, используемый для операций с клавиатурой
-bool gLightOnKey = false;			// L нажата?
-bool gShowDebugInfoKey = false;		// TAB нажат?
-bool gReverseKeyPress = false;		// Q нажат?
-bool gUpdateKeyPress = false;
+bool Master::gKeys[256];
 
-unsigned gSceneNum = 1;
-unsigned gSceneNumMax = 9;
+bool Master::gLightOnKey = false;			// L нажата?
+bool Master::gShowDebugInfoKey = false;		// TAB нажат?
+bool Master::gReverseKeyPress = false;		// Q нажат?
+bool Master::gUpdateKeyPress = false;
 
-float64 gTimeScale = 1.0f;
-float64 gAngleScale = 1.0f;
-float64 gMoveScale = 1.0f;
-float64 gShiftScale = 0.1f;
+//unsigned Master::gSceneNum = 1;
+unsigned Master::gSceneNumMax = 9;
 
-bool  done = false;	// Логическая переменная для выхода из цикла
+float64 Master::gTimeScale = 1.0f;
+float64 Master::gAngleScale = 1.0f;
+float64 Master::gMoveScale = 1.0f;
+float64 Master::gShiftScale = 0.1f;
 
-bool gActive = true;                // Флаг активности окна
-bool gPause = true;
-bool gShowDebugInfo = true;
+bool Master::gDone = false;	// Логическая переменная для выхода из цикла
+
+bool Master::gActive = true;                // Флаг активности окна
+bool Master::gPause = true;
+bool Master::gShowDebugInfo = true;
 //bool gUpdateCamera = false;
 //bool gFirstLoad = false;
 
 
-float64 gfps = 0.0f;
-float64 gTime = 0.0f;
+float64 Master::gfps = 0.0f;
+float64 Master::gTime = 0.0f;
+
+
 
 
 Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
@@ -124,6 +127,8 @@ void Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
 
+
+
 	//Camera::Instance().Init();
 	
 	//if (!LoadData(gSceneNum)) 
@@ -146,13 +151,13 @@ void Master::Run()
 
 	MSG  msg;           // Структура для хранения сообщения Windows
 
-	while( !done )							// Цикл продолжается, пока done не равно true
+	while( !gDone )							// Цикл продолжается, пока done не равно true
 	{
 		if( PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) )    // Есть ли в очереди какое-нибудь сообщение?
 		{
 			if( msg.message == WM_QUIT )						// Мы поучили сообщение о выходе?
 			{
-				done = true;										// Если так, done=true
+				gDone = true;										// Если так, done=true
 			}
 			else												// Если нет, обрабатывает сообщения
 			{
@@ -180,20 +185,9 @@ void Master::Update()
 
 	if (!gPause)
 	{			
-		float dt = float(tickCount - lastTickCount) * 0.001f;
+		float64 dt = float64(tickCount - lastTickCount) * 0.001;
 		gTime += gTimeScale*dt;
-
 		gmGame->Update(gTimeScale*dt);
-	}
-
-	framesPerSecond = framesPerSecond + 1.0f;
-	float currentTime = float(tickCount)*0.001f;
-
-	if ((currentTime - lastTime) > 1.0f)
-	{
-		lastTime = currentTime;
-		gfps = framesPerSecond;
-		framesPerSecond = 0.0f;
 	}
 
 	lastTickCount = tickCount;			// Set Last Count To Current Count
@@ -209,20 +203,32 @@ void Master::Draw()                // Здесь будет происходит
 		RenderGL::Instance().DrawDebugInfo();
 	}
 	RenderGL::Instance().EndDraw();
+
+	framesPerSecond = framesPerSecond + 1.0;
+	float64 currentTime = float64(tickCount) * 0.001;
+
+	if ((currentTime - lastTime) > 1.0)
+	{
+		lastTime = currentTime;
+		gfps = framesPerSecond;
+		framesPerSecond = 0.0f;
+	}
 }
 
 bool Master::LoadData(unsigned fileNum)
 {
-	gSceneNum = fileNum;
+	return gmGame->LoadData(fileNum);
 
-	std::string fileNumstr = std::to_string(fileNum);
-	std::string fileName = "data//data" + fileNumstr + ".dat";
-	std::ifstream dataFile(fileName, std::ios::in);
+	//GameBase::Instance().SetSceneNum(fileNum);
 
-	if (!dataFile.is_open())
-		return false;
-	dataFile.close();
-	return true;
+	//std::string fileNumstr = std::to_string(fileNum);
+	//std::string fileName = "data//data" + fileNumstr + ".dat";
+	//std::ifstream dataFile(fileName, std::ios::in);
+
+	//if (!dataFile.is_open())
+		//return false;
+	//dataFile.close();
+	//return true;
 }
 
 void Master::Release()
@@ -230,7 +236,7 @@ void Master::Release()
 	gmGame->Release();
 	gTime = 0.0f;
 	gTimeScale = 1.0f;
-	RenderGL::Instance().Release();						// Разрушаем окно
+	//RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 bool Master::SaveData(const std::string& fileName)
@@ -256,7 +262,7 @@ void Master::UpdateKeys()
 		RenderGL::Instance().Release();					// Разрушаем текущее окно
 		RenderGL::Instance().SetFullScreen( !RenderGL::Instance().GetFullScreen() );		// Переключаем режим
 		// Пересоздаём наше OpenGL окно
-		done = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
+		gDone = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
 	}
 
 	if( gUpdateKeyPress && gKeys[VK_F5] == true )
@@ -264,7 +270,7 @@ void Master::UpdateKeys()
 		gKeys[VK_F5] = false;
 		gUpdateKeyPress = true;
 		Master::Instance().Release();		
-		done = !Master::Instance().LoadData(gSceneNum);
+		gDone = !Master::Instance().LoadData(gmGame->GetSceneNum());
 		RenderGL::Instance().SetGLLight();
 	}
 
@@ -273,7 +279,7 @@ void Master::UpdateKeys()
 		gKeys[VK_F6] = false;
 		gUpdateKeyPress = false;
 		Master::Instance().Release();
-		done = !Master::Instance().SaveData("dataSave");
+		gDone = !Master::Instance().SaveData("dataSave");
 	}
 
 	if ( !gUpdateKeyPress && gKeys[VK_F6] == false )
@@ -283,7 +289,7 @@ void Master::UpdateKeys()
 
 	if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
 	{
-		done = true;							// ESC говорит об останове выполнения программы
+		gDone = true;							// ESC говорит об останове выполнения программы
 	}
 	
 	if ( gKeys[VK_SPACE] )
@@ -443,7 +449,7 @@ void Master::UpdateKeys()
 		{
 			gKeys[c] = false;
 			Master::Instance().Release();
-			done = !Master::Instance().LoadData(i + 1);
+			gDone = !Master::Instance().LoadData(i + 1);
 			RenderGL::Instance().SetGLLight();
 		}
 	}

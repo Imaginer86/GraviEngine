@@ -30,6 +30,24 @@ public:
 
 	virtual void Draw();
 
+	void SetNumStars(unsigned long numStars, bool randomize = true);
+
+    void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
+
+	void AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
+
+	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles);
+
+	Vector3 GraviForce(int a, int b);
+
+	void Solve();							// no implementation because no forces are wanted in this basic container;
+ 	void Simulate(float64 dt);					// Iterate the masses by the change in time;
+	void AddGraviAcc(float64 dt);
+	void AddWindAcc(float64 dt);
+	void Collision(float64 dt);
+
+	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
+
 	void SetNumEntities(unsigned entities)
 	{
 		numEntitys = entities;
@@ -64,24 +82,6 @@ public:
 	{
 		this->graviAcc = graviAcc_;
 	}
-
-	void SetNumStars(unsigned long numStars, bool randomize = true);
-
-    void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
-
-	void AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
-
-	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles);
-
-	Vector3 GraviForce(int a, int b);
-
-	void Solve();							// no implementation because no forces are wanted in this basic container;
- 	void Simulate(float64 dt);					// Iterate the masses by the change in time;
-	void AddGraviAcc(float64 dt);
-	void AddWindAcc(float64 dt);
-	void Collision(float64 dt);
-
-	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
 
 private:	
 	//vector<Vector3> globalForces;

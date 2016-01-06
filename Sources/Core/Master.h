@@ -32,8 +32,34 @@ namespace Core
 
 		bool Master::LoadData(unsigned fileNum);
 		bool SaveData(const std::string& fileName);
+
+		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
+		static bool gLightOnKey;			// L нажата?
+		static bool gShowDebugInfoKey;		// TAB нажат?
+		static bool gReverseKeyPress;		// Q нажат?
+		static bool gUpdateKeyPress;
+
+		//static unsigned gSceneNum;
+		static unsigned gSceneNumMax;
+
+		static float64 gTimeScale;
+		static float64 gAngleScale;
+		static float64 gMoveScale;
+		static float64 gShiftScale;
+
+		static bool gDone;	// Логическая переменная для выхода из цикла
+
+		static bool gActive;                // Флаг активности окна
+		static bool gPause;
+		static bool gShowDebugInfo;
+		//bool gUpdateCamera = false;
+		//bool gFirstLoad = false;
+
+
+		static float64 gfps;
+		static float64 gTime;
+
 	private:
 		//Camera mCamera;		
 	};
-
 }

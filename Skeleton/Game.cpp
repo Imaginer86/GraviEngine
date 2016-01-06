@@ -5,36 +5,29 @@
 #include <fstream>
 #include <typeinfo.h>
 
+#include "../Sources/Core/Master.h"
 #include "../Sources/Core/Camera.h"
 
 #include "../Sources/Entities/Mass.h"
 #include "../Sources/Entities/Box.h"
 #include "../Sources/Entities/Smoke.h"
 #include "../Sources/Entities/Sky.h"
-//#include "/Sources/Entities/Line.h"
 #include "../Sources/Math/Math.h"
 #include "../Sources/Math/Plane.h"
 
-extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+extern Color4f gLightAmbient;
+extern Color4f gLightDiffuse;
+extern Vector3 gLightPosition;
 
-//static const double Gk = 0.000001;
-//static const double Gk = 1000000;
-//static const double G = 0.000066738480;
+//unsigned Core::Master::gSceneNum;
+//extern float64 gTimeScale;
+
 static const float64  G = 6.673848;
 
-static const float64 minDistG = 0.1f;
 static Sky mSky;
-
 
 bool gUpdateCamera = false;
 bool gFirstLoad = false;
-
-extern unsigned gSceneNum;
-extern float64 gTimeScale;
-
-//Camera gcCamera = Camera::Instance();
 
 Game::Game()
 : numEntitys(0)
@@ -408,7 +401,8 @@ Vector3 Game::GraviForce( int a, int b )
 	
 	gforce = float64( G * double(Entities[a]->GetMass() * Entities[b]->GetMass()/(r * r))  );
 	
-	if (r < minDistG)
+	//if (r < minDistG)
+	if (r < Math::EPSILON)
 	{
 		gforce = 0;
 		Vector3 vel0(0.0f, 0.0f ,0.0f);
@@ -438,8 +432,10 @@ void Game::Solve()
 			if (a != b)
 			{
 				Vector3 force(GraviForce(a,b));
-				if ( force.unitize() > Math::EPSILON )
-				 Entities[a]->applyForce(force); //Gravi Force
+				//if ( force.unitize() > Math::EPSILON )
+				//{
+				Entities[a]->applyForce(force); //Gravi Force
+				//}
 			}
 		}
 	}
@@ -458,7 +454,7 @@ void Game::SetNumStars(unsigned long numStars, bool randomize /* = true */)
 bool Game::LoadData(unsigned fileNum)
 {
 	
-	gSceneNum = fileNum;
+	SetSceneNum(fileNum);
 
 	std::string fileNumstr = std::to_string(fileNum);
 	std::string fileName = "data//data" + fileNumstr + ".dat";
@@ -469,7 +465,7 @@ bool Game::LoadData(unsigned fileNum)
 
 	float64 timeScale;
 	dataFile >> timeScale;
-	gTimeScale = timeScale;
+	Core::Master::gTimeScale = timeScale;
 	
 	bool bGraviMasses;
 	dataFile >> bGraviMasses;

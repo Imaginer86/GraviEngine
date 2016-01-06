@@ -2,10 +2,6 @@
 #include <string>
 #include <fstream>
 
-//#include "Camera.h"
-
-extern unsigned gSceneNum;
-
 GameBase::GameBase()
 {
 

@@ -1,7 +1,6 @@
 ﻿#include "Game.h"
 #include "../Sources/Core/Master.h"
 
-
 void main()
 {
 	Game gGame = Game::Instance();

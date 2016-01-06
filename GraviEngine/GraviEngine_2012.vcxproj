@@ -25,7 +25,6 @@
     <ClCompile Include="..\Sources\Entities\Wave.cpp" />
     <ClCompile Include="..\Sources\Entities\WaveOut.cpp" />
     <ClCompile Include="..\Sources\GameBase.cpp" />
-    <ClCompile Include="..\Sources\main.cpp" />
     <ClCompile Include="..\Sources\Math\Random.cpp" />
     <ClCompile Include="..\Sources\Math\Tensus.cpp" />
   </ItemGroup>
@@ -74,7 +73,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>

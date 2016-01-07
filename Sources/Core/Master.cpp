@@ -16,17 +16,19 @@ using namespace Core;
 
 bool Master::gKeys[256];
 
-bool Master::gLightOnKey = false;			// L нажата?
-bool Master::gShowDebugInfoKey = false;		// TAB нажат?
-bool Master::gReverseKeyPress = false;		// Q нажат?
-bool Master::gUpdateKeyPress = false;
+bool gLightOnKey = false;			// L нажата?
+bool gShowDebugInfoKey = false;		// TAB нажат?
+bool gReverseKeyPress = false;		// Q нажат?
+bool gReloadKeyPress = false;
+bool gSaveKeyPress = false;
 
 //unsigned Master::gSceneNum = 1;
 unsigned Master::gSceneNumMax = 9;
 
 float64 Master::gTimeScale = 1.0f;
-float64 Master::gAngleScale = 1.0f;
-float64 Master::gMoveScale = 1.0f;
+
+float64 Master::gAngleScale = 0.001f;
+float64 Master::gMoveScale = 0.1f;
 float64 Master::gShiftScale = 0.1f;
 
 bool Master::gDone = false;	// Логическая переменная для выхода из цикла
@@ -36,12 +38,9 @@ bool Master::gPause = true;
 bool Master::gShowDebugInfo = true;
 //bool gUpdateCamera = false;
 //bool gFirstLoad = false;
-
-
-float64 Master::gfps = 0.0f;
+float64 Master::gfps = 0;
+float64 Master::gups = 0;
 float64 Master::gTime = 0.0f;
-
-
 
 
 Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
@@ -49,13 +48,21 @@ Color4f gLightDiffuse( 1.0f, 1.0f, 1.0f, 1.0f );//= { 1.0f, 1.0f, 1.0f, 1.0f }; 
 Vector3 gLightPosition( 3.0f, 3.0f, 4.0f );//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 
-float64 framesPerSecond = 0.0f;
-float64 lastTime = 0.0f;
+unsigned countUpdate = 0;
+unsigned countDraw = 0;
+unsigned count = 0;
 
 long tickCount = 0;
 long lastTickCount = 0;
+long lastTickFPS = 0;
+long lastTickUPS = 0;
+
+float64 minFPS = 100.0;
+float64 minUPS = 200.0;
 
 GameBase *gmGame;
+
+bool gFirstLoad = false;
 
 Master::Master()
 {
@@ -127,16 +134,6 @@ void Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
 
-
-
-	//Camera::Instance().Init();
-	
-	//if (!LoadData(gSceneNum)) 
-	//{
-		//std::cerr << "Load Data Failed!" << std::endl;
-		//return;													// Return False (Failure)
-	//}
-
 	// Создать наше OpenGL окно	
 	if (!RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32))
 	{
@@ -148,6 +145,8 @@ void Master::Init(GameBase* gameBase_)
 void Master::Run()
 {
 	lastTickCount = ::GetTickCount();		// Get Tick Count
+	lastTickFPS = lastTickCount;
+	lastTickUPS = lastTickCount;
 
 	MSG  msg;           // Структура для хранения сообщения Windows
 
@@ -170,8 +169,36 @@ void Master::Run()
 			// Прорисовываем сцену.
 			if( gActive )          // Активна ли программа?
 			{
-				Update();
-				Draw();						// Рисуем сцену
+				tickCount = GetTickCount();			// Get The Tick Count
+				//float64 currentTime = float64(tickCount) * 0.001;
+
+				count += tickCount - lastTickCount;
+
+				if (count > 1000)
+				{
+					count -= 1000;
+					gups = float64(countUpdate);
+					gfps = float64(countDraw);
+					countUpdate = 0;
+					countDraw  = 0;
+				}
+
+				//if (!gPause && (tickCount - lastTickUPS) > long(1000.0/minUPS))
+				if (!gPause)
+				{
+					Update();
+					lastTickUPS = tickCount;
+					countUpdate++;					
+				}
+				
+
+				if ( float64(tickCount - lastTickFPS) > long(1000.0/minFPS))
+				{
+					Draw();							// Рисуем сцену
+					lastTickFPS = tickCount;
+					countDraw++;
+				}				
+				lastTickCount = tickCount;			// Set Last Count To Current Count
 			}
 
 			UpdateKeys();
@@ -181,16 +208,9 @@ void Master::Run()
 
 void Master::Update()
 {
-	tickCount = GetTickCount();				// Get The Tick Count
-
-	if (!gPause)
-	{			
-		float64 dt = float64(tickCount - lastTickCount) * 0.001;
-		gTime += gTimeScale*dt;
-		gmGame->Update(gTimeScale*dt);
-	}
-
-	lastTickCount = tickCount;			// Set Last Count To Current Count
+	float64 dt = float64(tickCount - lastTickCount) * 0.001;
+	gTime += gTimeScale*dt;
+	gmGame->Update(gTimeScale*dt);
 }
 
 
@@ -203,16 +223,14 @@ void Master::Draw()                // Здесь будет происходит
 		RenderGL::Instance().DrawDebugInfo();
 	}
 	RenderGL::Instance().EndDraw();
+}
 
-	framesPerSecond = framesPerSecond + 1.0;
-	float64 currentTime = float64(tickCount) * 0.001;
-
-	if ((currentTime - lastTime) > 1.0)
-	{
-		lastTime = currentTime;
-		gfps = framesPerSecond;
-		framesPerSecond = 0.0f;
-	}
+void Master::Release()
+{
+	gmGame->Release();
+	gTime = 0.0f;
+	gTimeScale = 1.0f;
+	//RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 bool Master::LoadData(unsigned fileNum)
@@ -226,17 +244,9 @@ bool Master::LoadData(unsigned fileNum)
 	//std::ifstream dataFile(fileName, std::ios::in);
 
 	//if (!dataFile.is_open())
-		//return false;
+	//return false;
 	//dataFile.close();
 	//return true;
-}
-
-void Master::Release()
-{
-	gmGame->Release();
-	gTime = 0.0f;
-	gTimeScale = 1.0f;
-	//RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 bool Master::SaveData(const std::string& fileName)
@@ -252,7 +262,6 @@ bool Master::SaveData(const std::string& fileName)
 	return true;
 }
 
-
 void Master::UpdateKeys()
 {
 	
@@ -265,27 +274,35 @@ void Master::UpdateKeys()
 		gDone = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
 	}
 
-	if( gUpdateKeyPress && gKeys[VK_F5] == true )
-	{
-		gKeys[VK_F5] = false;
-		gUpdateKeyPress = true;
+	if( gReloadKeyPress && gKeys[VK_F5])
+	{		
+		gReloadKeyPress = false;
 		Master::Instance().Release();		
 		gDone = !Master::Instance().LoadData(gmGame->GetSceneNum());
 		RenderGL::Instance().SetGLLight();
 	}
 
-	if ( gUpdateKeyPress && gKeys[VK_F6] == true )
+	if ( !gReloadKeyPress && gKeys[VK_F5] )
+	{
+		gReloadKeyPress = true;		
+	}
+
+
+	if ( gSaveKeyPress && gKeys[VK_F6])
 	{
 		gKeys[VK_F6] = false;
-		gUpdateKeyPress = false;
-		Master::Instance().Release();
+		gReloadKeyPress = false;
+		
 		gDone = !Master::Instance().SaveData("dataSave");
 	}
 
-	if ( !gUpdateKeyPress && gKeys[VK_F6] == false )
+	if ( !gSaveKeyPress && gKeys[VK_F6] )
 	{
-		gUpdateKeyPress = true;
+		gKeys[VK_F6] = false;
+		gSaveKeyPress = true;
 	}
+
+
 
 	if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
 	{
@@ -298,6 +315,38 @@ void Master::UpdateKeys()
 		gKeys[VK_SPACE] = false;
 	}
 
+	if ( gShowDebugInfoKey && gKeys[VK_TAB] )
+	{
+		gKeys[VK_TAB] = false;
+		gShowDebugInfoKey = false;
+		gShowDebugInfo = !gShowDebugInfo;		
+	}
+
+	if ( !gShowDebugInfoKey && gKeys[VK_TAB] )
+	{
+		gShowDebugInfoKey = true;
+	}
+
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_ADD] )
+	{
+		gTimeScale += 0.1f*gTimeScale;
+	}
+
+	if ( !gKeys[VK_SHIFT] && gKeys[VK_ADD] )
+	{
+		gTimeScale += 0.001f;
+	}
+
+	if ( !gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
+	{
+		gTimeScale -= 0.001f;
+	}
+
+	if ( gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
+	{
+		gTimeScale -= 0.1f*gTimeScale;
+	}	
 	
 	if( gKeys[VK_RIGHT] )
 	{
@@ -330,39 +379,6 @@ void Master::UpdateKeys()
 		else
 			Camera::Instance().RotateUpDown(-gShiftScale*gAngleScale);
 	}
-	
-
-	if ( gKeys[VK_TAB] && !gShowDebugInfoKey )
-	{
-		gShowDebugInfoKey = true;
-		gShowDebugInfo = !gShowDebugInfo;		
-	}
-
-	if ( !gKeys[VK_TAB] &&gShowDebugInfo )
-	{
-		gShowDebugInfoKey = false;
-		gShowDebugInfo = !gShowDebugInfo;		
-	}
-
-	if ( gKeys[VK_SHIFT] && gKeys[VK_ADD] )
-	{
-		gTimeScale += 0.1f*gTimeScale;
-	}
-
-	if ( !gKeys[VK_SHIFT] && gKeys[VK_ADD] )
-	{
-		gTimeScale += 0.01f;
-	}
-
-	if ( !gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
-	{
-		gTimeScale -= 0.01f;
-	}
-
-	if ( gKeys[VK_SHIFT] && gKeys[VK_SUBTRACT] )
-	{
-		gTimeScale -= 0.1f*gTimeScale;
-	}	
 
 	if ( gKeys[VK_SHIFT] && gKeys['0'] )
 	{
@@ -448,6 +464,7 @@ void Master::UpdateKeys()
 		if ( gKeys[c] )
 		{
 			gKeys[c] = false;
+			gFirstLoad = true;			
 			Master::Instance().Release();
 			gDone = !Master::Instance().LoadData(i + 1);
 			RenderGL::Instance().SetGLLight();

@@ -27,7 +27,7 @@ static const float64  G = 6.673848;
 static Sky mSky;
 
 bool gUpdateCamera = false;
-bool gFirstLoad = false;
+extern bool gFirstLoad;
 
 Game::Game()
 : numEntitys(0)

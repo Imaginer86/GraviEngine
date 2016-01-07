@@ -13,6 +13,7 @@
 #include "Master.h"
 #include "Camera.h"
 
+#include "../GameBase.h"
 
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3.h"
@@ -41,6 +42,8 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+
+extern GameBase *gmGame;
 
 //extern unsigned gSceneNum;
 //extern float64 gTimeScale;
@@ -216,7 +219,7 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 	glLoadIdentity();              // Сброс матрицы проекции
 
 	// Вычисление соотношения геометрических размеров для окна
-	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 2000.0f);
+	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 1.0, 100000.0f);
 
 	// 	glMatrixMode( GL_MODELVIEW );            // Выбор матрицы вида модели
 	// 	gluLookAt(mCamera.pos.x, mCamera.pos.y, mCamera.pos.z, 
@@ -539,16 +542,18 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(1, 1, 1);
 	glTranslatef(-5.0f, 3.6f, -10.0f);
 	glScalef(0.2f, 0.2f, 0.2f);
-	glPrint("Scene #: %d", GameBase::Instance().GetSceneNum());
+	glPrint("Scene #: %d", gmGame->GetSceneNum());
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("FPS: %2.2f", Master::gfps);						// Print GL Text To The Screen
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("UPS: %2.2f", Master::gups);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Time: %2.2f", Master::gTime);
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Time Scale: %2.2f", Master::gTimeScale);
 	glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
-	//glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
+	glTranslatef(0.0f, -1.0f, 0);
 	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
 	//Quaternion q = Camera::Instance().GetQuaternion();
 	//Vector3 axic;

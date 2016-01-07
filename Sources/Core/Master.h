@@ -34,11 +34,6 @@ namespace Core
 		bool SaveData(const std::string& fileName);
 
 		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
-		static bool gLightOnKey;			// L нажата?
-		static bool gShowDebugInfoKey;		// TAB нажат?
-		static bool gReverseKeyPress;		// Q нажат?
-		static bool gUpdateKeyPress;
-
 		//static unsigned gSceneNum;
 		static unsigned gSceneNumMax;
 
@@ -57,6 +52,7 @@ namespace Core
 
 
 		static float64 gfps;
+		static float64 gups;
 		static float64 gTime;
 
 	private:

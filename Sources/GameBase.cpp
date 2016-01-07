@@ -26,7 +26,7 @@ void GameBase::Init() /* this method will call the init() method of every mass *
 
 void GameBase::Update(float64 dt)
 {
-
+	dt;
 }
 
 void GameBase::Draw()

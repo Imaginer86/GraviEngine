@@ -49,7 +49,7 @@ public:
 
 	virtual void simulateForce(float64 dt)
 	{
-
+		dt;
 	}
 
 	virtual void init()

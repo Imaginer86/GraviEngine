@@ -252,8 +252,8 @@ void Game::Collision(float64 dt)
 
 				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Box) || typeid(*Entities[a]) == typeid(Box) && typeid(*Entities[b]) == typeid(Mass))
 				{
-					Mass *mass;
-					Box *box;
+					Mass *mass = nullptr;
+					Box *box = nullptr;
 					if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Box))
 					{
 						mass = dynamic_cast<Mass*>(Entities[a]);

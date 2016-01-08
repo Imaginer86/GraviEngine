@@ -5,10 +5,8 @@ GraviAcc
 Wind
 Collissions
 
-numStars
-
 CameraPos
-Camera Axic Angle
+Camera AngleAxic Angle
 UpdateCamera
 
 LightAmbient
@@ -17,17 +15,19 @@ LightPosition
 
 GraveAcc
 
+numStars
+
 numEntities
 
 numMas
+numBox
+numSmoke
 
 m
 r
 Pos
 Vel
 Color
-
-numBox
 
 m
 Size
@@ -37,17 +37,9 @@ AngleQ
 AngleVelQ
 Color
 
-numSmoke
-
 numParticles
 Pos
 Rand
 Vel0
 Vel
 Color
-
-numWave
-
-pos
-numR numRo
-w

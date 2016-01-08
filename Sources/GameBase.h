@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <vector>
 #include "../Sources/Math/Quaternion.h"
 
 class GameBase

@@ -20,11 +20,6 @@
 
 using namespace Core;
 
-//HDC		hDC = nullptr;              // Приватный контекст устройства GDI
-//HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
-//HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
-//HINSTANCE  rhInstance = nullptr;              // Здесь будет хранится дескриптор приложения 
-
 HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
 HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
@@ -33,46 +28,43 @@ HINSTANCE  rhInstance = nullptr;              // Здесь будет хран�
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
 
-//GLuint		texture[4];									// 3 Textures				 
-//GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
-//WNDPROC *WndProc;					  // Процедура обработки сообщений					 
-
-//extern float64 gfps;
-
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
 extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 extern GameBase *gmGame;
 
+//WNDPROC *WndProc;					  // Процедура обработки сообщений
+//GLuint		texture[4];									// 3 Textures				 
+//GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
+//
 //extern unsigned gSceneNum;
 //extern float64 gTimeScale;
 //extern float64 gTime;
-
-
-/*
-** RGB Image Structure
-*/
-
+//
+// RGB Image Structure
+//
 //typedef struct _AUX_RGBImageRec {
-    //GLint sizeX, sizeY;
-    //unsigned char *data;
+//GLint sizeX, sizeY;
+//unsigned char *data;
 //} AUX_RGBImageRec;
-
-
-
+//
 //#define auxDIBImageLoad auxDIBImageLoadA
-
 //AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
+//AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
 
+RenderGL::RenderGL()
+: LightOn(true)
+, Fullscreen(false)
 
-/*
-#define auxDIBImageLoad auxDIBImageLoadA
+{
 
-AUX_RGBImageRec * APIENTRY auxDIBImageLoadA(LPCSTR);
-AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
-*/
+}
 
+RenderGL::~RenderGL()
+{
+
+}
 
 //AUX_RGBImageRec *LoadBMP(char *Filename)				// Loads A Bitmap Image
 //{
@@ -82,20 +74,9 @@ AUX_RGBImageRec * APIENTRY auxDIBImageLoadW(LPCWSTR);
 //		File.close();
 //		return auxDIBImageLoad(Filename);				// Load The Bitmap And Return A Pointer
 //	}
-
 //	return NULL;										// If Load Failed Return NULL
 //}	
 
-
-RenderGL::RenderGL()
-{
-
-}
-
-RenderGL::~RenderGL()
-{
-
-}
 
 void RenderGL::BuildFont()								// Build Our Bitmap Font
 {
@@ -554,15 +535,15 @@ void RenderGL::DrawDebugInfo()
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
-	//Quaternion q = Camera::Instance().GetQuaternion();
-	//Vector3 axic;
-	//float64 angle;
-	//q.toAxisAngle(axic, angle);
-	//glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
-	//glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Angle: %2.2f", angle);
+	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
+	Quaternion q = Camera::Instance().GetQuaternion();
+	Vector3 axic;
+	float64 angle;
+	q.toAxisAngle(axic, angle);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Angle: %2.2f", angle);
 	glPopMatrix();
 }
 

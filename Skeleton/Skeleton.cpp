@@ -4,7 +4,7 @@
 void main()
 {
 	Game gGame = Game::Instance();
-	gGame.LoadData(3);
+	gGame.LoadData(4);
 
 	Core::Master::Instance().Init((GameBase*) &gGame);
 	Core::Master::Instance().Run();

@@ -7,8 +7,6 @@ class Render
 protected:
 
 	Render()
-	: LightOn(true)
-	, Fullscreen(false)
 	{
 	}
 
@@ -52,13 +50,9 @@ public:
 	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const  = 0;
 	virtual void DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const  = 0;
 
-	void SetLightOn(bool LightOn_) { LightOn = LightOn_; }
-	bool GetLightOn() { return LightOn; }
+	virtual void SetLightOn(bool LightOn_) = 0;
+	virtual bool GetLightOn() = 0;
 
-	void SetFullScreen(bool Fullscreen_) { Fullscreen = Fullscreen_; }
-	bool GetFullScreen() { return Fullscreen;}
-
-private:
-	bool LightOn;      // Свет ВКЛ / ВЫКЛ
-	bool Fullscreen;
+	virtual void SetFullScreen(bool Fullscreen_) = 0;
+	virtual bool GetFullScreen() = 0;
 };

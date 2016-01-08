@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include <vector>
 #include "../Sources/GameBase.h"
 #include "../Sources/Entities/Entity.h"
+#include "../Sources/Entities/Sky.h"
 #include "../Sources/Math/Math.h"
 #include "../Sources/Math/Quaternion.h"
 
@@ -20,6 +20,8 @@ public:
 		return SingleGame;
 	}
 
+	virtual bool SaveData();
+
 	virtual bool LoadData(unsigned fileNum);
 
 	virtual void Release();							// delete the entities created;
@@ -30,13 +32,11 @@ public:
 
 	virtual void Draw();
 
-	void SetNumStars(unsigned long numStars, bool randomize = true);
-
-    void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
+	void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
 
 	void AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
 
-	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles);
+	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles, bool createCollision);
 
 	Vector3 GraviForce(int a, int b);
 
@@ -48,10 +48,14 @@ public:
 
 	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
 
-	void SetNumEntities(unsigned entities)
+	void SetNumStars(unsigned long numStars, bool randomize = true);
+
+	unsigned long GetNumStars()
 	{
-		numEntitys = entities;
+		return mSky->GetNumStars();
 	}
+
+	void SetNumEntities(unsigned numEntities_);
 
 	int GetNumEntities()
 	{
@@ -63,9 +67,19 @@ public:
 		bGraviMasses = bGraviMasses_;
 	}
 
+	bool GetBGraviMasses()
+	{
+		return bGraviMasses;
+	}
+
 	void SetBGraviAcc(bool bGraviAcc_)
 	{
 		bGraviAcc = bGraviAcc_;
+	}
+
+	bool GetBGraviAcc()
+	{
+		return bGraviAcc;
 	}
 
 	void SetBWindAcc(bool bWindAcc_)
@@ -73,24 +87,75 @@ public:
 		bWindAcc = bWindAcc_;
 	}
 
+	bool GetBWindAcc()
+	{
+		return bWindAcc;
+	}
+
 	void SetBCollisions(bool bCollisions_)
 	{
 		bCollisions = bCollisions_;
 	}
 
-	void SetGraviAcc(Vector3 graviAcc_)
+	bool GetBCollisions()
 	{
-		this->graviAcc = graviAcc_;
+		return bCollisions;
 	}
 
-private:	
-	//vector<Vector3> globalForces;
-	unsigned numEntitys;
-	std::vector<Entity*> Entities;
-	//list<Entity> Entities;
+	void SetGraviAcc(Vector3 graviAcc_)
+	{
+		graviAcc = graviAcc_;
+	}
+
+	void SetNumMasses(unsigned numMasses_)
+	{
+		numMasses = numMasses_;
+	}
+
+	unsigned GetNumMasses()
+	{
+		return numMasses;
+	}
+
+	void SetNumBoxes(unsigned numBoxes_)
+	{
+		numBoxes= numBoxes_;
+	}
+
+	unsigned GetNumBoxes()
+	{
+		return numBoxes;
+	}
+
+	void SetNumSmokers(unsigned numSmokers_)
+	{
+		numSmokers = numSmokers_;
+	}
+
+	unsigned GetNumSmokers()
+	{
+		return numSmokers;
+	}
+
+	Vector3 GetGraviAcc()
+	{
+		return graviAcc;
+	}
+
+private:
+	unsigned numMasses;
+	unsigned numBoxes;
+	unsigned numSmokers;
+
 	bool bGraviMasses;
 	bool bGraviAcc;
 	bool bWindAcc;
 	bool bCollisions;
+
+	unsigned numEntitys;
+	Entity** Entities;
+
 	Vector3 graviAcc;
+
+	Sky* mSky;
 };

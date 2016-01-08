@@ -12,8 +12,10 @@
 #include "../Sources/Entities/Box.h"
 #include "../Sources/Entities/Smoke.h"
 #include "../Sources/Entities/Sky.h"
+
 #include "../Sources/Math/Math.h"
 #include "../Sources/Math/Plane.h"
+#include "../Sources/Math/Random.h"
 
 extern Color4f gLightAmbient;
 extern Color4f gLightDiffuse;
@@ -22,12 +24,10 @@ extern Vector3 gLightPosition;
 //unsigned Core::Master::gSceneNum;
 //extern float64 gTimeScale;
 
-static const float64  G = 6.673848;
-
-static Sky mSky;
-
 bool gUpdateCamera = false;
 extern bool gFirstLoad;
+
+unsigned countAddEntities = 0;
 
 Game::Game()
 : numEntitys(0)
@@ -41,25 +41,42 @@ Game::Game()
 
 Game::~Game()
 {
-	numEntitys = 0;
-	for (unsigned i = 0; i < Entities.size(); i++)
-		delete Entities[i];
-	Entities.clear();
 }
 
 void Game::Release() /* delete the masses created */
 {
-	numEntitys = 0;
-	for (unsigned i = 0; i < Entities.size(); i++)
+	for (unsigned i = 0; i < numEntitys; ++i)
+	{
 		delete Entities[i];
-	Entities.clear();
+	}
+
+	numEntitys = 0;
+	numMasses = 0;
+	numBoxes = 0;
+	numSmokers = 0;
+
+	countAddEntities = 0;
+	Entities = nullptr;
+	delete mSky;
 }
+
+void Game::SetNumEntities(unsigned numEntities_)
+{
+	numEntitys = numEntities_;
+	//for (unsigned i = 0; i < numEntitys; ++i)
+	//{
+		//Entities[i] = new Entity;
+	//}
+	Entities = new Entity*[numEntitys];
+}
+
 
 void Game::AddMass( float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color )
 {	
 	Mass* mass = new Mass;	
 	mass->Set(m, r, pos, vel, color);
-	Entities.push_back(mass);
+	Entities[countAddEntities] = mass;
+	++countAddEntities;
 }
 
 void Game::AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color)
@@ -72,14 +89,16 @@ void Game::AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vect
 	box->SetAngleQ(q);
 	box->SetAngleVelQ(qVel);
 	box->SetColor(color);
-	Entities.push_back(box);
+	Entities[countAddEntities] = box;
+	++countAddEntities;
 }
 
-void Game::AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numEntitys)
+void Game::AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numEntitys, bool createCollision)
 {
 	Smoke *smoke = new Smoke;
-	smoke->Init(pos, rand, vel0, vel, color, numEntitys);
-	Entities.push_back(smoke);
+	smoke->Init(pos, rand, vel0, vel, color, numEntitys, createCollision);
+	Entities[countAddEntities] = smoke;
+	++countAddEntities;
 }
 
 /*
@@ -120,15 +139,16 @@ void Game::Update(float64 dt)
 	Simulate(dt);								// Step 3: iterate the masses by the change in time
 }
 
+
 void Game::Init() /* this method will call the init() method of every mass */
-{
-	for (unsigned i = 0; i < Entities.size(); i++)		// We will init() every mass
+{	
+	for (unsigned i = 0; i < numEntitys; i++)		// We will init() every mass
 		Entities[i]->init();						// call init() method of the mass
 }
 
 void Game::AddGraviAcc(float64 dt)
 {
-	for (unsigned i = 0; i < Entities.size(); i++)
+	for (unsigned i = 0; i < numEntitys; i++)
 	{
 		if (typeid(*Entities[i]) == typeid(Mass))
 		{
@@ -144,7 +164,7 @@ void Game::AddGraviAcc(float64 dt)
 
 void Game::AddWindAcc(float64 dt)
 {
-	for (unsigned i = 0; i < Entities.size(); i++)
+	for (unsigned i = 0; i < numEntitys; i++)
 	{
 		if (typeid(*Entities[i]) == typeid(Smoke))
 		{
@@ -157,15 +177,15 @@ void Game::AddWindAcc(float64 dt)
 
 void Game::Simulate(float64 dt) /* Iterate the masses by the change in time */
 {
-	for (unsigned i = 0; i < Entities.size(); i++)		// We will iterate every mass
+	for (unsigned i = 0; i < numEntitys; i++)		// We will iterate every mass
 		Entities[i]->simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
 }
 
 
 void Game::Collision(float64 dt)
 {
-	for (unsigned a = 0; a < (Entities.size() - 1); a++)
-		for (unsigned b = a + 1; b < Entities.size(); b++)
+	for (unsigned a = 0; a < (numEntitys - 1); a++)
+		for (unsigned b = a + 1; b < numEntitys; b++)
 			if (a != b)
 			{
 				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Mass))
@@ -375,8 +395,8 @@ bool Game::InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vecto
 
 void Game::Draw()
 {
-	mSky.Draw();
-	for(int i = 0; i < GetNumEntities(); i++) 
+	mSky->Draw();
+	for(unsigned i = 0; i < numEntitys; i++) 
 	{
 		Entities[i]->Draw();
 	}
@@ -425,9 +445,9 @@ Vector3 Game::GraviForce( int a, int b )
 
 void Game::Solve() 
 {
-	for(unsigned a = 0; a < Entities.size(); a++)
+	for(unsigned a = 0; a < numEntitys; a++)
 	{
-		for(unsigned b = 0; b < Entities.size(); b++)
+		for(unsigned b = 0; b < numEntitys; b++)
 		{			
 			if (a != b)
 			{
@@ -444,16 +464,155 @@ void Game::Solve()
 
 void Game::SetNumStars(unsigned long numStars, bool randomize /* = true */)
 {
+	mSky = new Sky;
+
+
 	if (randomize)
 	{
-		mSky.Randomize();
+		mSky->Randomize();
 	}
-	mSky.Init(numStars);
+	mSky->Init(numStars);
+}
+
+bool Game::SaveData()
+{
+
+	std::string fileNumstr = "quickSave";
+	std::string fileName = "data/" + fileNumstr + ".dat";
+	std::ofstream dataFile(fileName, std::ios::out);
+
+	if (!dataFile.is_open())
+		return false;
+
+	float64 timeScale = Core::Master::gTimeScale;
+	dataFile << timeScale;
+	
+	bool bGraviMasses = GetBGraviMasses();
+	dataFile << bGraviMasses;
+
+	bool bGraviAcc = GetBGraviAcc();
+	dataFile << bGraviAcc;
+
+	bool bWindAcc = GetBWindAcc();
+	dataFile << bWindAcc;
+
+	bool bCollisions = GetBCollisions();
+	dataFile << bCollisions;
+	
+	Vector3 cameraPos = Core::Camera::Instance().GetPos();
+	Vector3 cameraAxic;
+	float64 cameraAngle;
+	Core::Camera::Instance().GetQuaternion().toAxisAngle(cameraAxic, cameraAngle);
+	
+	dataFile << cameraPos.x << cameraPos.y << cameraPos.z
+		<< cameraAxic.x << cameraAxic.y << cameraAxic.z
+		<< cameraAngle;
+	dataFile << gUpdateCamera;
+
+	dataFile << gLightAmbient.r << gLightAmbient.g << gLightAmbient.b << gLightAmbient.a;
+	dataFile << gLightDiffuse.r << gLightDiffuse.g << gLightDiffuse.b << gLightDiffuse.a;
+	dataFile << gLightPosition.x << gLightPosition.y << gLightPosition.z;
+
+	Vector3 graviAcc = GetGraviAcc();
+
+	dataFile << graviAcc.x << graviAcc.y << graviAcc.z;
+
+	unsigned long numStars = GetNumStars();
+	dataFile << numStars;
+	
+	unsigned numEntities = GetNumEntities();;
+
+	dataFile << numEntities;
+
+	int numMass = GetNumMasses();	
+	dataFile << numMass;	
+
+	int numBoxs = GetNumBoxes();
+	dataFile << numBoxs;
+
+	unsigned numSmokers = GetNumSmokers();	
+	dataFile << numSmokers;
+	
+	for (unsigned i = 0; i < numEntities; i++)
+	{
+		Mass* M = dynamic_cast<Mass*>(Entities[i]);
+		float64 m = M->GetMass();
+		float64 r = M->GetR();
+		Vector3 pos = M->GetPos();
+		Vector3 vel = M->GetVel();		
+		Color4f color = M->GetColor();
+		
+		dataFile << m << r
+			<< pos.x << pos.y << pos.z
+			<< vel.x << vel.y << vel.z
+			//<< isLight
+			<< color.r << color.g << color.b << color.a;
+
+		Box* B = dynamic_cast<Box*>(Entities[i]);
+		m = B->GetMass();
+		Vector3 size = B->GetSize();
+		pos = B->GetPos();
+		vel = B->GetVel();
+		color = B->GetColor();
+		Quaternion q = B->GetAngleQ();
+		Vector3 angleAxic;
+		float64 angle;
+		q.toAxisAngle(angleAxic, angle);
+		Quaternion qVel = B->GetAngleVelQ();
+		Vector3 angleVelAxic;
+		float64 angleVel;
+		qVel.toAxisAngle(angleVelAxic, angleVel);
+				
+		dataFile << m
+			<< size.x << size.y << size.z
+			<< pos.x << pos.y << pos.z
+			<< vel.x << vel.y << vel.z
+			<< q.x << q.y << q.z << angle
+			<< qVel.x << qVel.y << qVel.z << angleVel
+			<< color.r << color.g << color.b << color.a;
+		angle = Math::degreesToRadians(angle);
+		angleVel = Math::degreesToRadians(angleVel);
+		q.w = cos(angle / 2.0f);
+		q.x *= sin(angle / 2.0f);
+		q.y *= sin(angle / 2.0f);
+		q.z *= sin(angle / 2.0f);
+
+		qVel.w = cos(angleVel / 2.0f);
+		qVel.x *= sin(angleVel / 2.0f);
+		qVel.y *= sin(angleVel / 2.0f);
+		qVel.z *= sin(angleVel / 2.0f);
+
+		AddBox(m, size, pos, vel, q, qVel, color);
+
+
+		Smoke* S = dynamic_cast<Smoke*>(Entities[i]);
+
+		pos = S->GetPos();		
+		Vector3 vel0 = S->GetVel0();
+		vel = S->GetVel();
+		color = S->GetColor();
+		Vector3 rand( (Random::Instance().randf64() - 0.5) * 2.0, (Random::Instance().randf64() - 0.5) * 2.0, (Random::Instance().randf64() - 0.5) * 2.0);
+		unsigned numParticless = S->GetNumParticles();
+		
+		bool createCollision = S->GetCreateCollision();
+
+		dataFile << numParticless
+			<< createCollision
+			<< pos.x << pos.y << pos.z
+			<< rand.x << rand.y << rand.z
+			<< vel0.x << vel0.y << vel0.z
+			<< vel.x << vel.y << vel.z
+			<< color.r << color.g << color.b << color.a;
+
+		AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
+	}
+
+	dataFile.close();
+	return true;
 }
 
 bool Game::LoadData(unsigned fileNum)
 {
-	
 	SetSceneNum(fileNum);
 
 	std::string fileNumstr = std::to_string(fileNum);
@@ -482,13 +641,6 @@ bool Game::LoadData(unsigned fileNum)
 	bool bCollisions;
 	dataFile >> bCollisions;
 	SetBCollisions(bCollisions);
-
-	unsigned long numStars;
-	dataFile >> numStars;
-	if (numStars)
-	{
-		SetNumStars(numStars /*,false*/);
-	}
 
 	Vector3 cameraPos;
 	Vector3 cameraAxic;
@@ -526,17 +678,25 @@ bool Game::LoadData(unsigned fileNum)
 	dataFile >> graviAcc.x >> graviAcc.y >> graviAcc.z;
 	SetGraviAcc(graviAcc);
 
-	unsigned int numEntities = 0;
-
+	unsigned long numStars = 0;
+	dataFile >> numStars;
+	SetNumStars(numStars /*,false*/);
+	
+	unsigned numEntities = 0;
 	dataFile >> numEntities;
 
 	SetNumEntities(numEntities);
 
-	int numMass = 0;
-
+	unsigned numMass = 0;
 	dataFile >> numMass;
 
-	for (int i = 0; i < numMass; i++)
+	unsigned numBoxs = 0;
+	dataFile >> numBoxs;
+
+	unsigned numSmokers = 0;
+	dataFile >> numSmokers;
+
+	for (unsigned i = 0; i < numMass; i++)
 	{
 		float64 m = 0.0f, r = 0.0f;
 		Vector3 pos, vel;
@@ -550,10 +710,7 @@ bool Game::LoadData(unsigned fileNum)
 		AddMass(m, r, pos, vel, /*isLight,*/ color);
 	}
 
-	int numBoxs = 0;
-	dataFile >> numBoxs;
-
-	for (int i = 0; i < numBoxs; i++)
+	for (unsigned i = 0; i < numBoxs; i++)
 	{
 		float64 m = 0.0;
 		Vector3 pos, size, vel;
@@ -584,24 +741,25 @@ bool Game::LoadData(unsigned fileNum)
 		AddBox(m, size, pos, vel, q, qVel, color);
 	}
 
-	unsigned numSmokers = 0;
 	unsigned long numParticless = 0;
 	Vector3 pos;
 	Vector3 rand;
 	Vector3 vel0;
 	Vector3 vel;
 	Color4f color;
-	dataFile >> numSmokers ;
+	bool createCollision;
+	
 	for (unsigned i = 0; i < numSmokers; i++)
 	{
 		dataFile >> numParticless
+		>> createCollision
 		>> pos.x >> pos.y >> pos.z
 		>> rand.x >> rand.y >> rand.z
 		>> vel0.x >> vel0.y >> vel0.z
 		>> vel.x >> vel.y >> vel.z
 		>> color.r >> color.g >> color.b >> color.a;
 
-		AddSmoker( pos, rand, vel0, vel, color, numParticless);
+		AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
 	}
 
 	/*	

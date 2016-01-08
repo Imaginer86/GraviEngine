@@ -27,12 +27,6 @@ public:
 
 	Vector3 GetView();
 
-	void Init()
-	{
-		pos = Vector3(10.0f, 10.0f, 0.0f);
-		q = Quaternion(1.0f, 1.0f, 1.0f, 0.0f);
-	}
-
 	void Interpolate(Quaternion& q_)
 	{
 		q *= q_;

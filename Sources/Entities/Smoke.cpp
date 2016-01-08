@@ -15,9 +15,10 @@ Smoke::~Smoke()
 	delete[] E;
 }
 
-void Smoke::Init( const Vector3& Pos_, const Vector3& rand_, const Vector3& vel0_, const Vector3& vel_, const Color4f& color_, unsigned long numParticles_)
+void Smoke::Init( const Vector3& Pos_, const Vector3& rand_, const Vector3& vel0_, const Vector3& vel_, const Color4f& color_, unsigned long numParticles_, bool createCollision_)
 {
 	numParticles = numParticles_;
+	createCollision = createCollision_;
 	E = new Entity[numParticles];
 	pos = Pos_;
 	rand = rand_;
@@ -25,11 +26,25 @@ void Smoke::Init( const Vector3& Pos_, const Vector3& rand_, const Vector3& vel0
 	vel = vel_;	
 	color = color_;
 	m = 1.0f;
-	for ( unsigned long i = 0; i < numParticles_; i++)
+	for ( unsigned long i = 0; i < numParticles; ++i)
 	{
-		E[i].SetMass(1.0f);
+		
 		Vector3 r = Vector3((Random::Instance().randf() - 0.5f) * 2.0f * rand.x, (Random::Instance().randf() - 0.5f) * 2.0f * rand.y, (Random::Instance().randf() - 0.5f) * 2.0f * rand.z);
-		E[i].SetPos(pos + r);		
+		Vector3 posEntity = pos + r;
+
+		bool flag = true;
+
+		for (unsigned long j = 0; flag && j < i; ++j)
+		{
+			Vector3 posEnather = E[j].GetPos();
+
+			Vector3 diff = posEnather - posEntity;
+			if (createCollision)
+			{
+
+			}
+		}
+		E[i].SetMass(1.0f);
 		Vector3 velll = (vel - vel0);
 		velll.x *= (Random::Instance().randf() - 0.5f) * 2.0f;
 		velll.y *= (Random::Instance().randf() - 0.5f) * 2.0f;

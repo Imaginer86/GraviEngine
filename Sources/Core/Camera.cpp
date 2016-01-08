@@ -5,9 +5,9 @@ using namespace Core;
 
 Camera::Camera()
 :pos(0.0, 0.0, 0.0)
-,q(0.0, 1.0, 1.0, 0.0)
+,q(0.0, 0.0, 1.0, 0.0)
 {
-	Init();
+
 }
 
 Camera::~Camera()

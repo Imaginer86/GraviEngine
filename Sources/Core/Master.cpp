@@ -14,34 +14,16 @@
 
 using namespace Core;
 
-bool Master::gKeys[256];
+unsigned gcWidth = 1920;
+unsigned gcHeight = 1080;
+
+bool gFirstLoad = true;
 
 bool gLightOnKey = false;			// L нажата?
 bool gShowDebugInfoKey = false;		// TAB нажат?
 bool gReverseKeyPress = false;		// Q нажат?
 bool gReloadKeyPress = false;
 bool gSaveKeyPress = false;
-
-//unsigned Master::gSceneNum = 1;
-unsigned Master::gSceneNumMax = 9;
-
-float64 Master::gTimeScale = 1.0f;
-
-float64 Master::gAngleScale = 0.001f;
-float64 Master::gMoveScale = 0.1f;
-float64 Master::gShiftScale = 0.1f;
-
-bool Master::gDone = false;	// Логическая переменная для выхода из цикла
-
-bool Master::gActive = true;                // Флаг активности окна
-bool Master::gPause = true;
-bool Master::gShowDebugInfo = true;
-//bool gUpdateCamera = false;
-//bool gFirstLoad = false;
-float64 Master::gfps = 0;
-float64 Master::gups = 0;
-float64 Master::gTime = 0.0f;
-
 
 Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 Color4f gLightDiffuse( 1.0f, 1.0f, 1.0f, 1.0f );//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
@@ -62,7 +44,34 @@ float64 minUPS = 200.0;
 
 GameBase *gmGame;
 
-bool gFirstLoad = false;
+bool irstLoad = false;
+
+
+
+bool Master::gKeys[256];
+
+float64 Master::gfps = 0.0;
+float64 Master::gups = 0.0;
+
+float64 Master::gTime = 0.0;
+
+//unsigned Master::gSceneNum = 1;
+unsigned Master::gSceneNumMax = 9;
+
+float64 Master::gTimeScale = 1.0f;
+
+float64 Master::gAngleScale = 0.001f;
+float64 Master::gMoveScale = 0.1f;
+float64 Master::gShiftScale = 0.1f;
+
+bool Master::gDone = false;	// Логическая переменная для выхода из цикла
+
+bool Master::gActive = true;                // Флаг активности окна
+bool Master::gPause = true;
+bool Master::gShowDebugInfo = true;
+//bool gUpdateCamera = false;
+//bool gFirstLoad = false;
+
 
 Master::Master()
 {
@@ -135,7 +144,8 @@ void Master::Init(GameBase* gameBase_)
 	gmGame = gameBase_;
 
 	// Создать наше OpenGL окно	
-	if (!RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32))
+	bool assert = !RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32);
+	if (assert)
 	{
 		std::cerr << "CreateWin Failed!" << std::endl;
 		return;              // Выйти, если окно не может быть создано
@@ -251,8 +261,8 @@ bool Master::LoadData(unsigned fileNum)
 
 bool Master::SaveData(const std::string& fileName)
 {
-	std::string fileNamestr = "../data/" + fileName;
-	std::ofstream dataFile(fileName, std::ios::out);
+	std::string fileNamestr = "data/" + fileName;
+	std::ofstream dataFile(fileNamestr, std::ios::out);
 	if (!dataFile.is_open())
 		return false;
 
@@ -274,33 +284,36 @@ void Master::UpdateKeys()
 		gDone = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
 	}
 
-	if( gReloadKeyPress && gKeys[VK_F5])
-	{		
+	if( !gReloadKeyPress && gKeys[VK_F5])
+	{
+		gKeys[VK_F5] = false;
 		gReloadKeyPress = false;
+
 		Master::Instance().Release();		
 		gDone = !Master::Instance().LoadData(gmGame->GetSceneNum());
 		RenderGL::Instance().SetGLLight();
 	}
 
-	if ( !gReloadKeyPress && gKeys[VK_F5] )
-	{
-		gReloadKeyPress = true;		
-	}
+//	if ( gReloadKeyPress && gKeys[VK_F5] )
+//	{
+//		gKeys[VK_F5] = false;
+//		gReloadKeyPress = false;		
+//	}
 
 
-	if ( gSaveKeyPress && gKeys[VK_F6])
-	{
-		gKeys[VK_F6] = false;
-		gReloadKeyPress = false;
-		
-		gDone = !Master::Instance().SaveData("dataSave");
-	}
-
-	if ( !gSaveKeyPress && gKeys[VK_F6] )
+	if ( !gSaveKeyPress && gKeys[VK_F6])
 	{
 		gKeys[VK_F6] = false;
 		gSaveKeyPress = true;
+		
+		gDone = !Master::Instance().SaveData("quickSave");
 	}
+
+//	if ( gSaveKeyPress && gKeys[VK_F6] )
+//	{
+//		gKeys[VK_F6] = false;
+//		gSaveKeyPress = false;
+//	}
 
 
 
@@ -464,7 +477,7 @@ void Master::UpdateKeys()
 		if ( gKeys[c] )
 		{
 			gKeys[c] = false;
-			gFirstLoad = true;			
+			gFirstLoad = true;
 			Master::Instance().Release();
 			gDone = !Master::Instance().LoadData(i + 1);
 			RenderGL::Instance().SetGLLight();

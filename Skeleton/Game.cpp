@@ -5,19 +5,19 @@
 #include <fstream>
 #include <typeinfo.h>
 
-#include "../../Sources/Constans.h"
+#include "../Sources/Constans.h"
 
-#include "../../Sources/Math/Math.h"
-#include "../../Sources/Math/Plane.h"
-#include "../../Sources/Math/Random.h"
+#include "../Sources/Math/Math.h"
+#include "../Sources/Math/Plane.h"
+#include "../Sources/Math/Random.h"
 
-#include "../../Sources/Core/Master.h"
-#include "../../Sources/Core/Camera.h"
+#include "../Sources/Core/Master.h"
+#include "../Sources/Core/Camera.h"
 
-#include "../../Sources/Entity/Mass.h"
-#include "../../Sources/Entity/Box.h"
-#include "../../Sources/Entity/Smoke.h"
-#include "../../Sources/Entity/Sky.h"
+#include "../Sources/Entity/Mass.h"
+#include "../Sources/Entity/Box.h"
+#include "../Sources/Entity/Smoke.h"
+#include "../Sources/Entity/Sky.h"
 
 using namespace Math;
 

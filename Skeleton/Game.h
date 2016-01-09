@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "../../Sources/Types.h"
-#include "../../Sources/GameBase.h"
-#include "../../Sources/Entity/Entity.h"
-#include "../../Sources/Entity/Sky.h"
-#include "../../Sources/Math/Math.h"
-#include "../../Sources/Math/Quaternion.h"
+#include "../Sources/Types.h"
+#include "../Sources/GameBase.h"
+#include "../Sources/Entity/Entity.h"
+#include "../Sources/Entity/Sky.h"
+#include "../Sources/Math/Math.h"
+#include "../Sources/Math/Quaternion.h"
 
 
 class Game: public GameBase

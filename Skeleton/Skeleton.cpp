@@ -8,7 +8,7 @@
 
 
 #include "Game.h"
-#include "../../Sources/Core/Master.h"
+#include "../Sources/Core/Master.h"
 
 void main()
 {

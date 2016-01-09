@@ -29,11 +29,11 @@ HINSTANCE  rhInstance = nullptr;              // Здесь будет хран�
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
 
-extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-extern Vector3f gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+//extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
+//extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
+//extern Vector3f gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
-extern GameBase *gmGame;
+//extern GameBase *gmGame;
 
 //WNDPROC *WndProc;					  // Процедура обработки сообщений
 //GLuint		texture[4];									// 3 Textures				 
@@ -214,13 +214,16 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 
 void RenderGL::SetGLLight()
 {
-	GLfloat rLightAmbient[4] = {gLightAmbient.r, gLightAmbient.g, gLightAmbient.b, gLightAmbient.a};
-	GLfloat rLightDiffuse[4] = {gLightDiffuse.r, gLightDiffuse.g, gLightDiffuse.b, gLightDiffuse.a};
-	GLfloat rLightPosition[4] = {float32(gLightPosition.x), float32(gLightPosition.y), float32(gLightPosition.z), 1.0f};
+	GLfloat rLightAmbient[4] = {Master::Instance().gLightAmbient.r, Master::Instance().gLightAmbient.g, Master::Instance().gLightAmbient.b, Master::Instance().gLightAmbient.a};
+	GLfloat rLightDiffuse[4] = {Master::Instance().gLightDiffuse.r, Master::Instance().gLightDiffuse.g, Master::Instance().gLightDiffuse.b, Master::Instance().gLightDiffuse.a};
+	GLfloat rLightPosition[4] = {Master::Instance().gLightPosition.x, Master::Instance().gLightPosition.y, Master::Instance().gLightPosition.z, 1.0f};
+
 	glLightfv(GL_LIGHT0, GL_AMBIENT, rLightAmbient);    // Установка Фонового Света
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, rLightDiffuse);    // Установка Диффузного Света
 	glLightfv(GL_LIGHT0, GL_POSITION, rLightPosition);   // Позиция света
+
 	glEnable(GL_LIGHT0); // Разрешение источника света номер один
+
 	if (GetLightOn())
 		glEnable(GL_LIGHTING);
 }
@@ -523,7 +526,7 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(0.5f, 0.5f, 0.5f);
 	glTranslatef(-33.0f, 18.0f, -50.0f);
 	//glScalef(0.5f, 0.5f, 0.5f);	
-	glPrint("Scene #: %s", gmGame->GetSceneName().c_str());
+	glPrint("Scene #: %s", Master::Instance().gmGame->GetSceneName().c_str());
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("TPS: %u", Master::Instance().gtps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
@@ -569,7 +572,7 @@ void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& c
 	//rt += 0.1f;
 	//r += 0.001f;
 
-	glColor3f(color.r, color.g, color.b);
+	glColor4f(color.r, color.g, color.b, color.a);
 
 
 	//glBindTexture(GL_TEXTURE_2D, GLuint(4));			// Select Texture 2 (1)
@@ -599,7 +602,7 @@ void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3
 
 	glRotated(angle, axic.x, axic.y, axic.z);
 
-	glColor3f(color.r, color.g, color.b);
+	glColor4f(color.r, color.g, color.b, color.a);
 
 	Vector3f pos;
 

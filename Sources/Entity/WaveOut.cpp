@@ -30,7 +30,7 @@ void WaveOut::Draw()
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 
-	glColor3f(color.r, color.g, color.b);
+	glColor4f(color.r, color.g, color.b, color.a);
 
 	Vector3f pos0, pos1, pos2, pos3;
 	Vector3f normal;

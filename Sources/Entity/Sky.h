@@ -12,10 +12,11 @@ public:
 	Sky();
 	virtual ~Sky();	
 	
-	void Init(unsigned numStars);
-	void Release();
+	virtual void Init(unsigned numStars);
+	virtual void Release();	
+	virtual void Draw();
+
 	void Randomize();
-	void Draw();
 
 	void SetNumStars(unsigned numStars_)
 	{

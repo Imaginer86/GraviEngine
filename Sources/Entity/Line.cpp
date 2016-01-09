@@ -57,12 +57,12 @@ void Line::Draw()
 	glRotated(pitchDegrees, 0, 1, 0);
 	glRotated(rollDegrees, 0, 0, 1);
 	//q.y += 1;				  
-	glColor3f(color.r, color.g, color.b );
+	glColor4f(color.r, color.g, color.b );
 	gluCylinder(quadratic, r, r, h, 32, 32);
 	// 		//gluDisk(quadratic, 0, mGame.lines[i].r, 32, 32);
 
 // 	glBegin(GL_LINES);
-// 		glColor3f(1, 0, 0);
+// 		glColor4f(1, 0, 0);
 // 		glVertex3f(0, 0, 0);
 // 		glVertex3f(0, 0, h.length());
 // 	glEnd();

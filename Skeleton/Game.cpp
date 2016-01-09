@@ -5,32 +5,31 @@
 #include <fstream>
 #include <typeinfo.h>
 
-#include "../Sources/Constans.h"
+#include "../../Sources/Constans.h"
 
-#include "../Sources/Math/Math.h"
-#include "../Sources/Math/Plane.h"
-#include "../Sources/Math/Random.h"
+#include "../../Sources/Math/Math.h"
+#include "../../Sources/Math/Plane.h"
+#include "../../Sources/Math/Random.h"
 
-#include "../Sources/Core/Master.h"
-#include "../Sources/Core/Camera.h"
+#include "../../Sources/Core/Master.h"
+#include "../../Sources/Core/Camera.h"
 
-#include "../Sources/Entities/Mass.h"
-#include "../Sources/Entities/Box.h"
-#include "../Sources/Entities/Smoke.h"
-#include "../Sources/Entities/Sky.h"
+#include "../../Sources/Entity/Mass.h"
+#include "../../Sources/Entity/Box.h"
+#include "../../Sources/Entity/Smoke.h"
+#include "../../Sources/Entity/Sky.h"
 
 using namespace Math;
 
 
-extern Color4f gLightAmbient;
-extern Color4f gLightDiffuse;
-extern Vector3f gLightPosition;
+//extern Color4f gLightAmbient;
+//extern Color4f gLightDiffuse;
+//extern Vector3f gLightPosition;
 
 //unsigned Core::Master::gSceneNum;
 //extern float32 gTimeScale;
 
-bool gUpdateCamera = false;
-extern bool gFirstLoad;
+//extern bool gFirstLoad;
 
 unsigned countAddEntities = 0;
 
@@ -62,6 +61,8 @@ void Game::Release() /* delete the masses created */
 
 	countAddEntities = 0;
 	Entities = nullptr;
+
+	mSky->Release();
 	delete mSky;
 }
 
@@ -481,9 +482,6 @@ void Game::SetNumStars(unsigned numStars, bool randomize /* = true */)
 
 bool Game::SaveData(const std::string& fileName)
 {
-	//std::string fileNumstr = "quickSave";
-	//std::string fileName = "data/" + fileNumstr + ".dat";
-	
 	std::ofstream dataFile(fileName, std::ios::out);
 
 	if (!dataFile.is_open())
@@ -493,9 +491,9 @@ bool Game::SaveData(const std::string& fileName)
 	float32 timeScale = Core::Master::Instance().gTimeScale;
 	dataFile << timeScale << std::endl;
 
-	unsigned TPS, FPS, UPS;
-	TPS = Core::Master::Instance().gtps, FPS = Core::Master::Instance().gfps, UPS = Core::Master::Instance().gups;
-	dataFile << TPS << space << FPS << space << UPS << space << std::endl;
+	unsigned UPF, FPS, UPS;
+	UPF = Core::Master::Instance().UPF, FPS = Core::Master::Instance().gfps, UPS = Core::Master::Instance().gups;
+	dataFile << UPF << space << FPS << space << UPS << space << std::endl;
 	
 	bool bGraviMasses = GetBGraviMasses();
 	dataFile << bGraviMasses << std::endl;
@@ -516,11 +514,12 @@ bool Game::SaveData(const std::string& fileName)
 	
 	dataFile << cameraPos.x << space << cameraPos.y << space << cameraPos.z << space << std::endl
 		<< cameraAxic.x << space << cameraAxic.y << space << cameraAxic.z << space << cameraAngle << std::endl;
-	dataFile << gUpdateCamera << std::endl;
+	dataFile << Core::Master::Instance().gUpdateCamera << std::endl;
 
-	dataFile << gLightAmbient.r << space << gLightAmbient.g << space << gLightAmbient.b << space << gLightAmbient.a << space << std::endl;
-	dataFile << gLightDiffuse.r << space << gLightDiffuse.g << space << gLightDiffuse.b << space << gLightDiffuse.a << space << std::endl;
-	dataFile << gLightPosition.x << space << gLightPosition.y << space << gLightPosition.z << space << std::endl;
+	Core::Master master = Core::Master::Instance();
+	dataFile << master.gLightAmbient.r << space << master.gLightAmbient.g << space << master.gLightAmbient.b << space << master.gLightAmbient.a << space << std::endl;
+	dataFile << master.gLightDiffuse.r << space << master.gLightDiffuse.g << space << master.gLightDiffuse.b << space << master.gLightDiffuse.a << space << std::endl;
+	dataFile << master.gLightPosition.x << space << master.gLightPosition.y << space << master.gLightPosition.z << space << std::endl;
 
 	Vector3f graviAcc = GetGraviAcc();
 
@@ -621,10 +620,7 @@ bool Game::SaveData(const std::string& fileName)
 
 bool Game::LoadData(const std::string& fileName)
 {
-	//SetSceneNum(fileNum);
-
-	//std::string fileNumstr = std::to_string(fileNum);
-	//std::string fileName = "data//data" + fileNumstr + ".dat";
+	SetSceneName(fileName);
 
 	std::ifstream dataFile(fileName, std::ios::in);
 
@@ -662,11 +658,11 @@ bool Game::LoadData(const std::string& fileName)
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
 		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z
 		>> cameraAngle;
-	dataFile >> gUpdateCamera;
+	dataFile >> Core::Master::Instance().gUpdateCamera;
 
-	if (gUpdateCamera || gFirstLoad)
+	if (Core::Master::Instance().gUpdateCamera || Core::Master::Instance().gFirstLoad)
 	{
-		gFirstLoad = false;
+		Core::Master::Instance().gFirstLoad = false;
 		Core::Camera::Instance().SetPos(cameraPos);
 		Quaternion q;
 		q.fromAxisAngle(cameraAxic, cameraAngle);
@@ -677,9 +673,10 @@ bool Game::LoadData(const std::string& fileName)
 		Core::Camera::Instance().SetQuaternion(q);
 	}
 
-	dataFile >> gLightAmbient.r >> gLightAmbient.g >> gLightAmbient.b >> gLightAmbient.a;
-	dataFile >> gLightDiffuse.r >> gLightDiffuse.g >> gLightDiffuse.b >> gLightDiffuse.a;
-	dataFile >> gLightPosition.x >> gLightPosition.y >> gLightPosition.z;
+	Core::Master master = Core::Master::Instance();
+	dataFile >> master.gLightAmbient.r >> master.gLightAmbient.g >> master.gLightAmbient.b >> master.gLightAmbient.a;
+	dataFile >> master.gLightDiffuse.r >> master.gLightDiffuse.g >> master.gLightDiffuse.b >> master.gLightDiffuse.a;
+	dataFile >> master.gLightPosition.x >> master.gLightPosition.y >> master.gLightPosition.z;
 
 	//RenderGL::Instance().rLightAmbient = gLightAmbient;
 	//RenderGL::Instance().rLightDiffuse = gLightDiffuse;

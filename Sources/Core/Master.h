@@ -2,6 +2,7 @@
 #include <string>
 #include "../Types.h"
 #include "../GameBase.h"
+#include "../Math/Color.h"
 
 namespace Core
 {
@@ -18,7 +19,7 @@ namespace Core
 			return TheSingleInstance;
 		}
 
-		void Init(GameBase* gameBase_);
+		bool Init(GameBase* gameBase_);
 		void Run();
 		void Tick(long dtick);
 		void Update(float32 dt);
@@ -33,10 +34,6 @@ namespace Core
 
 		static bool gActive;                // Флаг активности окна
 		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
-
-		bool Master::LoadData(const std::string& fileName);
-		bool SaveData(const std::string& fileName);
-
 
 		bool gDone;	// Логическая переменная для выхода из цикла
 		bool gPause;
@@ -58,6 +55,15 @@ namespace Core
 		unsigned gfps, gups, gtps;
 		unsigned FPR, UPR, UPF;
 
+		unsigned gcWidth;
+		unsigned gcHeight;
+
+		bool gUpdateCamera, gFirstLoad;
+
+		GameBase *gmGame;
+
+		::Math::Color4f gLightAmbient, gLightDiffuse;
+		Vector3f gLightPosition;     // Позиция света
 	private:
 		//Camera mCamera;		
 	};
@@ -65,7 +71,7 @@ namespace Core
 	inline Master::Master()
 	//:gActive(true)                // Флаг активности окна
 	:gDone(false)	// Логическая переменная для выхода из цикла
-	,gPause(true)
+	,gPause(false)
 	,gShowDebugInfo(true)
 	//,gUpdateCamera(false)
 	//,gFirstLoad(false)
@@ -84,6 +90,13 @@ namespace Core
 	,UPF(0)
 	,FPR(0)
 	,UPR(0)
+	,gcWidth(1920)
+	,gcHeight(1080)
+	,gUpdateCamera(false)
+	,gFirstLoad(true)
+	,gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f )
+	,gLightDiffuse( 0.5f, 0.5f, 0.5f, 1.0f )
+	,gLightPosition( 0.0f, 10.0f, 0.0f)
 	{
 	}
 

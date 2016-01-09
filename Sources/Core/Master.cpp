@@ -17,11 +17,6 @@ using namespace Core;
 bool Master::gActive = true;
 bool Master::gKeys[256];
 
-unsigned gcWidth = 1920;
-unsigned gcHeight = 1080;
-
-bool gFirstLoad = true;
-
 bool gLightOnKey = false;			// L нажата?
 bool gShowDebugInfoKey = false;		// TAB нажат?
 bool gReverseKeyPress = false;		// Q нажат?
@@ -30,24 +25,7 @@ bool gReloadKeyPress = false;		// F5 нажат?
 bool gSaveKeyPress = false;			// F6 нажат?
 bool gLoadKeyPress = false;			// F9 нажат?
 
-::Math::Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
-::Math::Color4f gLightDiffuse( 1.0f, 1.0f, 1.0f, 1.0f );//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-Vector3f gLightPosition( 3.0f, 3.0f, 4.0f );//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
-
-
-//long tickCount = 0;
-//long lastTickCount = 0;
-//long lastTickFPS = 0;
-//long lastTickUPS = 0;
-
-float32 minFPS = 100.0;
-float32 minUPS = 200.0;
-
-GameBase *gmGame;
-
-bool irstLoad = false;
-
-
+//::Math::Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 
 long Master::WndProc(  void*  hWnd,				// Дескриптор нужного окна
 			 unsigned	uMsg,				// Сообщение для этого окна
@@ -105,7 +83,7 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 	return DefWindowProc( (HWND) hWnd, uMsg, wParam, lParam );
 }
 
-void Master::Init(GameBase* gameBase_)
+bool Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
 
@@ -117,8 +95,10 @@ void Master::Init(GameBase* gameBase_)
 	if (assert)
 	{
 		std::cerr << "CreateWin Failed!" << std::endl;
-		return;              // Выйти, если окно не может быть создано
+		return false;              // Выйти, если окно не может быть создано
 	}
+
+	return true;
 }
 
 void Master::Release()
@@ -159,15 +139,13 @@ void Master::Run()
 			{
 				tickCount = ::GetTickCount();			// Get The Tick Count
 				UpdateKeys();
-
 				
 				if ( count > 1000 )
 				{
 					count -= 1000;
 					gups = countUpdate;
-					gfps = countDraw;
-					//gtps = countTick;
-					gtps = count;
+					gfps = countDraw;					
+					gtps = countTick;
 					countUpdate = 0;
 					countDraw  = 0;
 					countTick = 0;
@@ -224,37 +202,6 @@ void Master::Draw()                // Здесь будет происходит
 	++countDraw;
 }
 
-bool Master::LoadData(const std::string& fileName)
-{
-	gmGame->SetSceneName(fileName);
-	return gmGame->LoadData(fileName);
-
-	//GameBase::Instance().SetSceneNum(fileNum);
-
-	//std::string fileNumstr = std::to_string(fileNum);
-	//std::string fileName = "data//data" + fileNumstr + ".dat";
-	//std::ifstream dataFile(fileName, std::ios::in);
-
-	//if (!dataFile.is_open())
-	//return false;
-	//dataFile.close();
-	//return true;
-}
-
-bool Master::SaveData(const std::string& fileName)
-{
-	return gmGame->SaveData(fileName);
-	//std::string fileNamestr = "data/" + fileName;
-	//std::ofstream dataFile(fileNamestr, std::ios::out);
-	//if (!dataFile.is_open())
-		//return false;
-
-	//dataFile << "Be Happy" << std::endl;
-	//dataFile.close();
-
-	//return true;
-}
-
 void Master::UpdateKeys()
 {
 	if(gKeys[VK_ESCAPE])						// Было ли нажата клавиша ESC?
@@ -280,8 +227,9 @@ void Master::UpdateKeys()
 	{
 		gReloadKeyPress = true;
 
+		gFirstLoad = true;
 		Release();		
-		gDone = !LoadData(gmGame->GetSceneName());
+		gDone = !gmGame->LoadData(gmGame->GetSceneName());
 		RenderGL::Instance().SetGLLight();
 	}
 
@@ -294,7 +242,7 @@ void Master::UpdateKeys()
 	{
 		gSaveKeyPress = true;		
 
-		gDone = !SaveData("data/quickSave.dat");
+		gDone = !gmGame->SaveData("data/quickSave.dat");
 	}
 
 	if (gSaveKeyPress && !gKeys[VK_F6])
@@ -307,7 +255,8 @@ void Master::UpdateKeys()
 		gLoadKeyPress = true;
 
 		Release();
-		gDone = !LoadData("data/quickSave.dat");
+		gDone = !gmGame->LoadData("data/quickSave.dat");
+		RenderGL::Instance().SetGLLight();
 	}
 
 	if( gLoadKeyPress && !gKeys[VK_F9])
@@ -470,11 +419,11 @@ void Master::UpdateKeys()
 		{
 			gKeys[c] = false;
 			gFirstLoad = true;
-			Master::Instance().Release();
+			Release();
 			std::string fileName = "data/data";
 			fileName += std::string(std::to_string(i + 1));
 			fileName += ".dat";			
-			gDone = !LoadData(fileName);
+			gDone = !gmGame->LoadData(fileName);
 			RenderGL::Instance().SetGLLight();
 		}
 	}

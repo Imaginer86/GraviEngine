@@ -52,6 +52,7 @@ void Sky::Init(unsigned numStars_)
 
 void Sky::Release()
 {
+	numStars = 0;
 	delete[] r;
 	delete[] color;
 }

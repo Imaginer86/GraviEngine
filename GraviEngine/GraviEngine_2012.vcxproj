@@ -11,24 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Sources\Core\Camera.cpp" />
-    <ClCompile Include="..\Sources\Core\Input.cpp" />
-    <ClCompile Include="..\Sources\Core\Master.cpp" />
-    <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
-    <ClCompile Include="..\Sources\Entities\Box.cpp" />
-    <ClCompile Include="..\Sources\Entities\Line.cpp" />
-    <ClCompile Include="..\Sources\Entities\Mass.cpp" />
-    <ClCompile Include="..\Sources\Entities\Sky.cpp" />
-    <ClCompile Include="..\Sources\Entities\Smoke.cpp" />
-    <ClCompile Include="..\Sources\Entities\Star.cpp" />
-    <ClCompile Include="..\Sources\Entities\Video.cpp" />
-    <ClCompile Include="..\Sources\Entities\Wave.cpp" />
-    <ClCompile Include="..\Sources\Entities\WaveOut.cpp" />
-    <ClCompile Include="..\Sources\GameBase.cpp" />
-    <ClCompile Include="..\Sources\Math\Random.cpp" />
-    <ClCompile Include="..\Sources\Math\Tensus.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\Sources\Constans.h" />
     <ClInclude Include="..\Sources\Core\Camera.h" />
     <ClInclude Include="..\Sources\Core\Defines.h" />
@@ -36,17 +18,17 @@
     <ClInclude Include="..\Sources\Core\Master.h" />
     <ClInclude Include="..\Sources\Core\Render.h" />
     <ClInclude Include="..\Sources\Core\RenderGL.h" />
-    <ClInclude Include="..\Sources\Entities\BaseEntity.h" />
-    <ClInclude Include="..\Sources\Entities\Box.h" />
-    <ClInclude Include="..\Sources\Entities\Entity.h" />
-    <ClInclude Include="..\Sources\Entities\Line.h" />
-    <ClInclude Include="..\Sources\Entities\Mass.h" />
-    <ClInclude Include="..\Sources\Entities\Sky.h" />
-    <ClInclude Include="..\Sources\Entities\Smoke.h" />
-    <ClInclude Include="..\Sources\Entities\Star.h" />
-    <ClInclude Include="..\Sources\Entities\Video.h" />
-    <ClInclude Include="..\Sources\Entities\Wave.h" />
-    <ClInclude Include="..\Sources\Entities\WaveOut.h" />
+    <ClInclude Include="..\Sources\Entity\BaseEntity.h" />
+    <ClInclude Include="..\Sources\Entity\Box.h" />
+    <ClInclude Include="..\Sources\Entity\Entity.h" />
+    <ClInclude Include="..\Sources\Entity\Line.h" />
+    <ClInclude Include="..\Sources\Entity\Mass.h" />
+    <ClInclude Include="..\Sources\Entity\Sky.h" />
+    <ClInclude Include="..\Sources\Entity\Smoke.h" />
+    <ClInclude Include="..\Sources\Entity\Star.h" />
+    <ClInclude Include="..\Sources\Entity\Video.h" />
+    <ClInclude Include="..\Sources\Entity\Wave.h" />
+    <ClInclude Include="..\Sources\Entity\WaveOut.h" />
     <ClInclude Include="..\Sources\GameBase.h" />
     <ClInclude Include="..\Sources\Math\Color.h" />
     <ClInclude Include="..\Sources\Math\Line.h" />
@@ -60,6 +42,25 @@
     <ClInclude Include="..\Sources\Math\Vector3f.h" />
     <ClInclude Include="..\Sources\Math\VectorField.h" />
     <ClInclude Include="..\Sources\Types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Sources\Core\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\Input.cpp" />
+    <ClCompile Include="..\Sources\Core\Master.cpp" />
+    <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
+    <ClCompile Include="..\Sources\Entity\Box.cpp" />
+    <ClCompile Include="..\Sources\Entity\Line.cpp" />
+    <ClCompile Include="..\Sources\Entity\Mass.cpp" />
+    <ClCompile Include="..\Sources\Entity\Sky.cpp" />
+    <ClCompile Include="..\Sources\Entity\Smoke.cpp" />
+    <ClCompile Include="..\Sources\Entity\Star.cpp" />
+    <ClCompile Include="..\Sources\Entity\Video.cpp" />
+    <ClCompile Include="..\Sources\Entity\Wave.cpp" />
+    <ClCompile Include="..\Sources\Entity\WaveOut.cpp" />
+    <ClCompile Include="..\Sources\GameBase.cpp" />
+    <ClCompile Include="..\Sources\main.cpp" />
+    <ClCompile Include="..\Sources\Math\Random.cpp" />
+    <ClCompile Include="..\Sources\Math\Tensus.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79508FD0-94D2-48BB-994B-080F40938F69}</ProjectGuid>

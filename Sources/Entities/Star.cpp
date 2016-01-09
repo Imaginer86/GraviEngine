@@ -12,7 +12,7 @@ Star::Star()
 
 }
 
-Star::Star(Vector3 R_, Quaternion q_)
+Star::Star(Vector3d R_, Quaternion q_)
 {
 	q = q_;
 	q.normalize();

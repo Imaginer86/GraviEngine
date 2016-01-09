@@ -16,7 +16,7 @@
 #include "../GameBase.h"
 
 #include "../Math/Quaternion.h"
-#include "../Math/Vector3.h"
+#include "../Math/Vector3d.h"
 
 using namespace Core;
 
@@ -30,7 +30,7 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-extern Vector3 gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+extern Vector3d gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 extern GameBase *gmGame;
 
@@ -436,8 +436,6 @@ bool RenderGL::Init()
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
 
 	return true;                // Инициализация прошла успешно
-
-
 }
 
 bool RenderGL::Release()
@@ -498,12 +496,12 @@ void RenderGL::BeginDraw()
 	////mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
 	Quaternion q = Camera::Instance().GetQuaternion();
-	Vector3 cameraAxic;
+	Vector3d cameraAxic;
 	float64 cameraAngle;
 	q.toAxisAngle(cameraAxic, cameraAngle);
 	glRotated(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
-	Vector3 cameraPos = Camera::Instance().GetPos();
+	Vector3d cameraPos = Camera::Instance().GetPos();
 	glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
@@ -518,36 +516,79 @@ void RenderGL::EndDraw()
 
 void RenderGL::DrawDebugInfo()
 {
+	DisableLight();
 	glLoadIdentity();
-	glPushMatrix();
-	glColor3f(1, 1, 1);
-	glTranslatef(-5.0f, 3.6f, -10.0f);
-	glScalef(0.2f, 0.2f, 0.2f);
-	glPrint("Scene #: %d", gmGame->GetSceneNum());
+	//glPushMatrix();
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glTranslatef(-33.0f, 18.0f, -50.0f);
+	//glScalef(0.5f, 0.5f, 0.5f);	
+	glPrint("Scene #: %u", gmGame->GetSceneNum());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("FPS: %2.2f", Master::gfps);						// Print GL Text To The Screen
+	glPrint("FPS: %u", Master::Instance().gfps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("UPS: %2.2f", Master::gups);						// Print GL Text To The Screen
+	glPrint("UPS: %u", Master::Instance().gups);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time: %2.2f", Master::gTime);
+	glPrint("Time: %2.2f", Master::Instance().gTime);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time Scale: %2.2f", Master::gTimeScale);
+	glPrint("Time Scale: %2.2f", Master::Instance().gTimeScale);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
-	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
-	Quaternion q = Camera::Instance().GetQuaternion();
-	Vector3 axic;
-	float64 angle;
-	q.toAxisAngle(axic, angle);
-	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
-	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Angle: %2.2f", angle);
-	glPopMatrix();
+	//glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
+	//glTranslatef(0.0f, -1.0f, 0);
+	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
+	//Quaternion q = Camera::Instance().GetQuaternion();
+	//Vector3 axic;
+	//float64 angle;
+	//q.toAxisAngle(axic, angle);
+	//glTranslatef(0.0f, -1.0f, 0);
+	//glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+	//glTranslatef(0.0f, -1.0f, 0);
+	//glPrint("Camera Angle: %2.2f", angle);
+	//glPopMatrix();
+	glLoadIdentity();
+	SetGLLight();
 }
 
-void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const
+void RenderGL::DrawSphere(const Vector3d& pos, const float64 r, const Color4f& color) const
+{
+	GLUquadricObj *quadratic;
+	quadratic = gluNewQuadric();
+
+	gluQuadricDrawStyle(quadratic, GLU_FILL);
+	gluQuadricNormals(quadratic, GLU_SMOOTH);			// Create Smooth Normals (NEW)
+	gluQuadricTexture(quadratic, GL_FALSE);
+
+	glPushMatrix();
+
+	glTranslated(pos.x, pos.y, pos.z);
+
+	//glRotatef(-90.0f, 1, 0, 0);
+	//glRotatef(rt, 0, 0, 1);
+	//rt += 0.1f;
+	//r += 0.001f;
+
+	glColor3f(color.r, color.g, color.b);
+
+
+	//glBindTexture(GL_TEXTURE_2D, GLuint(4));			// Select Texture 2 (1)
+	//glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	//glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+
+	//glEnable(GL_TEXTURE_GEN_S);							// Enable Sphere Mapping
+	//glEnable(GL_TEXTURE_GEN_T);							// Enable Sphere Mapping	
+
+	gluSphere(quadratic, r, 32, 16);
+	//glDisable(GL_TEXTURE_GEN_S);
+	//glDisable(GL_TEXTURE_GEN_T);
+
+	//glBindTexture(GL_TEXTURE_2D, GLuint(0));
+
+	glPopMatrix();
+
+	gluDeleteQuadric(quadratic);
+
+}
+
+void RenderGL::DrawBox(const Vector3d& pos_, const Vector3d& size, const Vector3d& axic, const float64 angle, const Color4f& color) const
 {
 	glPushMatrix();
 
@@ -557,7 +598,7 @@ void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& 
 
 	glColor3f(color.r, color.g, color.b);
 
-	Vector3 pos;
+	Vector3d pos;
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 	// Передняя грань
@@ -600,44 +641,4 @@ void RenderGL::DrawBox(const Vector3& pos_, const Vector3& size, const Vector3& 
 	glEnd();
 
 	glPopMatrix();
-}
-
-void RenderGL::DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const
-{
-	GLUquadricObj *quadratic;
-	quadratic = gluNewQuadric();
-
-	gluQuadricDrawStyle(quadratic, GLU_FILL);
-	gluQuadricNormals(quadratic, GLU_SMOOTH);			// Create Smooth Normals (NEW)
-	gluQuadricTexture(quadratic, GL_FALSE);
-
-	glPushMatrix();
-
-	glTranslated(pos.x, pos.y, pos.z);
-
-	//glRotatef(-90.0f, 1, 0, 0);
-	//glRotatef(rt, 0, 0, 1);
-	//rt += 0.1f;
-	//r += 0.001f;
-
-	glColor3f(color.r, color.g, color.b);
-
-
-	//glBindTexture(GL_TEXTURE_2D, GLuint(4));			// Select Texture 2 (1)
-	//glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-	//glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-
-	//glEnable(GL_TEXTURE_GEN_S);							// Enable Sphere Mapping
-	//glEnable(GL_TEXTURE_GEN_T);							// Enable Sphere Mapping	
-
-	gluSphere(quadratic, r, 32, 16);
-	//glDisable(GL_TEXTURE_GEN_S);
-	//glDisable(GL_TEXTURE_GEN_T);
-
-	//glBindTexture(GL_TEXTURE_2D, GLuint(0));
-
-	glPopMatrix();
-
-	gluDeleteQuadric(quadratic);
-
 }

@@ -20,6 +20,7 @@ namespace Core
 
 		void Init(GameBase* gameBase_);
 		void Run();
+		void Tick();
 		void Update();
 		void Draw();
 		void Release();
@@ -33,29 +34,58 @@ namespace Core
 		bool Master::LoadData(unsigned fileNum);
 		bool SaveData(const std::string& fileName);
 
-		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
-		//static unsigned gSceneNum;
-		static unsigned gSceneNumMax;
+		bool gKeys[256];					// Массив, используемый для операций с клавиатурой
 
-		static float64 gTimeScale;
-		static float64 gAngleScale;
-		static float64 gMoveScale;
-		static float64 gShiftScale;
-
-		static bool gDone;	// Логическая переменная для выхода из цикла
-
-		static bool gActive;                // Флаг активности окна
-		static bool gPause;
-		static bool gShowDebugInfo;
+		bool gActive;                // Флаг активности окна
+		bool gDone;	// Логическая переменная для выхода из цикла
+		bool gPause;
+		bool gShowDebugInfo;		
 		//bool gUpdateCamera = false;
 		//bool gFirstLoad = false;
+		
+		//static unsigned gSceneNum;
+		unsigned gSceneNumMax;
 
+		float64 gTime;
+		float64 gTimeScale;
 
-		static float64 gfps;
-		static float64 gups;
-		static float64 gTime;
+		float64 gAngleScale;
+		float64 gMoveScale;
+		float64 gShiftScale;		
+
+		unsigned countUpdate, countDraw;
+		unsigned gfps, gups;
+		unsigned FPR, UPR;
 
 	private:
 		//Camera mCamera;		
 	};
+
+	inline Master::Master()
+	:gActive(true)                // Флаг активности окна
+	,gDone(false)	// Логическая переменная для выхода из цикла
+	,gPause(true)
+	,gShowDebugInfo(true)
+	//,gUpdateCamera(false)
+	//,gFirstLoad(false)
+	,gSceneNumMax(9)
+	,gTime(0.0)
+	,gTimeScale(1.0)
+	,gAngleScale(1.0)
+	,gMoveScale(1.0)
+	,gShiftScale(1.0)
+	,countUpdate(0)
+	,countDraw(0)
+	,gfps(60)
+	,gups(100)
+	,FPR(0)
+	,UPR(0)
+	{
+	}
+
+	inline Master::~Master()
+	{
+
+	}
+
 }

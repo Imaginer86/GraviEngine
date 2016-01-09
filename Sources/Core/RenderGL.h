@@ -40,9 +40,9 @@ public:
 
 	virtual void DrawDebugInfo();
 
-	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const;
+	virtual void DrawBox(const Vector3d& pos, const Vector3d& size, const Vector3d& axic, const float64 angle, const Color4f& color) const;
 
-	virtual void DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const;
+	virtual void DrawSphere(const Vector3d& pos, const float64 r, const Color4f& color) const;
 
 	virtual void SetLightOn(bool LightOn_) { LightOn = LightOn_; }
 	virtual bool GetLightOn() { return LightOn; }

@@ -7,11 +7,11 @@
 //-----------------------------------------------------------------------------
 
 #include "Math.h"
-#include "Vector3.h"
+#include "Vector3d.h"
 
 class Matrix4
 {
-	friend Vector3 operator*(const Vector3 &lhs, const Matrix4 &rhs);
+	friend Vector3d operator*(const Vector3d &lhs, const Matrix4 &rhs);
 	friend Matrix4 operator*(float scalar, const Matrix4 &rhs);
 
 public:
@@ -51,9 +51,9 @@ private:
 	float mtx[4][4];
 };
 
-inline Vector3 operator*(const Vector3 &lhs, const Matrix4 &rhs)
+inline Vector3d operator*(const Vector3d &lhs, const Matrix4 &rhs)
 {
-	return Vector3((lhs.x * rhs.mtx[0][0]) + (lhs.y * rhs.mtx[1][0]) + (lhs.z * rhs.mtx[2][0]),
+	return Vector3d((lhs.x * rhs.mtx[0][0]) + (lhs.y * rhs.mtx[1][0]) + (lhs.z * rhs.mtx[2][0]),
 		(lhs.x * rhs.mtx[0][1]) + (lhs.y * rhs.mtx[1][1]) + (lhs.z * rhs.mtx[2][1]),
 		(lhs.x * rhs.mtx[0][2]) + (lhs.y * rhs.mtx[1][2]) + (lhs.z * rhs.mtx[2][2]));
 }

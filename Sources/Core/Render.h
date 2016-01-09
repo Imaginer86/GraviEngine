@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Math/Vector3.h"
+#include "../Math/Vector3d.h"
 #include "../Math/Color.h"
 
 class Render
@@ -47,8 +47,8 @@ public:
 	virtual void glPrint(const char *fmt, ...) = 0;
 
 	virtual void DrawDebugInfo() = 0;
-	virtual void DrawBox(const Vector3& pos, const Vector3& size, const Vector3& axic, const float64 angle, const Color4f& color) const  = 0;
-	virtual void DrawSphere(const Vector3& pos, const float64 r, const Color4f& color) const  = 0;
+	virtual void DrawBox(const Vector3d& pos, const Vector3d& size, const Vector3d& axic, const float64 angle, const Color4f& color) const  = 0;
+	virtual void DrawSphere(const Vector3d& pos, const float64 r, const Color4f& color) const  = 0;
 
 	virtual void SetLightOn(bool LightOn_) = 0;
 	virtual bool GetLightOn() = 0;

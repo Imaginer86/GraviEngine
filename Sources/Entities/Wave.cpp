@@ -22,8 +22,8 @@ void Wave::Draw()
 
 	glColor3f(color.r+0.4f, color.g, color.b);
 
-	Vector3 pos0, pos1, pos2, pos3;
-	Vector3 normal;
+	Vector3d pos0, pos1, pos2, pos3;
+	Vector3d normal;
 
 	//pos0 = pos;
 	//pos1 = pos0 + Vector3(0.0f, 0.0f, w);
@@ -37,10 +37,10 @@ void Wave::Draw()
 			float64 dist0 = r*w;
 			float64 dist1 = (r + 1)*w;
 
-			pos0 = Vector3(dist0*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle0));
-			pos1 = Vector3(dist1*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle0));
-			pos2 = Vector3(dist1*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle1));
-			pos3 = Vector3(dist0*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle1));
+			pos0 = Vector3d(dist0*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle0));
+			pos1 = Vector3d(dist1*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle0));
+			pos2 = Vector3d(dist1*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle1));
+			pos3 = Vector3d(dist0*cos(angle1), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle1));
 						
 			//Vector3 pos2d = Vector3(dist*cosf(Math::degreesToRadians(angle)), 10 * sqrtf(tGame)*sinf(dist - tGame) / (dist + tGame), dist*sinf(Math::degreesToRadians(angle)));
 			//Vector3 pos3d = Vector3(dist0*cosf(Math::degreesToRadians(angle)), 10 * sqrtf(tGame)*sinf(dist0 - tGame) / (dist0 + tGame), dist0*sinf(Math::degreesToRadians(angle)));

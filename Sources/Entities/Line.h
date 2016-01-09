@@ -1,6 +1,8 @@
 ﻿#pragma once
+
+/*
 #include "Entity.h"
-#include "../Math/Vector3.h"
+#include "../Math/Vector3d.h"
 #include "../Math/Quaternion.h"
 #include "../Math/Color.h"
 
@@ -42,7 +44,7 @@ public:
 		return q;
 	}
 
-	virtual void applyForce(Vector3& force_)
+	virtual void applyForce(Vector3d& force_)
 	{
 		this->force += force_;		
 	}
@@ -59,7 +61,7 @@ public:
 
 	virtual bool IsColisions(Entity& entity)
 	{
-		Vector3 posss = entity.GetPos(); //todo
+		Vector3d posss = entity.GetPos(); //todo
 		return false;
 	}
 
@@ -74,7 +76,8 @@ public:
 private:
 	float64 h;
 	float64 r;
-	Vector3 force;
+	Vector3d force;
 	Quaternion q;
 	Color4f color;
 };
+*/

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../Constans.h"
 #include "Math.h"
-#include "Vector3.h"
+#include "Vector3d.h"
 #include "Matrix3.h"
 
 class Quaternion
@@ -35,17 +35,17 @@ public:
 //	void rotate(Vector3 &v) const;
 
 	Quaternion conjugate() const;
-	void fromAxisAngle(const Vector3 &axis, float64 degrees);
+	void fromAxisAngle(const Vector3d &axis, float64 degrees);
 //	void fromHeadPitchRoll(float64 headDegrees, float64 pitchDegrees, float64 rollDegrees);
-	void fromAngleXYZ(const Vector3 &angle);
+	void fromAngleXYZ(const Vector3d &angle);
 //	void fromMatrix(const Matrix4 &m);
 	void identity();
 	Quaternion inverse() const;
 	float64 magnitude() const;
-	Vector3 rotate(Vector3 p);
+	Vector3d rotate(Vector3d p);
 	void normalize();
 	void set(float64 w_, float64 x_, float64 y_, float64 z_);
-	void toAxisAngle(Vector3 &axis, float64 &degrees) const;
+	void toAxisAngle(Vector3d &axis, float64 &degrees) const;
 //	void toHeadPitchRoll(float64 &headDegrees, float64 &pitchDegrees, float64 &rollDegrees) const;
 //	Matrix4 toMatrix4() const;
 };
@@ -168,7 +168,7 @@ inline Quaternion Quaternion::conjugate() const
     return tmp;
 }
 
-inline void Quaternion::fromAxisAngle(const Vector3 &axis, float64 degrees)
+inline void Quaternion::fromAxisAngle(const Vector3d &axis, float64 degrees)
 {
     float64 halfTheta = Math::degreesToRadians(degrees) * 0.5;
     float64 s = sin(halfTheta);
@@ -183,9 +183,9 @@ inline void Quaternion::fromAxisAngle(const Vector3 &axis, float64 degrees)
 //     fromMatrix(m);
 //}
 
- inline void Quaternion::fromAngleXYZ(const Vector3 &angle)
+ inline void Quaternion::fromAngleXYZ(const Vector3d &angle)
 {
-	Vector3 vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
+	Vector3d vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
 	Quaternion qx, qy, qz, qt;
 
 	qx.fromAxisAngle(vx, angle.x );
@@ -218,7 +218,7 @@ inline float64 Quaternion::magnitude() const
     return sqrt(w * w + x * x + y * y + z * z);
 }
 
-inline Vector3 Quaternion::rotate(Vector3 p)
+inline Vector3d Quaternion::rotate(Vector3d p)
 {
 	Matrix3 RotateM;
 	RotateM[0][0] = 1 - 2 * y*y - 2 * z*z;
@@ -231,7 +231,7 @@ inline Vector3 Quaternion::rotate(Vector3 p)
 	RotateM[2][1] = 2 * y*z + 2 * x*w;
 	RotateM[2][2] = 1 - 2 * x*x - 2 * y*y;
 
-	Vector3 p1 = RotateM * p;
+	Vector3d p1 = RotateM * p;
 
 	return p1;
 }
@@ -302,7 +302,7 @@ inline void Quaternion::set(float64 w_, float64 x_, float64 y_, float64 z_)
  	x = q[0], y = q[1], z = q[2], w = q[3];
 }*/
 
-inline void Quaternion::toAxisAngle(Vector3 &axis, float64 &degrees) const
+inline void Quaternion::toAxisAngle(Vector3d &axis, float64 &degrees) const
 {
 	// Converts this quaternion to an axis and an angle.
 

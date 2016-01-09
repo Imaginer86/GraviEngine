@@ -125,7 +125,7 @@
     <ClInclude Include="..\Sources\Math\Quaternion.h" />
     <ClInclude Include="..\Sources\Math\Random.h" />
     <ClInclude Include="..\Sources\Math\Tensus.h" />
-    <ClInclude Include="..\Sources\Math\Vector3.h" />
+    <ClInclude Include="..\Sources\Math\Vector3d.h" />
     <ClInclude Include="..\Sources\Math\VectorField.h" />
     <ClInclude Include="Game.h" />
   </ItemGroup>

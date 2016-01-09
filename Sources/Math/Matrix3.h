@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../Constans.h"
-#include "Vector3.h"
+#include "Vector3d.h"
 
 class Matrix3
 {
@@ -16,7 +16,7 @@ public:
 	const float64 *operator[](int row) const;
 
 	inline Matrix3 &operator*(const Matrix3 &rhs);
-	Vector3 operator*(const Vector3 &lhs);
+	Vector3d operator*(const Vector3d &lhs);
 	Matrix3 &operator*(float64 scalar);
 
 	float64 det();
@@ -68,9 +68,9 @@ inline Matrix3 &Matrix3::operator*(const Matrix3 &rhs)
 	*this = tmp;
 	return *this;
 }
-inline Vector3 Matrix3::operator*(const Vector3 &lhs)
+inline Vector3d Matrix3::operator*(const Vector3d &lhs)
 {
-	return Vector3((lhs.x *mtx[0][0]) + (lhs.y * mtx[1][0]) + (lhs.z * mtx[2][0]),
+	return Vector3d((lhs.x *mtx[0][0]) + (lhs.y * mtx[1][0]) + (lhs.z * mtx[2][0]),
 		(lhs.x * mtx[0][1]) + (lhs.y * mtx[1][1]) + (lhs.z * mtx[2][1]),
 		(lhs.x * mtx[0][2]) + (lhs.y * mtx[1][2]) + (lhs.z * mtx[2][2]));
 }

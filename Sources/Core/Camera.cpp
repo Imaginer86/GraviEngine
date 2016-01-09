@@ -33,23 +33,23 @@ Camera::~Camera()
 void Camera::RotateUpDown(float64 anglef)
 {
 	Quaternion qn;
-	qn.fromAxisAngle(Vector3(-1, 0, 0), anglef);
+	qn.fromAxisAngle(Vector3d(-1, 0, 0), anglef);
 	q *= qn;
 	q.normalize();
 }
 
 void Camera::RotateLR(float64 anglef)
 {
-	Vector3 axic(0, 1, 0);
+	Vector3d axic(0, 1, 0);
 	Quaternion qn;
 	qn.fromAxisAngle(axic, anglef);
 	q *= qn;
 	q.normalize();
 }
 
- Vector3 Camera::GetView()
+ Vector3d Camera::GetView()
  {
- 	Vector3 view(0,0,1);	
+ 	Vector3d view(0,0,1);	
  	view = q.rotate(view);
  	view.unitize();		  
  	return view;
@@ -57,14 +57,14 @@ void Camera::RotateLR(float64 anglef)
 
 void Camera::MoveCamera(float64 speed)
 {
-	Vector3 v = GetView();
+	Vector3d v = GetView();
 	pos += v*speed;
 }
 
 void Camera::MoveLRCamera(float64 speed)
 {
-	Vector3 b(0,-1,0);
-	Vector3 v = GetView();
+	Vector3d b(0,-1,0);
+	Vector3d v = GetView();
 	b = b*v;
 	pos += b*speed;
 }

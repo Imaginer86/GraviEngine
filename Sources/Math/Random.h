@@ -13,8 +13,10 @@ public:
 	Random() {}
 	virtual ~Random() {}
 
-
-	float randf();
-	float64 randf64();
 	void randomize();
+
+	float32 randf();
+	float64 randfd();
+
+	float32 randf(float32 a, float32 b);
 };

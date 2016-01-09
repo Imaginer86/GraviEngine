@@ -16,6 +16,13 @@ namespace Math
 		return fabs((f1 - f2) / ((f2 == 0.0f) ? 1.0f : f2)) < EPSILON;
 	}
 
+	inline unsigned Max(unsigned f1, unsigned f2)
+	{
+		// Determines whether the two float64ing-point values f1 and f2 are
+		// close enough together that they can be considered equal.
+		return f1 > f2 ? f1 : f2;
+	}
+
 	inline float64 degreesToRadians(float64 degrees)
 	{
 		return (degrees * M_PI) / 180.0f;

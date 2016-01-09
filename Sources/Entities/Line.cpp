@@ -1,4 +1,5 @@
-﻿//#include "..\gl\glaux.h"
+﻿/*
+//#include "..\gl\glaux.h"
 #include "Line.h"
 #include <Windows.h>
 #include <gl\GL.h>
@@ -80,3 +81,4 @@ void Line::Draw()
 
 	gluDeleteQuadric(quadratic);
 }
+*/

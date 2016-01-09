@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Entity.h"
-#include "../Math/Vector3.h"
+#include "../Math/Vector3d.h"
 #include "../Math/Quaternion.h"
 
 class Box: public Entity
@@ -10,12 +10,16 @@ public:
 	Box();
 	virtual ~Box(){};
 
-	Vector3 GetSize()
+	virtual void simulateForce(float dt);	
+
+	virtual void Draw();
+
+	Vector3d GetSize()
 	{
 		return size;
 	}
 
-	void SetSize(const Vector3& size_)
+	void SetSize(const Vector3d& size_)
 	{
 		this->size = size_;
 	}
@@ -40,12 +44,8 @@ public:
 		qVel = qVel_;
 	}
 
-	virtual void simulateForce(float dt);	
-
-	virtual void Draw();
-
 private:	
-	Vector3 size;
+	Vector3d size;
 	Quaternion q;
 	Quaternion qVel;
 };

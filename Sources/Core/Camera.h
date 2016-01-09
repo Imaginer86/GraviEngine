@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Math/Vector3.h"
+#include "../Math/Vector3d.h"
 #include "../Math/Quaternion.h"
 
 namespace Core
@@ -25,19 +25,19 @@ public:
 
 	void MoveLRCamera(float64 speed);
 
-	Vector3 GetView();
+	Vector3d GetView();
 
 	void Interpolate(Quaternion& q_)
 	{
 		q *= q_;
 	}
 
-	void SetPos(Vector3& pos_)
+	void SetPos(Vector3d& pos_)
 	{
 		pos = pos_;
 	}
 
-	Vector3& GetPos()
+	Vector3d& GetPos()
 	{
 		return pos;
 	}
@@ -52,7 +52,7 @@ public:
 		q = q_;
 	}
 private:
-	Vector3 pos;
+	Vector3d pos;
 	Quaternion q;
 };
 }

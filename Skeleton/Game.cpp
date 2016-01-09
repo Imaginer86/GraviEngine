@@ -19,7 +19,7 @@
 
 extern Color4f gLightAmbient;
 extern Color4f gLightDiffuse;
-extern Vector3 gLightPosition;
+extern Vector3d gLightPosition;
 
 //unsigned Core::Master::gSceneNum;
 //extern float64 gTimeScale;
@@ -71,7 +71,7 @@ void Game::SetNumEntities(unsigned numEntities_)
 }
 
 
-void Game::AddMass( float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color )
+void Game::AddMass( float64 m, float64 r, const Vector3d& pos, const Vector3d& vel, const Color4f& color )
 {	
 	Mass* mass = new Mass;	
 	mass->Set(m, r, pos, vel, color);
@@ -79,7 +79,7 @@ void Game::AddMass( float64 m, float64 r, const Vector3& pos, const Vector3& vel
 	++countAddEntities;
 }
 
-void Game::AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color)
+void Game::AddBox(float64 m, const Vector3d& size, const Vector3d& pos, const Vector3d& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color)
 {
 	Box *box = new Box;	
 	box->SetMass(m);
@@ -93,7 +93,7 @@ void Game::AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vect
 	++countAddEntities;
 }
 
-void Game::AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numEntitys, bool createCollision)
+void Game::AddSmoker(const Vector3d& pos, const Vector3d& rand, const Vector3d& vel0, const Vector3d& vel, const Color4f& color, unsigned long numEntitys, bool createCollision)
 {
 	Smoke *smoke = new Smoke;
 	smoke->Init(pos, rand, vel0, vel, color, numEntitys, createCollision);
@@ -200,10 +200,10 @@ void Game::Collision(float64 dt)
 						float64 dc = (dist - r2) / v;
 						if (dc <= 0.0f)
 						{
-							Vector3 p1 = ma->GetPos();
-							Vector3 v1 = ma->GetVel();
-							Vector3 p2 = mb->GetPos();
-							Vector3 v2 = mb->GetVel();
+							Vector3d p1 = ma->GetPos();
+							Vector3d v1 = ma->GetVel();
+							Vector3d p2 = mb->GetPos();
+							Vector3d v2 = mb->GetVel();
 
 							p1 = p1 + v1*dc;
 							p2 = p2 + v2*dc;
@@ -211,24 +211,24 @@ void Game::Collision(float64 dt)
 							ma->SetPos(p1);
 							mb->SetPos(p2);
 
-							Vector3 p1p2 = p2 - p1;
+							Vector3d p1p2 = p2 - p1;
 							p1p2.unitize();
-							Vector3 pn1 = p1p2*v1;
+							Vector3d pn1 = p1p2*v1;
 							//pn1.unitize();
-							Vector3 v1t = Vector3(p1p2.x*pn1.x*pn1.x + p1p2.x*(pn1.x*pn1.y - pn1.z) + p1p2.x*(pn1.x*pn1.z + pn1.y),
+							Vector3d v1t = Vector3d(p1p2.x*pn1.x*pn1.x + p1p2.x*(pn1.x*pn1.y - pn1.z) + p1p2.x*(pn1.x*pn1.z + pn1.y),
 								p1p2.y*(pn1.y*pn1.x + pn1.z) + p1p2.y*pn1.y*pn1.y + p1p2.y*(pn1.y*pn1.z - pn1.x),
 								p1p2.z*(pn1.z*pn1.x - pn1.y) + p1p2.z*(pn1.z*pn1.y + pn1.x) + p1p2.z*pn1.z*pn1.z);
 							float64 v1n = v1.dotProduct(p1p2);
 							//float64 v1ts = v1.dotProduct(v1t);
 
 
-							Vector3 p2p1 = p1 - p2;
+							Vector3d p2p1 = p1 - p2;
 							p2p1.unitize();
 							//p1p2 = - p1p2;
-							Vector3 pn2 = p2p1*v2;
+							Vector3d pn2 = p2p1*v2;
 							//pn2.unitize();
 
-							Vector3 v2t = Vector3(p2p1.x*pn2.x*pn2.x + p2p1.x*(pn2.x*pn2.y - pn2.z) + p2p1.x*(pn2.x*pn2.z + pn2.y),
+							Vector3d v2t = Vector3d(p2p1.x*pn2.x*pn2.x + p2p1.x*(pn2.x*pn2.y - pn2.z) + p2p1.x*(pn2.x*pn2.z + pn2.y),
 								p2p1.y*(pn2.y*pn2.x + pn2.z) + p2p1.y*pn2.y*pn2.y + p2p1.y*(pn2.y*pn2.z - pn2.x),
 								p2p1.z*(pn2.z*pn2.x - pn2.y) + p2p1.z*(pn2.z*pn2.y + pn2.x) + p2p1.z*pn2.z*pn2.z);
 
@@ -240,8 +240,8 @@ void Game::Collision(float64 dt)
 							float64 m2 = mb->GetMass();
 
 
-							Vector3 v11 = v1t - p1p2*v1n + ((p1p2*m1*v1n + p2p1*m2*v2n) / (m1 + m2))*2.0f;
-							Vector3 v22 = v2t - p2p1*v2n + ((p1p2*m1*v1n + p2p1*m2*v2n) / (m1 + m2))*2.0f;
+							Vector3d v11 = v1t - p1p2*v1n + ((p1p2*m1*v1n + p2p1*m2*v2n) / (m1 + m2))*2.0f;
+							Vector3d v22 = v2t - p2p1*v2n + ((p1p2*m1*v1n + p2p1*m2*v2n) / (m1 + m2))*2.0f;
 
 							//ma->SetPos(ma->GetPos() - ma->GetVel()*dt);
 							//mb->SetPos(mb->GetPos() - mb->GetVel()*dt);
@@ -284,35 +284,35 @@ void Game::Collision(float64 dt)
 						mass = dynamic_cast<Mass*>(Entities[b]);
 						box = dynamic_cast<Box*>(Entities[a]);
 					}
-					Vector3 pm = mass->GetPos();
+					Vector3d pm = mass->GetPos();
 					float64 rm = mass->GetR();
-					Vector3 vm = mass->GetVel();
+					Vector3d vm = mass->GetVel();
 
-					Vector3 pb = box->GetPos();
+					Vector3d pb = box->GetPos();
 					Quaternion q = box->GetAngleQ();
-					Vector3 axicb;
+					Vector3d axicb;
 					float64 angleb;
 					q.toAxisAngle(axicb, angleb);
 					Quaternion q1;
 					q1.fromAxisAngle(axicb, -angleb);
-					Vector3 size = box->GetSize();
+					Vector3d size = box->GetSize();
 					size *= 0.5f;
 
-					Vector3 diff = size;
+					Vector3d diff = size;
 
-					Vector3 P[8];
-					P[0] = pb + Vector3(-diff.x, -diff.y, diff.z);;
-					P[1] = pb + Vector3(-diff.x, -diff.y, -diff.z);
-					P[2] = pb + Vector3(diff.x, -diff.y, -diff.z);
-					P[3] = pb + Vector3(diff.x, -diff.y, diff.z);
-					P[4] = pb + Vector3(-diff.x, diff.y, diff.z);
-					P[5] = pb + Vector3(-diff.x, diff.y, -diff.z);
-					P[6] = pb + Vector3(diff.x, diff.y, -diff.z);
-					P[7] = pb + Vector3(diff.x, diff.y, diff.z);
+					Vector3d P[8];
+					P[0] = pb + Vector3d(-diff.x, -diff.y, diff.z);;
+					P[1] = pb + Vector3d(-diff.x, -diff.y, -diff.z);
+					P[2] = pb + Vector3d(diff.x, -diff.y, -diff.z);
+					P[3] = pb + Vector3d(diff.x, -diff.y, diff.z);
+					P[4] = pb + Vector3d(-diff.x, diff.y, diff.z);
+					P[5] = pb + Vector3d(-diff.x, diff.y, -diff.z);
+					P[6] = pb + Vector3d(diff.x, diff.y, -diff.z);
+					P[7] = pb + Vector3d(diff.x, diff.y, diff.z);
 
 					for (int i = 0; i < 8; i++)
 					{
-						Vector3 d = P[i] - pb;
+						Vector3d d = P[i] - pb;
 						d = q1.rotate(d);
 						P[i] = pb + d;
 					}
@@ -325,7 +325,7 @@ void Game::Collision(float64 dt)
 
 					for (int i = 0; i < 6; i++)
 					{
-						Vector3 pr = PL[i].proj(pm);
+						Vector3d pr = PL[i].proj(pm);
 						//float64 t = PL[i].a*pr.x + PL[i].b*pr.y + PL[i].c*pr.z+PL[i].d;
 						//float64 d = PL[i].distance(pm);
 						float64 d = (pm - pr).length();
@@ -335,9 +335,9 @@ void Game::Collision(float64 dt)
 							//std::cout << "Collosion M (" << pm.x << ", " << pm.y << ", " << pm.z << ") and Plane " << i << std::endl;
 							if (InterPlanePoint(pr, P[PI[i][0]], P[PI[i][1]], P[PI[i][2]], P[PI[i][3]]))
 							{					
-								Vector3 n(PL[i].a, PL[i].b, PL[i].c);
+								Vector3d n(PL[i].a, PL[i].b, PL[i].c);
 								n.unitize();
-								Vector3 axic;
+								Vector3d axic;
 								axic = n*vm;
 								
 								if (axic.unitize() > Math::EPSILON)
@@ -367,25 +367,25 @@ void Game::Collision(float64 dt)
 			}
 }
 
-bool Game::InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+bool Game::InterPlanePoint(Vector3d pr, Vector3d p0, Vector3d p1, Vector3d p2, Vector3d p3)
 {
-	Vector3 p10 = p1 - p0;
-	Vector3 pm0 = pr - p0;
+	Vector3d p10 = p1 - p0;
+	Vector3d pm0 = pr - p0;
 	float64 cosa = p10.dotProduct(pm0)/(p10.length()*pm0.length());
 	if ( cosa < 0.0f || cosa > 1.0f)
 		return false;
-	Vector3 p21 = p2 - p1;
-	Vector3 pm1 = pr - p1;
+	Vector3d p21 = p2 - p1;
+	Vector3d pm1 = pr - p1;
 	cosa = p21.dotProduct(pm1)/(p21.length()*pm1.length());
 	if ( cosa < 0.0f || cosa > 1.0f)
 		return false;
-	Vector3 p32 = p3 - p2;
-	Vector3 pm2 = pr - p2;
+	Vector3d p32 = p3 - p2;
+	Vector3d pm2 = pr - p2;
 	cosa = p32.dotProduct(pm2)/(p32.length()*pm2.length());
 	if ( cosa < 0.0f || cosa > 1.0f)
 		return false;
-	Vector3 p03 = p0 - p3;
-	Vector3 pm3 = pr - p3;
+	Vector3d p03 = p0 - p3;
+	Vector3d pm3 = pr - p3;
 	cosa = p03.dotProduct(pm3)/(p03.length()*pm3.length());
 	if ( cosa < 0.0f || cosa > 1.0f)
 		return false;
@@ -403,15 +403,15 @@ void Game::Draw()
 }
 
 
-Vector3 Game::GraviForce( int a, int b )
+Vector3d Game::GraviForce( int a, int b )
 {
-	Vector3 f;
+	Vector3d f;
 	float64 gforce;
 
-	Vector3 Dif;
+	Vector3d Dif;
 	float64 r;
 
-	Vector3 t =  Entities[a]->GetPos();
+	Vector3d t =  Entities[a]->GetPos();
 
 	Dif = Entities[a]->GetPos() - Entities[b]->GetPos();
 
@@ -425,7 +425,7 @@ Vector3 Game::GraviForce( int a, int b )
 	if (r < Math::EPSILON)
 	{
 		gforce = 0;
-		Vector3 vel0(0.0f, 0.0f ,0.0f);
+		Vector3d vel0(0.0f, 0.0f ,0.0f);
 
 		Entities[a]->SetVel(vel0);
 		Entities[b]->SetVel(vel0);
@@ -451,7 +451,7 @@ void Game::Solve()
 		{			
 			if (a != b)
 			{
-				Vector3 force(GraviForce(a,b));
+				Vector3d force(GraviForce(a,b));
 				//if ( force.unitize() > Math::EPSILON )
 				//{
 				Entities[a]->applyForce(force); //Gravi Force
@@ -484,7 +484,7 @@ bool Game::SaveData()
 	if (!dataFile.is_open())
 		return false;
 
-	float64 timeScale = Core::Master::gTimeScale;
+	float64 timeScale = Core::Master::Instance().gTimeScale;
 	dataFile << timeScale;
 	
 	bool bGraviMasses = GetBGraviMasses();
@@ -499,8 +499,8 @@ bool Game::SaveData()
 	bool bCollisions = GetBCollisions();
 	dataFile << bCollisions;
 	
-	Vector3 cameraPos = Core::Camera::Instance().GetPos();
-	Vector3 cameraAxic;
+	Vector3d cameraPos = Core::Camera::Instance().GetPos();
+	Vector3d cameraAxic;
 	float64 cameraAngle;
 	Core::Camera::Instance().GetQuaternion().toAxisAngle(cameraAxic, cameraAngle);
 	
@@ -513,7 +513,7 @@ bool Game::SaveData()
 	dataFile << gLightDiffuse.r << gLightDiffuse.g << gLightDiffuse.b << gLightDiffuse.a;
 	dataFile << gLightPosition.x << gLightPosition.y << gLightPosition.z;
 
-	Vector3 graviAcc = GetGraviAcc();
+	Vector3d graviAcc = GetGraviAcc();
 
 	dataFile << graviAcc.x << graviAcc.y << graviAcc.z;
 
@@ -538,8 +538,8 @@ bool Game::SaveData()
 		Mass* M = dynamic_cast<Mass*>(Entities[i]);
 		float64 m = M->GetMass();
 		float64 r = M->GetR();
-		Vector3 pos = M->GetPos();
-		Vector3 vel = M->GetVel();		
+		Vector3d pos = M->GetPos();
+		Vector3d vel = M->GetVel();		
 		Color4f color = M->GetColor();
 		
 		dataFile << m << r
@@ -550,16 +550,16 @@ bool Game::SaveData()
 
 		Box* B = dynamic_cast<Box*>(Entities[i]);
 		m = B->GetMass();
-		Vector3 size = B->GetSize();
+		Vector3d size = B->GetSize();
 		pos = B->GetPos();
 		vel = B->GetVel();
 		color = B->GetColor();
 		Quaternion q = B->GetAngleQ();
-		Vector3 angleAxic;
+		Vector3d angleAxic;
 		float64 angle;
 		q.toAxisAngle(angleAxic, angle);
 		Quaternion qVel = B->GetAngleVelQ();
-		Vector3 angleVelAxic;
+		Vector3d angleVelAxic;
 		float64 angleVel;
 		qVel.toAxisAngle(angleVelAxic, angleVel);
 				
@@ -588,10 +588,10 @@ bool Game::SaveData()
 		Smoke* S = dynamic_cast<Smoke*>(Entities[i]);
 
 		pos = S->GetPos();		
-		Vector3 vel0 = S->GetVel0();
+		Vector3d vel0 = S->GetVel0();
 		vel = S->GetVel();
 		color = S->GetColor();
-		Vector3 rand( (Random::Instance().randf64() - 0.5) * 2.0, (Random::Instance().randf64() - 0.5) * 2.0, (Random::Instance().randf64() - 0.5) * 2.0);
+		Vector3d rand( (Random::Instance().randf() - 0.5) * 2.0, (Random::Instance().randf() - 0.5) * 2.0, (Random::Instance().randf() - 0.5) * 2.0);
 		unsigned numParticless = S->GetNumParticles();
 		
 		bool createCollision = S->GetCreateCollision();
@@ -617,6 +617,7 @@ bool Game::LoadData(unsigned fileNum)
 
 	std::string fileNumstr = std::to_string(fileNum);
 	std::string fileName = "data//data" + fileNumstr + ".dat";
+
 	std::ifstream dataFile(fileName, std::ios::in);
 
 	if (!dataFile.is_open())
@@ -624,7 +625,11 @@ bool Game::LoadData(unsigned fileNum)
 
 	float64 timeScale;
 	dataFile >> timeScale;
-	Core::Master::gTimeScale = timeScale;
+	Core::Master::Instance().gTimeScale = timeScale;
+
+	unsigned numFPR, numUPR;
+	dataFile >> numFPR >> numUPR;
+	Core::Master::Instance().FPR = numFPR, Core::Master::Instance().UPR = numUPR;
 	
 	bool bGraviMasses;
 	dataFile >> bGraviMasses;
@@ -642,8 +647,8 @@ bool Game::LoadData(unsigned fileNum)
 	dataFile >> bCollisions;
 	SetBCollisions(bCollisions);
 
-	Vector3 cameraPos;
-	Vector3 cameraAxic;
+	Vector3d cameraPos;
+	Vector3d cameraAxic;
 	float64 cameraAngle;
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
@@ -673,7 +678,7 @@ bool Game::LoadData(unsigned fileNum)
 	//RenderGL::Instance().rLightPosition = gLightPosition;
 
 
-	Vector3 graviAcc;
+	Vector3d graviAcc;
 
 	dataFile >> graviAcc.x >> graviAcc.y >> graviAcc.z;
 	SetGraviAcc(graviAcc);
@@ -699,7 +704,7 @@ bool Game::LoadData(unsigned fileNum)
 	for (unsigned i = 0; i < numMass; i++)
 	{
 		float64 m = 0.0f, r = 0.0f;
-		Vector3 pos, vel;
+		Vector3d pos, vel;
 		//bool isLight = false;
 		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 		dataFile >> m >> r
@@ -713,12 +718,12 @@ bool Game::LoadData(unsigned fileNum)
 	for (unsigned i = 0; i < numBoxs; i++)
 	{
 		float64 m = 0.0;
-		Vector3 pos, size, vel;
+		Vector3d pos, size, vel;
 		Color4f color;
 		Quaternion q;
 		Quaternion qVel;
 		float64 angle, angleVel;
-		Vector3 angleAxic, angleVelAxic;
+		Vector3d angleAxic, angleVelAxic;
 		dataFile >> m
 			>> size.x >> size.y >> size.z
 			>> pos.x >> pos.y >> pos.z
@@ -742,10 +747,10 @@ bool Game::LoadData(unsigned fileNum)
 	}
 
 	unsigned long numParticless = 0;
-	Vector3 pos;
-	Vector3 rand;
-	Vector3 vel0;
-	Vector3 vel;
+	Vector3d pos;
+	Vector3d rand;
+	Vector3d vel0;
+	Vector3d vel;
 	Color4f color;
 	bool createCollision;
 	

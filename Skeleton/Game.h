@@ -32,13 +32,13 @@ public:
 
 	virtual void Draw();
 
-	void AddMass(float64 m, float64 r, const Vector3& pos, const Vector3& vel, const Color4f& color);
+	void AddMass(float64 m, float64 r, const Vector3d& pos, const Vector3d& vel, const Color4f& color);
 
-	void AddBox(float64 m, const Vector3& size, const Vector3& pos, const Vector3& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
+	void AddBox(float64 m, const Vector3d& size, const Vector3d& pos, const Vector3d& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
 
-	void AddSmoker(const Vector3& pos, const Vector3& rand, const Vector3& vel0, const Vector3& vel, const Color4f& color, unsigned long numParticles, bool createCollision);
+	void AddSmoker(const Vector3d& pos, const Vector3d& rand, const Vector3d& vel0, const Vector3d& vel, const Color4f& color, unsigned long numParticles, bool createCollision);
 
-	Vector3 GraviForce(int a, int b);
+	Vector3d GraviForce(int a, int b);
 
 	void Solve();							// no implementation because no forces are wanted in this basic container;
  	void Simulate(float64 dt);					// Iterate the masses by the change in time;
@@ -46,7 +46,7 @@ public:
 	void AddWindAcc(float64 dt);
 	void Collision(float64 dt);
 
-	bool InterPlanePoint(Vector3 pr, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3);
+	bool InterPlanePoint(Vector3d pr, Vector3d p0, Vector3d p1, Vector3d p2, Vector3d p3);
 
 	void SetNumStars(unsigned long numStars, bool randomize = true);
 
@@ -102,7 +102,7 @@ public:
 		return bCollisions;
 	}
 
-	void SetGraviAcc(Vector3 graviAcc_)
+	void SetGraviAcc(Vector3d graviAcc_)
 	{
 		graviAcc = graviAcc_;
 	}
@@ -137,7 +137,7 @@ public:
 		return numSmokers;
 	}
 
-	Vector3 GetGraviAcc()
+	Vector3d GetGraviAcc()
 	{
 		return graviAcc;
 	}
@@ -155,7 +155,7 @@ private:
 	unsigned numEntitys;
 	Entity** Entities;
 
-	Vector3 graviAcc;
+	Vector3d graviAcc;
 
 	Sky* mSky;
 };

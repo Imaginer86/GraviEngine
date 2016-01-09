@@ -27,12 +27,11 @@ bool gSaveKeyPress = false;
 
 Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 Color4f gLightDiffuse( 1.0f, 1.0f, 1.0f, 1.0f );//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-Vector3 gLightPosition( 3.0f, 3.0f, 4.0f );//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+Vector3d gLightPosition( 3.0f, 3.0f, 4.0f );//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 
-unsigned countUpdate = 0;
-unsigned countDraw = 0;
 unsigned count = 0;
+unsigned maxFUPS;
 
 long tickCount = 0;
 long lastTickCount = 0;
@@ -48,39 +47,30 @@ bool irstLoad = false;
 
 
 
-bool Master::gKeys[256];
+// bool Master::gKeys[256];
+//
+// float64 Master::gfps = 0.0;
+// float64 Master::gups = 0.0;
+// 
+// float64 Master::gTime = 0.0;
+// 
+// unsigned Master::gSceneNum = 1;
+// unsigned Master::gSceneNumMax = 9;
+// 
+// float64 Master::gTimeScale = 1.0f;
+// 
+// float64 Master::gAngleScale = 0.001f;
+// float64 Master::gMoveScale = 0.1f;
+// float64 Master::gShiftScale = 0.1f;
+// 
+// bool Master::gDone = false;	// Логическая переменная для выхода из цикла
+// 
+// bool Master::gActive = true;                // Флаг активности окна
+// bool Master::gPause = true;
+// bool Master::gShowDebugInfo = true;
+// bool gUpdateCamera = false;
+// bool gFirstLoad = false;
 
-float64 Master::gfps = 0.0;
-float64 Master::gups = 0.0;
-
-float64 Master::gTime = 0.0;
-
-//unsigned Master::gSceneNum = 1;
-unsigned Master::gSceneNumMax = 9;
-
-float64 Master::gTimeScale = 1.0f;
-
-float64 Master::gAngleScale = 0.001f;
-float64 Master::gMoveScale = 0.1f;
-float64 Master::gShiftScale = 0.1f;
-
-bool Master::gDone = false;	// Логическая переменная для выхода из цикла
-
-bool Master::gActive = true;                // Флаг активности окна
-bool Master::gPause = true;
-bool Master::gShowDebugInfo = true;
-//bool gUpdateCamera = false;
-//bool gFirstLoad = false;
-
-
-Master::Master()
-{
-}
-
-Master::~Master()
-{
-
-}
 
 
 long Master::WndProc(  void*  hWnd,				// Дескриптор нужного окна
@@ -94,11 +84,11 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 		{
 			if( !HIWORD( wParam ) )          // Проверить состояние минимизации
 			{
-				gActive = true;					// Программа активна
+				Master::Instance().gActive = true;					// Программа активна
 			}
 			else
 			{
-				gActive = false;					// Программа теперь не активна
+				Master::Instance().gActive = false;					// Программа теперь не активна
 			}
 
 			return 0;						// Возвращаемся в цикл обработки сообщений
@@ -121,12 +111,12 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 
 	case WM_KEYDOWN:            // Была ли нажата кнопка?
 		{
-			gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
+			Master::Instance().gKeys[wParam] = true;			// Если так, мы присваиваем этой ячейке true
 			return 0;							// Возвращаемся
 		}
 	case WM_KEYUP:              // Была ли отпущена клавиша?
 		{
-			gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
+			Master::Instance().gKeys[wParam] = false;			//  Если так, мы присваиваем этой ячейке false
 			return 0;						// Возвращаемся
 		}
 	case WM_SIZE:              // Изменены размеры OpenGL окна
@@ -143,6 +133,9 @@ void Master::Init(GameBase* gameBase_)
 {
 	gmGame = gameBase_;
 
+	countUpdate = 1;
+	countDraw = 1;
+
 	// Создать наше OpenGL окно	
 	bool assert = !RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32);
 	if (assert)
@@ -157,6 +150,8 @@ void Master::Run()
 	lastTickCount = ::GetTickCount();		// Get Tick Count
 	lastTickFPS = lastTickCount;
 	lastTickUPS = lastTickCount;
+
+	maxFUPS = ::Math::Max(FPR, UPR);
 
 	MSG  msg;           // Структура для хранения сообщения Windows
 
@@ -179,41 +174,48 @@ void Master::Run()
 			// Прорисовываем сцену.
 			if( gActive )          // Активна ли программа?
 			{
-				tickCount = GetTickCount();			// Get The Tick Count
-				//float64 currentTime = float64(tickCount) * 0.001;
-
-				count += tickCount - lastTickCount;
-
-				if (count > 1000)
-				{
-					count -= 1000;
-					gups = float64(countUpdate);
-					gfps = float64(countDraw);
-					countUpdate = 0;
-					countDraw  = 0;
-				}
-
-				//if (!gPause && (tickCount - lastTickUPS) > long(1000.0/minUPS))
-				if (!gPause)
-				{
-					Update();
-					lastTickUPS = tickCount;
-					countUpdate++;					
-				}
-				
-
-				if ( float64(tickCount - lastTickFPS) > long(1000.0/minFPS))
-				{
-					Draw();							// Рисуем сцену
-					lastTickFPS = tickCount;
-					countDraw++;
-				}				
-				lastTickCount = tickCount;			// Set Last Count To Current Count
+				Tick();
 			}
-
-			UpdateKeys();
+			
 		}
 	}
+}
+
+void Master::Tick()
+{
+
+	tickCount = GetTickCount();			// Get The Tick Count
+
+	//float64 currentTime = float64(tickCount) * 0.001;
+
+	count += tickCount - lastTickCount;
+
+	if (count > 1000)
+	{
+		count -= 1000;
+		gups = countUpdate;
+		gfps = countDraw;
+		countUpdate = 0;
+		countDraw  = 0;
+	}
+
+	//for (unsigned i = 0; i < maxFUPS; ++i )
+	//{
+		//if (i < UPR)
+		//{
+			Update();
+		//}
+
+		//if (i < FPR)					
+		//{
+			Draw();
+		//}
+
+		UpdateKeys();					
+	//}
+
+	lastTickCount = tickCount;			// Set Last Count To Current Count
+
 }
 
 void Master::Update()
@@ -221,11 +223,16 @@ void Master::Update()
 	float64 dt = float64(tickCount - lastTickCount) * 0.001;
 	gTime += gTimeScale*dt;
 	gmGame->Update(gTimeScale*dt);
+
+	//lastTickUPS = tickCount;
+	++countUpdate;
 }
 
 
 void Master::Draw()                // Здесь будет происходить вся прорисовка
 {
+	//if ( float64(tickCount - lastTickFPS) > long(1000.0/minFPS))
+	
 	RenderGL::Instance().BeginDraw();	
 	gmGame->Draw();
 	if (gShowDebugInfo)
@@ -233,6 +240,9 @@ void Master::Draw()                // Здесь будет происходит
 		RenderGL::Instance().DrawDebugInfo();
 	}
 	RenderGL::Instance().EndDraw();
+
+	//lastTickFPS = tickCount;
+	++countDraw;
 }
 
 void Master::Release()

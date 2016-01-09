@@ -1,16 +1,16 @@
 ﻿#pragma once
 #include "../Math/Quaternion.h"
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 
 class Star
 {
 public:
 	Star();
-	Star(Vector3d, Quaternion);
+	Star(Vector3f, Quaternion);
 	virtual ~Star();
 	void Init();
 
 	void Draw();
 	Quaternion	q;
-	Vector3d R;
+	Vector3f R;
 };

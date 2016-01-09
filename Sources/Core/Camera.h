@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "../Math/Vector3d.h"
+#include "../Types.h"
+#include "../Math/Vector3f.h"
 #include "../Math/Quaternion.h"
 
 namespace Core
@@ -17,27 +18,27 @@ public:
 		return SingleCamera;
 	}
 
-	void RotateUpDown(float64 anglef);
+	void RotateUpDown(float32 anglef);
 
-	void RotateLR(float64 angle);
+	void RotateLR(float32 angle);
 
-	void MoveCamera(float64 speed);		
+	void MoveCamera(float32 speed);		
 
-	void MoveLRCamera(float64 speed);
+	void MoveLRCamera(float32 speed);
 
-	Vector3d GetView();
+	Vector3f GetView();
 
 	void Interpolate(Quaternion& q_)
 	{
 		q *= q_;
 	}
 
-	void SetPos(Vector3d& pos_)
+	void SetPos(Vector3f& pos_)
 	{
 		pos = pos_;
 	}
 
-	Vector3d& GetPos()
+	Vector3f& GetPos()
 	{
 		return pos;
 	}
@@ -52,7 +53,7 @@ public:
 		q = q_;
 	}
 private:
-	Vector3d pos;
+	Vector3f pos;
 	Quaternion q;
 };
 }

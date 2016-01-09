@@ -16,8 +16,9 @@
 #include "../GameBase.h"
 
 #include "../Math/Quaternion.h"
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 
+using namespace Math;
 using namespace Core;
 
 HDC		hDC = nullptr;              // Приватный контекст устройства GDI
@@ -30,7 +31,7 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 
 extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
-extern Vector3d gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
+extern Vector3f gLightPosition;//= { 3.0f, 3.0f, 4.0f, 1.0f };     // Позиция света
 
 extern GameBase *gmGame;
 
@@ -39,8 +40,8 @@ extern GameBase *gmGame;
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //
 //extern unsigned gSceneNum;
-//extern float64 gTimeScale;
-//extern float64 gTime;
+//extern float32 gTimeScale;
+//extern float32 gTime;
 //
 // RGB Image Structure
 //
@@ -123,7 +124,7 @@ void RenderGL::KillFont()									// Delete The Font
 
 void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 {
-	float64		length = 0;								// Used To Find The Length Of The Text
+	float32		length = 0;								// Used To Find The Length Of The Text
 	char		text[256];								// Holds Our String
 	va_list		ap;										// Pointer To List Of Arguments
 
@@ -134,7 +135,7 @@ void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	vsprintf_s(text, fmt, ap);						// And Converts Symbols To Actual Numbers
 	va_end(ap);											// Results Are Stored In Text
 
-	for (unsigned int loop = 0; loop<(strlen(text)); loop++)	// Loop To Find Text Length
+	for (unsigned loop = 0; loop<(strlen(text)); loop++)	// Loop To Find Text Length
 	{
 		length += gmFont[text[loop]].gmfCellIncX;			// Increase Length By Each Characters Width
 	}
@@ -215,7 +216,7 @@ void RenderGL::SetGLLight()
 {
 	GLfloat rLightAmbient[4] = {gLightAmbient.r, gLightAmbient.g, gLightAmbient.b, gLightAmbient.a};
 	GLfloat rLightDiffuse[4] = {gLightDiffuse.r, gLightDiffuse.g, gLightDiffuse.b, gLightDiffuse.a};
-	GLfloat rLightPosition[4] = {float(gLightPosition.x), float(gLightPosition.y), float(gLightPosition.z), 1.0f};
+	GLfloat rLightPosition[4] = {float32(gLightPosition.x), float32(gLightPosition.y), float32(gLightPosition.z), 1.0f};
 	glLightfv(GL_LIGHT0, GL_AMBIENT, rLightAmbient);    // Установка Фонового Света
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, rLightDiffuse);    // Установка Диффузного Света
 	glLightfv(GL_LIGHT0, GL_POSITION, rLightPosition);   // Позиция света
@@ -496,12 +497,12 @@ void RenderGL::BeginDraw()
 	////mCamera.GetUp().x, mCamera.GetUp().y, mCamera.GetUp().z);
 
 	Quaternion q = Camera::Instance().GetQuaternion();
-	Vector3d cameraAxic;
-	float64 cameraAngle;
+	Vector3f cameraAxic;
+	float32 cameraAngle;
 	q.toAxisAngle(cameraAxic, cameraAngle);
 	glRotated(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
-	Vector3d cameraPos = Camera::Instance().GetPos();
+	Vector3f cameraPos = Camera::Instance().GetPos();
 	glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
@@ -522,7 +523,9 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(0.5f, 0.5f, 0.5f);
 	glTranslatef(-33.0f, 18.0f, -50.0f);
 	//glScalef(0.5f, 0.5f, 0.5f);	
-	glPrint("Scene #: %u", gmGame->GetSceneNum());
+	glPrint("Scene #: %s", gmGame->GetSceneName().c_str());
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("TPS: %u", Master::Instance().gtps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("FPS: %u", Master::Instance().gfps);						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
@@ -537,7 +540,7 @@ void RenderGL::DrawDebugInfo()
 	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
 	//Quaternion q = Camera::Instance().GetQuaternion();
 	//Vector3 axic;
-	//float64 angle;
+	//float32 angle;
 	//q.toAxisAngle(axic, angle);
 	//glTranslatef(0.0f, -1.0f, 0);
 	//glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
@@ -548,7 +551,7 @@ void RenderGL::DrawDebugInfo()
 	SetGLLight();
 }
 
-void RenderGL::DrawSphere(const Vector3d& pos, const float64 r, const Color4f& color) const
+void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& color) const
 {
 	GLUquadricObj *quadratic;
 	quadratic = gluNewQuadric();
@@ -588,7 +591,7 @@ void RenderGL::DrawSphere(const Vector3d& pos, const float64 r, const Color4f& c
 
 }
 
-void RenderGL::DrawBox(const Vector3d& pos_, const Vector3d& size, const Vector3d& axic, const float64 angle, const Color4f& color) const
+void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3f& axic, const float32 angle, const Color4f& color) const
 {
 	glPushMatrix();
 
@@ -598,7 +601,7 @@ void RenderGL::DrawBox(const Vector3d& pos_, const Vector3d& size, const Vector3
 
 	glColor3f(color.r, color.g, color.b);
 
-	Vector3d pos;
+	Vector3f pos;
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 	// Передняя грань

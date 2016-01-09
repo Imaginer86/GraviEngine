@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
 class WaveOut
@@ -9,7 +9,7 @@ public:
 	{}
 	virtual ~WaveOut(){}
 
-	void Set(const Vector3d& pos_, unsigned numR_, unsigned numRo_, float64 w_, float64 width_, float64 height_, const Color4f& _color)
+	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float32 w_, float32 width_, float32 height_, const Math::Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -21,9 +21,9 @@ public:
 	}
 	virtual void Draw();
 private:
-	Vector3d pos, posW;
+	Vector3f pos, posW;
 	unsigned numR, numRo;
-	float64 w;
-	float64 width, height;
-	Color4f color;
+	float32 w;
+	float32 width, height;
+	Math::Color4f color;
 };

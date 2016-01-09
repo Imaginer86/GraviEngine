@@ -9,12 +9,12 @@ Box::Box()
 {
 }
 
-void Box::simulateForce(float dt)
+void Box::simulateForce(float32 dt)
 {
 	Entity::simulateForce(dt);
 	Quaternion rotate = qVel;	
-	Vector3d axic;
-	float64 angle;
+	Vector3f axic;
+	float32 angle;
 	rotate.toAxisAngle(axic, angle);
 	angle *= dt;
 	rotate.fromAxisAngle(axic, angle);
@@ -23,8 +23,8 @@ void Box::simulateForce(float dt)
 
 void Box::Draw()
 {
-	Vector3d axic;
-	float64 angle;
+	Vector3f axic;
+	float32 angle;
 	q.toAxisAngle(axic, angle);
-	RenderGL::Instance().DrawBox(GetPos(), size, axic, angle, color);
+	Core::RenderGL::Instance().DrawBox(GetPos(), size, axic, angle, GetColor());
 }

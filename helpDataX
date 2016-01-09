@@ -1,25 +1,18 @@
 ﻿timeScale
-numFPS numUPS
-
+UPF FPS UPS
 GraviMasses
 GraviAcc
 Wind
 Collissions
-
 CameraPos
 Camera AngleAxic Angle
 UpdateCamera
-
 LightAmbient
 LightDiffuse
 LightPosition
-
 GraveAcc
-
 numStars
-
 numEntities
-
 numMas
 numBox
 numSmoke

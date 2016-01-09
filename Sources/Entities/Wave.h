@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
 class Wave
@@ -10,7 +10,7 @@ public:
 	{}
 	virtual ~Wave(){}
 
-	void Set(const Vector3d& pos_, unsigned numR_, unsigned numRo_, float64 w_, const Color4f& _color)
+	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float32 w_, const Math::Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -18,12 +18,12 @@ public:
 		w = w_;
 		color = _color;
 	}
-	virtual void Update(float64 dt_);
+	virtual void Update(float32 dt_);
 	virtual void Draw();
 private:
-	float64 tGame;
-	Vector3d pos;
+	float32 tGame;
+	Vector3f pos;
 	unsigned numR, numRo;
-	float64 w;
-	Color4f color;
+	float32 w;
+	Math::Color4f color;
 };

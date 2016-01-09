@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../Math/Quaternion.h"
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 #include "../Math//Color.h"
 //#include <vector>
 
@@ -12,17 +12,17 @@ public:
 	Sky();
 	virtual ~Sky();	
 	
-	void Init(unsigned long numStars);
+	void Init(unsigned numStars);
 	void Release();
 	void Randomize();
 	void Draw();
 
-	void SetNumStars(unsigned long numStars_)
+	void SetNumStars(unsigned numStars_)
 	{
 		numStars = numStars_;
 	}
 
-	unsigned long GetNumStars()
+	unsigned GetNumStars()
 	{
 		return numStars;
 	}
@@ -32,11 +32,11 @@ public:
 	//Star *Stars;
 
 private:
-	unsigned long numStars;
+	unsigned numStars;
 	//Quaternion *q;
 	float32 RMax;
 	float32 RMin;
-	Vector3d *Pos;
+	Vector3f *Pos;
 	float32 *r;
-	Color4f *color;
+	Math::Color4f *color;
 };

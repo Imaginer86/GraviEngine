@@ -1,23 +1,23 @@
 ﻿#pragma once
-#include "Vector3d.h"
+#include "Vector3f.h"
 
 struct Line
 {
-	Vector3d p;
-	Vector3d k;	
+	Vector3f p;
+	Vector3f k;	
 
 	Line()
 	{
 
 	}
 
-	Line(Vector3d pa, Vector3d pb)
+	Line(Vector3f pa, Vector3f pb)
 	{
 		p = pb;
 		k = pb - pa;
 	}
 
-	void FromAxic(const Vector3d& p_, const Vector3d& k_)
+	void FromAxic(const Vector3f& p_, const Vector3f& k_)
 	{
 		p = p_;
 		k = k_;

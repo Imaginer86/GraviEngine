@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <string>
-//#include "../Camera.h"
+#include "../Types.h"
 #include "../GameBase.h"
 
 namespace Core
@@ -20,23 +20,24 @@ namespace Core
 
 		void Init(GameBase* gameBase_);
 		void Run();
-		void Tick();
-		void Update();
+		void Tick(long dtick);
+		void Update(float32 dt);
 		void Draw();
 		void Release();
 		void UpdateKeys();
 
 		static long WndProc(void*  hWnd,	// Дескриптор нужного окна
-			unsigned int  uMsg,				// Сообщение для этого окна
-			unsigned int  wParam,            // Дополнительная информация
-			unsigned int  lParam);            // Дополнительная информация
+			unsigned  uMsg,				// Сообщение для этого окна
+			unsigned  wParam,            // Дополнительная информация
+			unsigned  lParam);            // Дополнительная информация
 
-		bool Master::LoadData(unsigned fileNum);
+		static bool gActive;                // Флаг активности окна
+		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
+
+		bool Master::LoadData(const std::string& fileName);
 		bool SaveData(const std::string& fileName);
 
-		bool gKeys[256];					// Массив, используемый для операций с клавиатурой
 
-		bool gActive;                // Флаг активности окна
 		bool gDone;	// Логическая переменная для выхода из цикла
 		bool gPause;
 		bool gShowDebugInfo;		
@@ -46,24 +47,24 @@ namespace Core
 		//static unsigned gSceneNum;
 		unsigned gSceneNumMax;
 
-		float64 gTime;
-		float64 gTimeScale;
+		float32 gTime;
+		float32 gTimeScale;
 
-		float64 gAngleScale;
-		float64 gMoveScale;
-		float64 gShiftScale;		
+		float32 gAngleScale;
+		float32 gMoveScale;
+		float32 gShiftScale;		
 
-		unsigned countUpdate, countDraw;
-		unsigned gfps, gups;
-		unsigned FPR, UPR;
+		unsigned countDraw, countUpdate, countTick;
+		unsigned gfps, gups, gtps;
+		unsigned FPR, UPR, UPF;
 
 	private:
 		//Camera mCamera;		
 	};
 
 	inline Master::Master()
-	:gActive(true)                // Флаг активности окна
-	,gDone(false)	// Логическая переменная для выхода из цикла
+	//:gActive(true)                // Флаг активности окна
+	:gDone(false)	// Логическая переменная для выхода из цикла
 	,gPause(true)
 	,gShowDebugInfo(true)
 	//,gUpdateCamera(false)
@@ -76,8 +77,11 @@ namespace Core
 	,gShiftScale(1.0)
 	,countUpdate(0)
 	,countDraw(0)
+	,countTick(0)
 	,gfps(60)
 	,gups(100)
+	,gtps(0)
+	,UPF(0)
 	,FPR(0)
 	,UPR(0)
 	{
@@ -87,5 +91,4 @@ namespace Core
 	{
 
 	}
-
 }

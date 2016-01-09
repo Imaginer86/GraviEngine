@@ -4,10 +4,12 @@
 #include <GL\gl.h>
 #include <GL\glu.h>
 
-bool Intersect(float64 x1, float64 y1, float64 x2, float64 y2, float64 x3, float64 y3, float64 x4, float64 y4, Vector3d& pos)
+using namespace Math;
+
+bool Intersect(float32 x1, float32 y1, float32 x2, float32 y2, float32 x3, float32 y3, float32 x4, float32 y4, Vector3f& pos)
 {
-//	float64 ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
-	float64 ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
+//	float32 ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
+	float32 ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
 
 	if (ub >= 0 && ub <= 1)
 	{
@@ -24,14 +26,14 @@ void WaveOut::Draw()
 {
 	glPushMatrix();
 
-	float64 hangle = 360.0f/float64(numRo);
+	float32 hangle = 360.0f/float32(numRo);
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 
 	glColor3f(color.r, color.g, color.b);
 
-	Vector3d pos0, pos1, pos2, pos3;
-	Vector3d normal;
+	Vector3f pos0, pos1, pos2, pos3;
+	Vector3f normal;
 
 	//pos0 = pos;
 	//pos1 = pos0 + Vector3(0.0f, 0.0f, w);
@@ -40,14 +42,14 @@ void WaveOut::Draw()
 	{
 		for (unsigned ro = 0; ro < numRo /2; ro++)
 		{
-			float64 angle0 = Math::degreesToRadians(hangle*float64(ro));
-			float64 angle1 = Math::degreesToRadians(hangle*float64(ro + 1));
-			//float64 dist0 = r*w;
-			float64 dist1 = (r + 1)*w;
+			float32 angle0 = degreesToRadians(hangle*float32(ro));
+			float32 angle1 = degreesToRadians(hangle*float32(ro + 1));
+			//float32 dist0 = r*w;
+			float32 dist1 = (r + 1)*w;
 
 			//pos0 = Vector3(dist0*cosf(angle0), 0.0f, dist0*sinf(angle0));
-			pos1 = Vector3d(dist1*cos(angle0), 0.0f, dist1*sin(angle0));
-			pos2 = Vector3d(dist1*cos(angle1), 0.0f, dist1*sin(angle1));
+			pos1 = Vector3f(dist1*cos(angle0), 0.0f, dist1*sin(angle0));
+			pos2 = Vector3f(dist1*cos(angle1), 0.0f, dist1*sin(angle1));
 			//pos3 = Vector3(dist0*cosf(angle1), 0.0f, dist0*sinf(angle1));
 
 			//pos0 = Vector3(-width / 2.0f, 0.0f, -height / 2.0f);

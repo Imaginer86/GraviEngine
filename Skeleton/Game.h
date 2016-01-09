@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Sources/Types.h"
 #include "../Sources/GameBase.h"
 #include "../Sources/Entities/Entity.h"
 #include "../Sources/Entities/Sky.h"
@@ -20,37 +21,57 @@ public:
 		return SingleGame;
 	}
 
-	virtual bool SaveData();
+	virtual bool SaveData(const std::string& fileName);
 
-	virtual bool LoadData(unsigned fileNum);
+	virtual bool LoadData(const std::string& fileName);
 
 	virtual void Release();							// delete the entities created;
 
 	virtual void Init();								// this method will call the init() method of every mass;
 
-	virtual void Update(float64 dt);
+	virtual void Update(float32 dt);
 
 	virtual void Draw();
 
-	void AddMass(float64 m, float64 r, const Vector3d& pos, const Vector3d& vel, const Color4f& color);
+	//virtual void SetSceneNum(unsigned sceneNum)
+	//{
+		//gSceneNum = sceneNum;
+	//}
 
-	void AddBox(float64 m, const Vector3d& size, const Vector3d& pos, const Vector3d& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color);
+	//virtual unsigned GetSceneNum()
+	//{
+		//return gSceneNum;
+	//}
 
-	void AddSmoker(const Vector3d& pos, const Vector3d& rand, const Vector3d& vel0, const Vector3d& vel, const Color4f& color, unsigned long numParticles, bool createCollision);
+	virtual void SetSceneName(const std::string& sceneName_)
+	{
+		gSceneName = sceneName_;
+	}
 
-	Vector3d GraviForce(int a, int b);
+	virtual std::string GetSceneName()
+	{
+		return gSceneName;
+	}
+
+	void AddMass(float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
+
+	void AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
+
+	void AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
+
+	Vector3f GraviForce(int a, int b);
 
 	void Solve();							// no implementation because no forces are wanted in this basic container;
- 	void Simulate(float64 dt);					// Iterate the masses by the change in time;
-	void AddGraviAcc(float64 dt);
-	void AddWindAcc(float64 dt);
-	void Collision(float64 dt);
+ 	void Simulate(float32 dt);					// Iterate the masses by the change in time;
+	void AddGraviAcc(float32 dt);
+	void AddWindAcc(float32 dt);
+	void Collision(float32 dt);
 
-	bool InterPlanePoint(Vector3d pr, Vector3d p0, Vector3d p1, Vector3d p2, Vector3d p3);
+	bool InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3);
 
-	void SetNumStars(unsigned long numStars, bool randomize = true);
+	void SetNumStars(unsigned numStars, bool randomize = true);
 
-	unsigned long GetNumStars()
+	unsigned GetNumStars()
 	{
 		return mSky->GetNumStars();
 	}
@@ -102,7 +123,7 @@ public:
 		return bCollisions;
 	}
 
-	void SetGraviAcc(Vector3d graviAcc_)
+	void SetGraviAcc(Vector3f graviAcc_)
 	{
 		graviAcc = graviAcc_;
 	}
@@ -137,12 +158,15 @@ public:
 		return numSmokers;
 	}
 
-	Vector3d GetGraviAcc()
+	Vector3f GetGraviAcc()
 	{
 		return graviAcc;
 	}
 
 private:
+	std::string  gSceneName;
+	//unsigned gSceneNum;
+
 	unsigned numMasses;
 	unsigned numBoxes;
 	unsigned numSmokers;
@@ -155,7 +179,7 @@ private:
 	unsigned numEntitys;
 	Entity** Entities;
 
-	Vector3d graviAcc;
+	Vector3f graviAcc;
 
 	Sky* mSky;
 };

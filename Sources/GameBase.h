@@ -1,40 +1,38 @@
 ﻿#pragma once
+#include <string>
+
+#include "Types.h"
 #include "../Sources/Math/Quaternion.h"
 
 class GameBase
 {
 public:
 
-	GameBase();
+	GameBase(){};
 
-	virtual ~GameBase(void);
+	virtual ~GameBase(void){};
 
-	static GameBase& Instance()
-	{
-		static GameBase SingleGameBase;
-		return SingleGameBase;
-	}
+// 	static GameBase& Instance()
+// 	{
+// 		static GameBase SingleGameBase;
+// 		return SingleGameBase;
+// 	}
 
-	virtual bool LoadData(unsigned fileNum);
+	virtual bool LoadData(const std::string& fileName) = 0;
+	virtual bool SaveData(const std::string& fileName) = 0;
 
-	virtual void Init();								// this method will call the init() method of every mass;
+	virtual void Init() = 0;								// this method will call the init() method of every mass;
 
-	virtual void Release();							// delete the entities created;
+	virtual void Release() = 0;							// delete the entities created;
 
-	virtual void Update(float64 dt);
+	virtual void Update(float32 dt) = 0;
 
-	virtual void Draw();
+	virtual void Draw() = 0;
 
-	void SetSceneNum(unsigned sceneNum)
-	{
-		gSceneNum = sceneNum;
-	}
+	//virtual void SetSceneNum(unsigned sceneNum) = 0;
 
-	unsigned GetSceneNum()
-	{
-		return gSceneNum;
-	}
+	//virtual unsigned GetSceneNum() = 0;
 
-private:
-	unsigned gSceneNum;
+	virtual void SetSceneName(const std::string& scenName_) = 0;
+	virtual std::string GetSceneName() = 0;
 };

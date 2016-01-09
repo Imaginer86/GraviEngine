@@ -4,7 +4,10 @@
 void main()
 {
 	Game gGame = Game::Instance();
-	gGame.LoadData(4);
+	gGame.SetSceneName("data/data4.dat");
+	gGame.LoadData(gGame.GetSceneName());
+
+	//Core::Master master = Core::Master::Instance();
 
 	Core::Master::Instance().Init((GameBase*) &gGame);
 	Core::Master::Instance().Run();

@@ -1,9 +1,8 @@
 ﻿#pragma once
+#include "Types.h"
 
 //const int gcWidth = 1920;
 //const int gcHeight = 1080;
 
-typedef double float64;
-typedef float float32;
-
-const float64  G = 6.673848;
+const float32 G = 6.673848f;
+const float32 TicksPerSrcond = 0.000001f;

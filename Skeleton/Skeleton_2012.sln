@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skeleton_2012", "Skeleton_2012.vcxproj", "{4FF1287F-C08F-4F86-AF62-C170DC239140}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraviEngine", "..\GraviEngine\GraviEngine_2012.vcxproj", "{79508FD0-94D2-48BB-994B-080F40938F69}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skeleton", "Skeleton_2012.vcxproj", "{4FF1287F-C08F-4F86-AF62-C170DC239140}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Debug|Win32.Build.0 = Debug|Win32
-		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Release|Win32.ActiveCfg = Release|Win32
-		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Release|Win32.Build.0 = Release|Win32
 		{79508FD0-94D2-48BB-994B-080F40938F69}.Debug|Win32.ActiveCfg = Debug|Win32
 		{79508FD0-94D2-48BB-994B-080F40938F69}.Debug|Win32.Build.0 = Debug|Win32
 		{79508FD0-94D2-48BB-994B-080F40938F69}.Release|Win32.ActiveCfg = Release|Win32
 		{79508FD0-94D2-48BB-994B-080F40938F69}.Release|Win32.Build.0 = Release|Win32
+		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Debug|Win32.Build.0 = Debug|Win32
+		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Release|Win32.ActiveCfg = Release|Win32
+		{4FF1287F-C08F-4F86-AF62-C170DC239140}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,13 +30,13 @@ void Line::Draw()
 	//Vector3 h_u = h.unit();
 	//glTranslatef(mGame.lines[i].pos1.x, mGame.lines[i].pos1.y, mGame.lines[i].pos1.z);
 
-// 	float angle_x = atan2(h.y, h.z);
+// 	float32 angle_x = atan2(h.y, h.z);
 // 	angle_x = Math::ToDegree(angle_x);
 // 
-// 	float angle_y = atan2(h.x, h.z);
+// 	float32 angle_y = atan2(h.x, h.z);
 // 	angle_y = Math::ToDegree(angle_y);
 // 
-// 	float64 angle_z = atan2(h.x, h.y);
+// 	float32 angle_z = atan2(h.x, h.y);
 // 	angle_z = Math::ToDegree(angle_z);
 
 	//glRotatef(-45, 1, 0, 0);
@@ -51,7 +51,7 @@ void Line::Draw()
 	//temp_angle += 0.5;
 
 	glTranslated(pos.x, pos.y, pos.z - h/2.0);
-	float64 headDegrees = 0.0, pitchDegrees = 0.0, rollDegrees = 0.0;
+	float32 headDegrees = 0.0, pitchDegrees = 0.0, rollDegrees = 0.0;
 //	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
 	glRotated(headDegrees, 1, 0, 0);
 	glRotated(pitchDegrees, 0, 1, 0);

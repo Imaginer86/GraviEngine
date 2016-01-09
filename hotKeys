@@ -1,20 +1,21 @@
 ESC		: exit
 F1		: info
 F5		: reload
-F6		: save
-space	: pause
+F6		: quicksave
+F9		: quickload
 1-9		: load Scene
 0		: time scale 0.0
 -		: time slowdown
 +		: time speed-up
-tab		: show/hide debug info
+TAB		: show/hide debug info
 L		: light on/off
-shift	: speed rotate/move
-left	: rotate left
-right	: rotate right
-up		: rotate up
-down	: rotate down
+Shift	: fast rotate/move
+Left	: rotate left
+Right	: rotate right
+Up		: rotate up
+Down	: rotate down
 W		: move forward
 S		: move back
 A		: move left
 D		: move right
+Spice	: pause

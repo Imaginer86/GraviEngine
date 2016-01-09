@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "Vector3d.h"
+#include "Vector3f.h"
 #include "Matrix3.h"
 #include "Line.h"
 #include "Math.h"
 
 struct Plane
 {
-	float64 a, b, c, d;
+	float32 a, b, c, d;
 	Plane()
 	: a(0.0f)
 	, b(0.0f)
@@ -14,20 +14,20 @@ struct Plane
 	, d(0.0f)
 	{}
 	
-	Plane(float64 a_, float64 b_, float64 c_, float64 d_)
+	Plane(float32 a_, float32 b_, float32 c_, float32 d_)
 	: a(a_)
 	, b(b_)
 	, c(c_)
 	, d(d_)
 	{}
 
-	Plane(Vector3d p1, Vector3d p2, Vector3d p3);
+	Plane(Vector3f p1, Vector3f p2, Vector3f p3);
 
-	Vector3d proj(Vector3d p);
-	float64 distance(Vector3d p);
+	Vector3f proj(Vector3f p);
+	float32 distance(Vector3f p);
 };
 
-inline Plane::Plane(Vector3d p1, Vector3d p2, Vector3d p3)
+inline Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3)
 {
 	Matrix3 A(	1.0f, p1.y, p1.z,
 				1.0f, p2.y, p2.z,
@@ -48,17 +48,17 @@ inline Plane::Plane(Vector3d p1, Vector3d p2, Vector3d p3)
 	this->d = -D.det();
 }
 
-inline Vector3d Plane::proj(Vector3d p)
+inline Vector3f Plane::proj(Vector3f p)
 {
-	float64 nn = a*a + b*b + c*c;
-	Vector3d pr;
+	float32 nn = a*a + b*b + c*c;
+	Vector3f pr;
 	pr.x = (b*b*p.x + c*c*p.x - a*b*p.y - a*c*p.z - a*d) / nn;
 	pr.y = (a*a*p.y + c*c*p.y - a*b*p.x - b*c*p.z - b*d) / nn;
 	pr.z = (a*a*p.z + b*b*p.z - a*c*p.x - b*c*p.y - c*d) / nn;
 	return pr;
 }
 
-inline float64 Plane::distance(Vector3d p)
+inline float32 Plane::distance(Vector3f p)
 {
 	return abs((a*p.x + b*p.y + c*p.z - d) / sqrt(a*a + b*b + c*c));
 }

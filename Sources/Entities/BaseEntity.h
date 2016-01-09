@@ -1,29 +1,29 @@
 ﻿#pragma once
-#include "../Math/Vector3d.h"
+#include "../Math/Vector3f.h"
 
 class BaseEntity
 {
 public:
 	BaseEntity() {}
 	virtual ~BaseEntity() {}
-	BaseEntity(const Vector3d& pos_);
+	BaseEntity(const Vector3f& pos_);
 	BaseEntity(const BaseEntity& be_);
 
-	Vector3d GetPos()
+	Vector3f GetPos()
 	{
 		return pos;
 	}
 
-	void SetPos(const Vector3d& pos_)
+	void SetPos(const Vector3f& pos_)
 	{
 		this->pos = pos_;
 	}
 
 private:
-	Vector3d pos;
+	Vector3f pos;
 };
 
-inline BaseEntity::BaseEntity(const Vector3d& pos_)
+inline BaseEntity::BaseEntity(const Vector3f& pos_)
 :pos(pos_)
 {
 }

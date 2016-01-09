@@ -15,10 +15,10 @@
 //extern bool gUpdateKeyPress;
 
 
-//extern float gTimeScale;
-//extern float gAngleScale;
-//extern float gMoveScale;
-//extern float gShiftScale;
+//extern float32 gTimeScale;
+//extern float32 gAngleScale;
+//extern float32 gMoveScale;
+//extern float32 gShiftScale;
 //extern bool gShowDebugInfo;
 //extern bool gShowDebugInfoKey;		// TAB нажат?
 

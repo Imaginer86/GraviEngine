@@ -214,9 +214,9 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 
 void RenderGL::SetGLLight()
 {
-	GLfloat rLightAmbient[4] = {Master::Instance().gLightAmbient.r, Master::Instance().gLightAmbient.g, Master::Instance().gLightAmbient.b, Master::Instance().gLightAmbient.a};
-	GLfloat rLightDiffuse[4] = {Master::Instance().gLightDiffuse.r, Master::Instance().gLightDiffuse.g, Master::Instance().gLightDiffuse.b, Master::Instance().gLightDiffuse.a};
-	GLfloat rLightPosition[4] = {Master::Instance().gLightPosition.x, Master::Instance().gLightPosition.y, Master::Instance().gLightPosition.z, 1.0f};
+	GLfloat rLightAmbient[4] = {Master::Instance().GetLightAmient().r, Master::Instance().GetLightAmient().g, Master::Instance().GetLightAmient().b, Master::Instance().GetLightAmient().a};
+	GLfloat rLightDiffuse[4] = {Master::Instance().GetLightDiffuse().r, Master::Instance().GetLightDiffuse().g, Master::Instance().GetLightDiffuse().b, Master::Instance().GetLightDiffuse().a};
+	GLfloat rLightPosition[4] = {Master::Instance().GetLightPosition().x, Master::Instance().GetLightPosition().y, Master::Instance().GetLightPosition().z, 1.0f};
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, rLightAmbient);    // Установка Фонового Света
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, rLightDiffuse);    // Установка Диффузного Света
@@ -526,17 +526,17 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(0.5f, 0.5f, 0.5f);
 	glTranslatef(-33.0f, 18.0f, -50.0f);
 	//glScalef(0.5f, 0.5f, 0.5f);	
-	glPrint("Scene #: %s", Master::Instance().gmGame->GetSceneName().c_str());
+	glPrint("Scene #: %s", Master::Instance().GetGMGame()->GetSceneName().c_str());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("TPS: %u", Master::Instance().gtps);						// Print GL Text To The Screen
+	glPrint("TPS: %u", Master::Instance().GetGTPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("FPS: %u", Master::Instance().gfps);						// Print GL Text To The Screen
+	glPrint("FPS: %u", Master::Instance().GetGFPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("UPS: %u", Master::Instance().gups);						// Print GL Text To The Screen
+	glPrint("UPS: %u", Master::Instance().GetGUPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time: %2.2f", Master::Instance().gTime);
+	glPrint("Time: %2.2f", Master::Instance().GetGTime());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time Scale: %2.2f", Master::Instance().gTimeScale);
+	glPrint("Time Scale: %2.2f", Master::Instance().GetGTimeScale());
 	glTranslatef(0.0f, -1.0f, 0);
 	//glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	//glTranslatef(0.0f, -1.0f, 0);

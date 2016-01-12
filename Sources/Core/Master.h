@@ -32,46 +32,148 @@ namespace Core
 			unsigned  wParam,            // Дополнительная информация
 			unsigned  lParam);            // Дополнительная информация
 
+		float32 GetGTime()
+		{
+			return gTime;
+		}
+
+		void SetGTimeScale(float32 gTimeScale_)
+		{
+			gTimeScale = gTimeScale_;
+		}
+
+		float32 GetGTimeScale()
+		{
+			return gTime;
+		}
+
+		void SetUPR(unsigned UPR_)
+		{
+			UPR = UPR_;
+		}
+
+		void SetFPR(unsigned FPR_)
+		{
+			FPR = FPR_;
+		}
+
+		void SetUPF(unsigned UPF_)
+		{
+			UPF = UPF_;
+		}
+
+		unsigned GetUPF()
+		{
+			return UPF;
+		}
+
+		unsigned GetGTPS()
+		{
+			return gtps;
+		}
+
+		unsigned GetGFPS()
+		{
+			return gfps;
+		}
+
+		unsigned GetGUPS()
+		{
+			return gups;
+		}
+
+		void SetLightAmbient(const Math::Color4f& gLightAmbient_)
+		{
+			gLightAmbient = gLightAmbient_;
+		}
+		
+		Math::Color4f GetLightAmient()
+		{
+			return gLightAmbient;
+		}
+
+		void SetLightDiffuse(const Math::Color4f& gLightDiffuse_)
+		{
+			gLightDiffuse = gLightDiffuse_;
+		}
+
+		Math::Color4f GetLightDiffuse()
+		{
+			return gLightDiffuse;
+		}
+
+		void SetLightPosition(const Vector3f& gLightPosition_)
+		{
+			gLightPosition = gLightPosition_;
+		}
+
+		Vector3f GetLightPosition()
+		{
+			return gLightPosition;
+		}
+
+		GameBase* GetGMGame()
+		{
+			return gmGame;
+		}
+
+		void SetGUpdateCamera(bool gUpdateCamera_)
+		{
+			gUpdateCamera = gUpdateCamera_;
+		}
+
+		bool GetGUpdateCamera()
+		{
+			return gUpdateCamera;
+		}
+
+		void SetGFirstLoad(bool gFirstLoad_)
+		{
+			gFirstLoad = gFirstLoad_;
+		}
+		bool GetGFirstLoad()
+		{
+			return gFirstLoad;
+		}
+	private:
 		static bool gActive;                // Флаг активности окна
 		static bool gKeys[256];					// Массив, используемый для операций с клавиатурой
 
+		GameBase *gmGame;
+
+		//Camera mCamera;		
 		bool gDone;	// Логическая переменная для выхода из цикла
 		bool gPause;
 		bool gShowDebugInfo;		
 		//bool gUpdateCamera = false;
 		//bool gFirstLoad = false;
-		
+
 		//static unsigned gSceneNum;
 		unsigned gSceneNumMax;
+		unsigned countDraw, countUpdate, countTick;
+		unsigned gfps, gups, gtps;
+		unsigned FPR, UPR, UPF;
 
 		float32 gTime;
 		float32 gTimeScale;
 
 		float32 gAngleScale;
 		float32 gMoveScale;
-		float32 gShiftScale;		
-
-		unsigned countDraw, countUpdate, countTick;
-		unsigned gfps, gups, gtps;
-		unsigned FPR, UPR, UPF;
+		float32 gShiftScale;
 
 		unsigned gcWidth;
 		unsigned gcHeight;
 
-		bool gUpdateCamera, gFirstLoad;
-
-		GameBase *gmGame;
+		bool gUpdateCamera, gFirstLoad;		
 
 		::Math::Color4f gLightAmbient, gLightDiffuse;
 		Vector3f gLightPosition;     // Позиция света
-	private:
-		//Camera mCamera;		
 	};
 
 	inline Master::Master()
 	//:gActive(true)                // Флаг активности окна
 	:gDone(false)	// Логическая переменная для выхода из цикла
-	,gPause(false)
+	,gPause(true)
 	,gShowDebugInfo(true)
 	//,gUpdateCamera(false)
 	//,gFirstLoad(false)

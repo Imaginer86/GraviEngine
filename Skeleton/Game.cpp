@@ -488,11 +488,11 @@ bool Game::SaveData(const std::string& fileName)
 		return false;
 
 	char space = ' ';
-	float32 timeScale = Core::Master::Instance().gTimeScale;
+	float32 timeScale = Core::Master::Instance().GetGTimeScale();
 	dataFile << timeScale << std::endl;
 
 	unsigned UPF, FPS, UPS;
-	UPF = Core::Master::Instance().UPF, FPS = Core::Master::Instance().gfps, UPS = Core::Master::Instance().gups;
+	UPF = Core::Master::Instance().GetUPF(), FPS = Core::Master::Instance().GetGFPS(), UPS = Core::Master::Instance().GetGUPS();
 	dataFile << UPF << space << FPS << space << UPS << space << std::endl;
 	
 	bool bGraviMasses = GetBGraviMasses();
@@ -514,12 +514,12 @@ bool Game::SaveData(const std::string& fileName)
 	
 	dataFile << cameraPos.x << space << cameraPos.y << space << cameraPos.z << space << std::endl
 		<< cameraAxic.x << space << cameraAxic.y << space << cameraAxic.z << space << cameraAngle << std::endl;
-	dataFile << Core::Master::Instance().gUpdateCamera << std::endl;
+	dataFile << Core::Master::Instance().GetGUpdateCamera() << std::endl;
 
 	Core::Master master = Core::Master::Instance();
-	dataFile << master.gLightAmbient.r << space << master.gLightAmbient.g << space << master.gLightAmbient.b << space << master.gLightAmbient.a << space << std::endl;
-	dataFile << master.gLightDiffuse.r << space << master.gLightDiffuse.g << space << master.gLightDiffuse.b << space << master.gLightDiffuse.a << space << std::endl;
-	dataFile << master.gLightPosition.x << space << master.gLightPosition.y << space << master.gLightPosition.z << space << std::endl;
+	dataFile << master.GetLightAmient().r << space << master.GetLightAmient().g << space << master.GetLightAmient().b << space << master.GetLightAmient().a << space << std::endl;
+	dataFile << master.GetLightDiffuse().r << space << master.GetLightDiffuse().g << space << master.GetLightDiffuse().b << space << master.GetLightDiffuse().a << space << std::endl;
+	dataFile << master.GetLightPosition().x << space << master.GetLightPosition().y << space << master.GetLightPosition().z << space << std::endl;
 
 	Vector3f graviAcc = GetGraviAcc();
 
@@ -629,11 +629,11 @@ bool Game::LoadData(const std::string& fileName)
 
 	float32 timeScale;
 	dataFile >> timeScale;
-	Core::Master::Instance().gTimeScale = timeScale;
+	Core::Master::Instance().SetGTimeScale(timeScale);
 
 	unsigned UPF, FPR, UPR;
 	dataFile >> UPF>> FPR >> UPR;
-	Core::Master::Instance().UPF = UPF, Core::Master::Instance().FPR = FPR, Core::Master::Instance().UPR = UPR;
+	Core::Master::Instance().SetUPF(UPF), Core::Master::Instance().SetFPR(FPR), Core::Master::Instance().SetUPR(UPR);
 	
 	bool bGraviMasses_;
 	dataFile >> bGraviMasses_;
@@ -654,15 +654,16 @@ bool Game::LoadData(const std::string& fileName)
 	Vector3f cameraPos;
 	Vector3f cameraAxic;
 	float32 cameraAngle;
+	bool gUpdateCamera;
 
 	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
-		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z
-		>> cameraAngle;
-	dataFile >> Core::Master::Instance().gUpdateCamera;
+		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z	>> cameraAngle
+		>> gUpdateCamera;
+	Core::Master::Instance().SetGUpdateCamera(gUpdateCamera);
 
-	if (Core::Master::Instance().gUpdateCamera || Core::Master::Instance().gFirstLoad)
+	if (Core::Master::Instance().GetGUpdateCamera() || Core::Master::Instance().GetGFirstLoad())
 	{
-		Core::Master::Instance().gFirstLoad = false;
+		Core::Master::Instance().SetGFirstLoad(false);
 		Core::Camera::Instance().SetPos(cameraPos);
 		Quaternion q;
 		q.fromAxisAngle(cameraAxic, cameraAngle);
@@ -673,10 +674,14 @@ bool Game::LoadData(const std::string& fileName)
 		Core::Camera::Instance().SetQuaternion(q);
 	}
 
-	Core::Master master = Core::Master::Instance();
-	dataFile >> master.gLightAmbient.r >> master.gLightAmbient.g >> master.gLightAmbient.b >> master.gLightAmbient.a;
-	dataFile >> master.gLightDiffuse.r >> master.gLightDiffuse.g >> master.gLightDiffuse.b >> master.gLightDiffuse.a;
-	dataFile >> master.gLightPosition.x >> master.gLightPosition.y >> master.gLightPosition.z;
+	Math::Color4f LightAmbient, LightDiffuse;
+	Vector3f LightPosition;
+	dataFile >> LightAmbient.r >> LightAmbient.g >> LightAmbient.b >> LightAmbient.a;
+	dataFile >> LightDiffuse.r >> LightDiffuse.g >> LightDiffuse.b >> LightDiffuse.a;
+	dataFile >> LightPosition.x >> LightPosition.y >> LightPosition.z;
+	Core::Master::Instance().SetLightAmbient(LightAmbient);
+	Core::Master::Instance().SetLightDiffuse(LightDiffuse);
+	Core::Master::Instance().SetLightPosition(LightPosition);
 
 	//RenderGL::Instance().rLightAmbient = gLightAmbient;
 	//RenderGL::Instance().rLightDiffuse = gLightDiffuse;

@@ -90,7 +90,6 @@
     <ClCompile Include="..\Sources\Entity\Wave.cpp" />
     <ClCompile Include="..\Sources\Entity\WaveOut.cpp" />
     <ClCompile Include="..\Sources\GameBase.cpp" />
-    <ClCompile Include="..\Sources\main.cpp" />
     <ClCompile Include="..\Sources\Math\Random.cpp" />
     <ClCompile Include="..\Sources\Math\Tensus.cpp" />
     <ClCompile Include="Game.cpp" />

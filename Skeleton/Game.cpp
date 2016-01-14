@@ -830,49 +830,40 @@ bool Game::LoadData(const std::string& fileName)
 	}
 	*/
 
-	Core::FileStream fileStream;
-	fileStream.OpenRead(gSceneName);
-	std::string str = fileStream.GetLine();
-	for (unsigned i = 0; i < line; ++i)
-	{
-		str = fileStream.GetLine();
-	}
-
-
 	for (unsigned i = 0; i < numShapes; ++i)
 	{
 		float32 m;
 		Vector3f pos, vel;
 		Math::Color4f color;
+		
 
 		dataFile >> m 
 			>> pos.x >> pos.y >> pos.z 
 			>> vel.x >> vel.y >> vel.z
 			>> color.r >> color.g >> color.b >> color.a;
-		str = fileStream.GetLine();
-		str = fileStream.GetLine();
-		str = fileStream.GetLine();
-		str = fileStream.GetLine();
-		str = fileStream.GetLine();
-
+		
 		unsigned numParts;
 		dataFile >> numParts;		
-		str = fileStream.GetLine();
-		
+
+		std::string fileName;
+		dataFile >> fileName;
+		Core::FileStream fileStream;
+		fileStream.OpenRead(fileName);
+		std::string str = fileStream.GetLine();
+
 		Shape* shape = new Shape(m, pos, vel, color, numShapes);
 		shape->Init(numParts);
 
 		for(unsigned i = 0; i < numParts; ++i)
 		{
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+
 			std::list<Vector3f> Coordinate;
 			std::list<int> CoordIndex;
-
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-
-			str = fileStream.GetLine();
 
 			std::string str2;
 
@@ -975,7 +966,7 @@ bool Game::LoadData(const std::string& fileName)
 			str = fileStream.GetLine();
 			str = fileStream.GetLine();
 			str = fileStream.GetLine();
-			str = fileStream.GetLine();
+			str = fileStream.GetLine();			
 			str = fileStream.GetLine();
 		}
 

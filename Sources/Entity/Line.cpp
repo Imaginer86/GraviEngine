@@ -50,12 +50,12 @@ void Line::Draw()
 	//glRotatef(90, 0, 1, 0);
 	//temp_angle += 0.5;
 
-	glTranslated(pos.x, pos.y, pos.z - h/2.0);
+	glTranslatef(pos.x, pos.y, pos.z - h/2.0);
 	float32 headDegrees = 0.0, pitchDegrees = 0.0, rollDegrees = 0.0;
 //	q.toHeadPitchRoll( headDegrees, pitchDegrees, rollDegrees);
-	glRotated(headDegrees, 1, 0, 0);
-	glRotated(pitchDegrees, 0, 1, 0);
-	glRotated(rollDegrees, 0, 0, 1);
+	glRotatef(headDegrees, 1, 0, 0);
+	glRotatef(pitchDegrees, 0, 1, 0);
+	glRotatef(rollDegrees, 0, 0, 1);
 	//q.y += 1;				  
 	glColor4f(color.r, color.g, color.b );
 	gluCylinder(quadratic, r, r, h, 32, 32);
@@ -68,7 +68,7 @@ void Line::Draw()
 // 	glEnd();
 
 	glPushMatrix();
-	glTranslated(0, 0, h);
+	glTranslatef(0, 0, h);
 	gluSphere(quadratic, r , 32, 32);
 	glPopMatrix();
 

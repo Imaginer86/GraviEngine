@@ -3,7 +3,7 @@
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
-namespace Core
+namespace Render
 {
 	class Render
 	{
@@ -50,6 +50,8 @@ namespace Core
 		virtual void glPrint(const char *fmt, ...) = 0;
 
 		virtual void DrawDebugInfo() = 0;
+		virtual void DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const = 0;
+		virtual void DrawPlane(const Vector3f& pos, const Vector3f& axic, const float32 angle, const ::Math::Color4f& color) const = 0;
 		virtual void DrawBox(const Vector3f& pos, const Vector3f& size, const Vector3f& axic, const float32 angle, const ::Math::Color4f& color) const  = 0;
 		virtual void DrawSphere(const Vector3f& pos, const float32 r, const ::Math::Color4f& color) const  = 0;
 

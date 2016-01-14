@@ -10,16 +10,15 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
-#include "Master.h"
-#include "Camera.h"
-
 #include "../GameBase.h"
-
+#include "../Core/Master.h"
+#include "../Core/Camera.h"
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3f.h"
 
 using namespace Math;
 using namespace Core;
+using namespace Render;
 
 HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
@@ -151,7 +150,7 @@ void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 
 int RenderGL::LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
 {
-	int Status = FALSE;									// Status Indicator
+	int Status = TRUE;									// Status Indicator
 
 	return Status;
 
@@ -225,7 +224,13 @@ void RenderGL::SetGLLight()
 	glEnable(GL_LIGHT0); // Разрешение источника света номер один
 
 	if (GetLightOn())
+	{
 		glEnable(GL_LIGHTING);
+	}
+	else
+	{
+		glDisable(GL_LIGHTING);
+	}
 }
 
 bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsigned height, int bits)
@@ -414,19 +419,19 @@ void RenderGL::DisableLight()
 
 bool RenderGL::Init()
 {
-	//if (!LoadGLTextures())								// If Loading The Textures Failed
-	//	{
-	//		return FALSE;									// Return False
-	//	}
-	glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
+	if (!LoadGLTextures())								// If Loading The Textures Failed
+	{
+		return false;									// Return False
+	}
+	//glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
 	glClearDepth(1.0f);              // Разрешить очистку буфера глубины
 	glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
-	glDepthFunc(GL_LEQUAL);            // Тип теста глубины
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
+	//glDepthFunc(GL_LEQUAL);            // Тип теста глубины
+	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
 	glEnable(GL_COLOR_MATERIAL);
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 
 	SetGLLight();
 
@@ -436,8 +441,8 @@ bool RenderGL::Init()
 	//gluQuadricNormals(q, GL_SMOOTH);					// Generate Smooth Normals For The Quad
 	//gluQuadricTexture(q, GL_TRUE);						// Enable Texture Coords For The Quad
 
-	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
-	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
+	//glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
+	//glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);	// Set Up Sphere Mapping
 
 	return true;                // Инициализация прошла успешно
 }
@@ -503,10 +508,10 @@ void RenderGL::BeginDraw()
 	Vector3f cameraAxic;
 	float32 cameraAngle;
 	q.toAxisAngle(cameraAxic, cameraAngle);
-	glRotated(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
+	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
 	Vector3f cameraPos = Camera::Instance().GetPos();
-	glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+	glTranslatef(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
 
 	SetGLLight();
@@ -520,7 +525,7 @@ void RenderGL::EndDraw()
 
 void RenderGL::DrawDebugInfo()
 {
-	DisableLight();
+	//DisableLight();
 	glLoadIdentity();
 	//glPushMatrix();
 	glColor3f(0.5f, 0.5f, 0.5f);
@@ -538,20 +543,20 @@ void RenderGL::DrawDebugInfo()
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Time Scale: %2.2f", Master::Instance().GetGTimeScale());
 	glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
-	//glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
-	//Quaternion q = Camera::Instance().GetQuaternion();
-	//Vector3 axic;
-	//float32 angle;
-	//q.toAxisAngle(axic, angle);
-	//glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
-	//glTranslatef(0.0f, -1.0f, 0);
-	//glPrint("Camera Angle: %2.2f", angle);
-	//glPopMatrix();
+	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
+	Quaternion q = Camera::Instance().GetQuaternion();
+	Vector3f axic;
+	float32 angle;
+	q.toAxisAngle(axic, angle);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+	glTranslatef(0.0f, -1.0f, 0);
+	glPrint("Camera Angle: %2.2f", angle);
+	glPopMatrix();
 	glLoadIdentity();
-	SetGLLight();
+	//SetGLLight();
 }
 
 void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& color) const
@@ -565,7 +570,7 @@ void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& c
 
 	glPushMatrix();
 
-	glTranslated(pos.x, pos.y, pos.z);
+	glTranslatef(pos.x, pos.y, pos.z);
 
 	//glRotatef(-90.0f, 1, 0, 0);
 	//glRotatef(rt, 0, 0, 1);
@@ -598,53 +603,70 @@ void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3
 {
 	glPushMatrix();
 
-	glTranslated(pos_.x, pos_.y, pos_.z);
+	glTranslatef(pos_.x, pos_.y, pos_.z);
 
-	glRotated(angle, axic.x, axic.y, axic.z);
+	glRotatef(angle, axic.x, axic.y, axic.z);
 
 	glColor4f(color.r, color.g, color.b, color.a);
 
-	Vector3f pos;
+	Vector3f pos(0.0f, 0.0f, 0.0f);
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 	// Передняя грань
-	//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 1 (Перед)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Перед)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Перед)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Перед)
+	glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 1 (Перед)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Перед)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Перед)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Перед)
 	// Задняя грань
-	//glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Зад)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Зад)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 3 (Зад)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Зад)
+	glNormal3f( 0.0f, 0.0f,-1.0f);     // Нормаль указывает от наблюдателя
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Зад)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Зад)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 3 (Зад)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Зад)
 	// Верхняя грань
-	// 		glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
-
+	glNormal3f( 0.0f, 1.0f, 0.0f);     // Нормаль указывает вверх
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
 	// Нижняя грань
-	//glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
+	glNormal3f( 0.0f,-1.0f, 0.0f);     // Нормаль указывает вниз
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 4 (Верх)
 	// Правая грань
-	//glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3d(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
+	glNormal3f( 1.0f, 0.0f, 0.0f);     // Нормаль указывает вправо
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3f(pos.x + size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
 	// Левая грань
-	//glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
-	glVertex3d(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
+	glNormal3f(-1.0f, 0.0f, 0.0f);     // Нормаль указывает влево
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 1 (Верх)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y + size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 2 (Верх)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z + size.z / 2.0f); // Точка 3 (Верх)
+	glVertex3f(pos.x - size.x / 2.0f, pos.y - size.y / 2.0f, pos.z - size.z / 2.0f); // Точка 4 (Верх)
 	glEnd();
 
 	glPopMatrix();
+}
+
+void RenderGL::DrawPlane(const Vector3f& pos_, const Vector3f& axic, const float32 angle, const Color4f& color) const
+{
+	pos_;axic; angle; color;
+}
+
+void RenderGL::DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const
+{
+	glColor4f(color.r, color.g, color.b, color.a);
+
+	glBegin(GL_TRIANGLES);       // Начало рисования четырехугольников
+	// Передняя грань
+	//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
+	glVertex3f(p1.x, p1.y, p1.z); // Точка 1 (Перед)
+	glVertex3f(p2.x, p2.y, p2.z); // Точка 1 (Перед)
+	glVertex3f(p3.x, p3.y, p3.z); // Точка 1 (Перед)
+	glEnd();
 }

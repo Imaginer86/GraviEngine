@@ -12,9 +12,6 @@
     <ClCompile Include="..\Sources\Core\Master.cpp">
       <Filter>GraviEngine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Sources\Core\RenderGL.cpp">
-      <Filter>GraviEngine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\Sources\Entity\Box.cpp">
       <Filter>GraviEngine\Entity</Filter>
     </ClCompile>
@@ -51,6 +48,15 @@
     <ClCompile Include="..\Sources\GameBase.cpp">
       <Filter>GraviEngine</Filter>
     </ClCompile>
+    <ClCompile Include="..\Sources\Render\RenderGL.cpp">
+      <Filter>GraviEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Sources\Core\FileStream.cpp">
+      <Filter>GraviEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Sources\Entity\Shape.cpp">
+      <Filter>GraviEngine\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -64,12 +70,6 @@
       <Filter>GraviEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Sources\Core\Master.h">
-      <Filter>GraviEngine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Sources\Core\Render.h">
-      <Filter>GraviEngine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Sources\Core\RenderGL.h">
       <Filter>GraviEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Sources\Entity\BaseEntity.h">
@@ -147,6 +147,18 @@
     <ClInclude Include="..\Sources\Types.h">
       <Filter>GraviEngine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Render\Render.h">
+      <Filter>GraviEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Render\RenderGL.h">
+      <Filter>GraviEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\FileStream.h">
+      <Filter>GraviEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Entity\Shape.h">
+      <Filter>GraviEngine\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GraviEngine">
@@ -160,6 +172,9 @@
     </Filter>
     <Filter Include="GraviEngine\Math">
       <UniqueIdentifier>{b1cad2fa-4121-4000-98b1-e9a314523067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraviEngine\Render">
+      <UniqueIdentifier>{609e2309-8147-4500-883a-1ea1d6430937}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

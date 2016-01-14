@@ -1,6 +1,6 @@
 ﻿#include "Smoke.h"
 #include "../Math/Random.h"
-#include "../Core/RenderGL.h"
+#include "../Render/RenderGL.h"
 
 using namespace Math;
 
@@ -48,7 +48,7 @@ void Smoke::Draw()
 {
 	for (unsigned i = 0; i < numParticles; i++)
 	{
-		Core::RenderGL::Instance().DrawSphere(E[i].GetPos(), 1.0f, E[i].GetColor());
+		Render::RenderGL::Instance().DrawSphere(E[i].GetPos(), 1.0f, E[i].GetColor());
 	}
 }
 

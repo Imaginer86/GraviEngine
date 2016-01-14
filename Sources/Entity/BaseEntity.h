@@ -4,8 +4,8 @@
 class BaseEntity
 {
 public:
-	BaseEntity() {}
-	virtual ~BaseEntity() {}
+	BaseEntity();
+	virtual ~BaseEntity();
 	BaseEntity(const Vector3f& pos_);
 	BaseEntity(const BaseEntity& be_);
 
@@ -22,6 +22,15 @@ public:
 private:
 	Vector3f pos;
 };
+
+inline BaseEntity::BaseEntity()
+:pos(0.0, 0.0, 0.0)
+{
+}
+
+inline BaseEntity::~BaseEntity()
+{
+}
 
 inline BaseEntity::BaseEntity(const Vector3f& pos_)
 :pos(pos_)

@@ -44,7 +44,7 @@ namespace Core
 
 		float32 GetGTimeScale()
 		{
-			return gTime;
+			return gTimeScale;
 		}
 
 		void SetUPR(unsigned UPR_)

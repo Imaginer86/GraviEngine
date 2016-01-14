@@ -1,7 +1,7 @@
 ﻿#include "sky.h"
 #include "../Math/Random.h"
 #include "../Math/Quaternion.h"
-#include "../Core/RenderGL.h"
+#include "../Render/RenderGL.h"
 
 using namespace Math;
 
@@ -72,6 +72,6 @@ void Sky::Draw()
 	for (unsigned i = 0; i < numStars; ++i)
 	{
 		//Stars[i].Draw();
-		Core::RenderGL::Instance().DrawSphere(Pos[i] / 5.0f, 5.0, color[i]);
+		Render::RenderGL::Instance().DrawSphere(Pos[i] / 5.0f, 5.0, color[i]);
 	}
 }

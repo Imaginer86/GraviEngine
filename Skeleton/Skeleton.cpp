@@ -12,7 +12,7 @@
 
 void main()
 {
-	if (Game::Instance().LoadData("data/data4.dat"))
+	if (Game::Instance().LoadData("data/data2.dat"))
 	{
 		Core::Master::Instance().Init(&Game::Instance());
 		Core::Master::Instance().Run();

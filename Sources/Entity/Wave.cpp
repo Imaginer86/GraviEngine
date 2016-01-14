@@ -52,11 +52,11 @@ void Wave::Draw()
 			//pos3 = pos + pos3d;
 			normal = (pos1 - pos0)*(pos3 - pos0);
 
-			glNormal3d(normal.x, normal.y, normal.z);
-			glVertex3d(pos0.x, pos0.y, pos0.z);
-			glVertex3d(pos1.x, pos1.y, pos1.z);
-			glVertex3d(pos2.x, pos2.y, pos2.z);			
-			glVertex3d(pos3.x, pos3.y, pos3.z);
+			glNormal3f(normal.x, normal.y, normal.z);
+			glVertex3f(pos0.x, pos0.y, pos0.z);
+			glVertex3f(pos1.x, pos1.y, pos1.z);
+			glVertex3f(pos2.x, pos2.y, pos2.z);			
+			glVertex3f(pos3.x, pos3.y, pos3.z);
 			pos0 = pos3;
 			pos1 = pos2;
 		}		 

@@ -34,6 +34,7 @@ void Camera::RotateUpDown(float32 anglef)
 {
 	Quaternion qn;
 	qn.fromAxisAngle(Vector3f(-1, 0, 0), anglef);
+	qn.normalize();
 	q *= qn;
 	q.normalize();
 }
@@ -43,6 +44,7 @@ void Camera::RotateLR(float32 anglef)
 	Vector3f axic(0, 1, 0);
 	Quaternion qn;
 	qn.fromAxisAngle(axic, anglef);
+	qn.normalize();
 	q *= qn;
 	q.normalize();
 }

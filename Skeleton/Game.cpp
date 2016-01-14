@@ -1,9 +1,12 @@
 ﻿#include "Game.h"
 
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <fstream>
-#include <typeinfo.h>
+#include <list>
+#include <typeinfo>
+
 
 #include "../Sources/Constans.h"
 
@@ -13,39 +16,15 @@
 
 #include "../Sources/Core/Master.h"
 #include "../Sources/Core/Camera.h"
+#include "../Sources//Core/FileStream.h"
 
 #include "../Sources/Entity/Mass.h"
 #include "../Sources/Entity/Box.h"
 #include "../Sources/Entity/Smoke.h"
+#include "../Sources/Entity/Shape.h"
 #include "../Sources/Entity/Sky.h"
 
-using namespace Math;
-
-
-//extern Color4f gLightAmbient;
-//extern Color4f gLightDiffuse;
-//extern Vector3f gLightPosition;
-
-//unsigned Core::Master::gSceneNum;
-//extern float32 gTimeScale;
-
-//extern bool gFirstLoad;
-
 unsigned countAddEntities = 0;
-
-Game::Game()
-: numEntitys(0)
-, bGraviMasses(false)
-, bGraviAcc(false)
-, bWindAcc(false)
-, bCollisions(false)
-, graviAcc(0, 0, 0)
-{
-}
-
-Game::~Game()
-{
-}
 
 void Game::Release() /* delete the masses created */
 {
@@ -77,15 +56,15 @@ void Game::SetNumEntities(unsigned numEntities_)
 }
 
 
-void Game::AddMass( float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Color4f& color )
+void Game::AddMass( float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color )
 {	
-	Mass* mass = new Mass;	
-	mass->Set(m, r, pos, vel, color);
+	
+	Mass* mass = new Mass(m, r, pos, vel, color);
 	Entities[countAddEntities] = mass;
 	++countAddEntities;
 }
 
-void Game::AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Color4f& color)
+void Game::AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
 {
 	Box *box = new Box;	
 	box->SetMass(m);
@@ -99,7 +78,7 @@ void Game::AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Ve
 	++countAddEntities;
 }
 
-void Game::AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Color4f& color, unsigned numEntitys, bool createCollision)
+void Game::AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numEntitys, bool createCollision)
 {
 	Smoke *smoke = new Smoke;
 	smoke->Init(1.0f, pos, rand, vel0, vel, color, numEntitys, createCollision);
@@ -545,7 +524,7 @@ bool Game::SaveData(const std::string& fileName)
 	float32 r;
 	Vector3f pos;
 	Vector3f vel;		
-	Color4f color;
+	Math::Color4f color;
 
 	unsigned i = 0;
 	for (i; i < numMasses; ++i)
@@ -622,33 +601,41 @@ bool Game::LoadData(const std::string& fileName)
 {
 	SetSceneName(fileName);
 
-	std::ifstream dataFile(fileName, std::ios::in);
+	std::ifstream dataFile(gSceneName, std::ios::in);
 
 	if (!dataFile.is_open())
 		return false;
 
+	unsigned line = 0;
+
 	float32 timeScale;
 	dataFile >> timeScale;
+	++line;
 	Core::Master::Instance().SetGTimeScale(timeScale);
 
 	unsigned UPF, FPR, UPR;
 	dataFile >> UPF>> FPR >> UPR;
+	++line;
 	Core::Master::Instance().SetUPF(UPF), Core::Master::Instance().SetFPR(FPR), Core::Master::Instance().SetUPR(UPR);
 	
 	bool bGraviMasses_;
 	dataFile >> bGraviMasses_;
+	++line;
 	SetBGraviMasses(bGraviMasses_);
 
 	bool bGraviAcc_;
 	dataFile >> bGraviAcc_;
+	++line;
 	SetBGraviAcc(bGraviAcc_);
 
 	bool bWindAcc_;
 	dataFile >> bWindAcc_;
+	++line;
 	SetBWindAcc(bWindAcc_);
 
 	bool bCollisions_;
 	dataFile >> bCollisions_;
+	++line;
 	SetBCollisions(bCollisions_);
 
 	Vector3f cameraPos;
@@ -656,9 +643,13 @@ bool Game::LoadData(const std::string& fileName)
 	float32 cameraAngle;
 	bool gUpdateCamera;
 
-	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z
+	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z		
 		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z	>> cameraAngle
 		>> gUpdateCamera;
+	++line;
+	++line;
+	++line;
+
 	Core::Master::Instance().SetGUpdateCamera(gUpdateCamera);
 
 	if (Core::Master::Instance().GetGUpdateCamera() || Core::Master::Instance().GetGFirstLoad())
@@ -677,62 +668,82 @@ bool Game::LoadData(const std::string& fileName)
 	Math::Color4f LightAmbient, LightDiffuse;
 	Vector3f LightPosition;
 	dataFile >> LightAmbient.r >> LightAmbient.g >> LightAmbient.b >> LightAmbient.a;
+	++line;
 	dataFile >> LightDiffuse.r >> LightDiffuse.g >> LightDiffuse.b >> LightDiffuse.a;
+	++line;
 	dataFile >> LightPosition.x >> LightPosition.y >> LightPosition.z;
+	++line;
 	Core::Master::Instance().SetLightAmbient(LightAmbient);
 	Core::Master::Instance().SetLightDiffuse(LightDiffuse);
 	Core::Master::Instance().SetLightPosition(LightPosition);
 
-	//RenderGL::Instance().rLightAmbient = gLightAmbient;
-	//RenderGL::Instance().rLightDiffuse = gLightDiffuse;
-	//RenderGL::Instance().rLightPosition = gLightPosition;
-
-
 	Vector3f graviAcc_;
 
 	dataFile >> graviAcc_.x >> graviAcc_.y >> graviAcc_.z;
+	++line;
 	SetGraviAcc(graviAcc_);
+
+	++line;
 
 	unsigned numStars_;
 	dataFile >> numStars_;
+	++line;
 	SetNumStars(numStars_ /*,false*/);
 	
 	unsigned numEntities_;
 	dataFile >> numEntities_;
+	++line;
 
 	SetNumEntities(numEntities_);
 
 	unsigned numMasses_;
 	dataFile >> numMasses_;
+	++line;
 	SetNumMasses(numMasses_);
 
 	unsigned numBoxes_;
 	dataFile >> numBoxes_;
+	++line;
 	SetNumBoxes(numBoxes_);
 
 	unsigned numSmokers_;
 	dataFile >> numSmokers_;
+	++line;
 	SetNumSmokers(numSmokers_);
+
+	unsigned numShapes_;
+	dataFile >> numShapes_;
+	++line;
+	SetNumShapes(numShapes_);
+
+	++line;
 
 	for (unsigned i = 0; i < numMasses; i++)
 	{
-		float32 m = 0.0f, r = 0.0f;
+		float32 m, r;
 		Vector3f pos, vel;
 		//bool isLight = false;
-		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
+		Math::Color4f color;
 		dataFile >> m >> r
 			>> pos.x >> pos.y >> pos.z
 			>> vel.x >> vel.y >> vel.z
 			//>> isLight
 			>> color.r >> color.g >> color.b >> color.a;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
 		AddMass(m, r, pos, vel, /*isLight,*/ color);
 	}
+
+	++line;
 
 	for (unsigned i = 0; i < numBoxes; i++)
 	{
 		float32 m = 0.0;
 		Vector3f pos, size, vel;
-		Color4f color;
+		Math::Color4f color;
 		Quaternion q;
 		Quaternion qVel;
 		float32 angle, angleVel;
@@ -744,6 +755,13 @@ bool Game::LoadData(const std::string& fileName)
 			>> q.x >> q.y >> q.z >> angle
 			>> qVel.x >> qVel.y >> qVel.z >> angleVel
 			>> color.r >> color.g >> color.b >> color.a;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
 		angle = Math::degreesToRadians(angle);
 		angleVel = Math::degreesToRadians(angleVel);
 		q.w = cos(angle / 2.0f);
@@ -759,16 +777,18 @@ bool Game::LoadData(const std::string& fileName)
 		AddBox(m, size, pos, vel, q, qVel, color);
 	}
 
-	unsigned numParticless = 0;
-	Vector3f pos;
-	Vector3f rand;
-	Vector3f vel0;
-	Vector3f vel;
-	Color4f color;
-	bool createCollision;
-	
+	++line;
+
 	for (unsigned i = 0; i < numSmokers; i++)
 	{
+		unsigned numParticless = 0;
+		Vector3f pos;
+		Vector3f rand;
+		Vector3f vel0;
+		Vector3f vel;
+		Math::Color4f color;
+		bool createCollision;
+
 		dataFile >> numParticless
 		>> createCollision
 		>> pos.x >> pos.y >> pos.z
@@ -776,9 +796,18 @@ bool Game::LoadData(const std::string& fileName)
 		>> vel0.x >> vel0.y >> vel0.z
 		>> vel.x >> vel.y >> vel.z
 		>> color.r >> color.g >> color.b >> color.a;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
+		++line;
 
 		AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
 	}
+
+	++line;
 
 	/*	
 	int numLines = 0;
@@ -800,6 +829,161 @@ bool Game::LoadData(const std::string& fileName)
 	Game::Instance().SetLine(m, r, h, pos, q, color);
 	}
 	*/
+
+	Core::FileStream fileStream;
+	fileStream.OpenRead(gSceneName);
+	std::string str = fileStream.GetLine();
+	for (unsigned i = 0; i < line; ++i)
+	{
+		str = fileStream.GetLine();
+	}
+
+
+	for (unsigned i = 0; i < numShapes; ++i)
+	{
+		float32 m;
+		Vector3f pos, vel;
+		Math::Color4f color;
+
+		dataFile >> m 
+			>> pos.x >> pos.y >> pos.z 
+			>> vel.x >> vel.y >> vel.z
+			>> color.r >> color.g >> color.b >> color.a;
+		str = fileStream.GetLine();
+		str = fileStream.GetLine();
+		str = fileStream.GetLine();
+		str = fileStream.GetLine();
+		str = fileStream.GetLine();
+
+		unsigned numParts;
+		dataFile >> numParts;		
+		str = fileStream.GetLine();
+		
+		Shape* shape = new Shape(m, pos, vel, color, numShapes);
+		shape->Init(numParts);
+
+		for(unsigned i = 0; i < numParts; ++i)
+		{
+			std::list<Vector3f> Coordinate;
+			std::list<int> CoordIndex;
+
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+
+			str = fileStream.GetLine();
+
+			std::string str2;
+
+			for(unsigned i = 0; i < str.length(); ++i)
+			{
+				if (str[i] == '\"')
+				{
+					++i;
+					while(str[i] != '\"' && i < str.length())
+					{
+						str2 += str[i];
+						++i;
+					}
+				}
+			}
+
+			std::list<std::string> words;
+			for(unsigned i = 0; i < str2.length(); ++i)
+			{
+				std::string str;
+				while(str2[i] != ' ' &&i < str2.length())
+				{
+					str += str2[i];
+					++i;
+				}
+
+				words.push_back(str);
+			}
+
+			for(std::list<std::string>::iterator it = words.begin(); it != words.end(); ++it)
+			{
+				std::string str = *it;
+				std::stringstream ist (str);
+				long coordIndex = 0;
+				ist >> coordIndex;
+				if (coordIndex != -1)
+				{
+					CoordIndex.push_back(coordIndex);
+				}
+			}
+
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+
+			std::string str3;
+
+			for(unsigned i = 0; i < str.length(); ++i)
+			{
+				if (str[i] == '\"')
+				{
+					++i;
+					while(str[i] != '\"' && i < str.length())
+					{
+						str3 += str[i];
+						++i;
+					}
+				}
+			}
+
+			std::list<std::string> words2;
+			for(unsigned i = 0; i < str3.length(); ++i)
+			{
+				std::string str;
+				while(str3[i] != ' ' &&i < str3.length())
+				{
+					str += str3[i];
+					++i;
+				}
+
+				words2.push_back(str);
+			}
+
+			for(std::list<std::string>::iterator it = words2.begin(); it != words2.end(); ++it)
+			{
+				std::string str;
+				str += *it;
+				str += " ";
+				++it;
+				str += *it;
+				str += " ";
+				++it;
+				str += *it;
+				std::stringstream ist (str);
+				Vector3f v = Vector3f(0.0f, 0.0f, 0.0f);
+				ist >> v.x >> v.y >> v.z;
+				Coordinate.push_back(v);
+			}
+			
+			shape->AddPart(Coordinate.size(), CoordIndex.size());
+			for(std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
+			{
+				shape->AddCoord(*it);
+			}
+			for(std::list<int>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
+			{
+				shape->AddIndex(*it);
+			}
+
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+			str = fileStream.GetLine();
+		}
+
+		fileStream.Close();		
+
+		Entities[countAddEntities] = shape;
+		++countAddEntities;
+	}
 	
 
 	dataFile.close();

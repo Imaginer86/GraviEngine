@@ -1,13 +1,5 @@
 ﻿#include "Box.h"
-#include "../Core/RenderGL.h"
-
-Box::Box()
-: Entity()
-, size(1.0, 1.0, 1.0)
-, q(0.0f,0.0f,0.0f,0.0f)
-, qVel(0.0f, 0.0f, 0.0f, 0.0f)
-{
-}
+#include "../Render/RenderGL.h"
 
 void Box::simulateForce(float32 dt)
 {
@@ -26,5 +18,5 @@ void Box::Draw()
 	Vector3f axic;
 	float32 angle;
 	q.toAxisAngle(axic, angle);
-	Core::RenderGL::Instance().DrawBox(GetPos(), size, axic, angle, GetColor());
+	Render::RenderGL::Instance().DrawBox(GetPos(), size, axic, angle, GetColor());
 }

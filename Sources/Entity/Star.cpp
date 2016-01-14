@@ -2,7 +2,7 @@
 
 //#include <iostream>
 
-#include "../Core/RenderGL.h"
+#include "../Render/RenderGL.h"
 #include "../Math/Math.h"
 
 static const float32 dist = 20;

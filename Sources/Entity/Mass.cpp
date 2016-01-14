@@ -1,5 +1,5 @@
 ﻿#include "Mass.h"
-#include "../Core/RenderGL.h"
+#include "../Render/RenderGL.h"
 
 using namespace Math;
 
@@ -14,5 +14,5 @@ void Mass::Set(float32 m_, float32 r_, Vector3f pos_, Vector3f vel_, Color4f col
 
 void Mass::Draw()
 {
-	Core::RenderGL::Instance().DrawSphere(GetPos(), r, GetColor());
+	Render::RenderGL::Instance().DrawSphere(GetPos(), r, GetColor());
 }

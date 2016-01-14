@@ -11,11 +11,13 @@ LightAmbient
 LightDiffuse
 LightPosition
 GraveAcc
+
 numStars
 numEntities
-numMas
-numBox
-numSmoke
+numMases
+numBoxes
+numSmokes
+numShapes
 
 m
 r
@@ -35,5 +37,10 @@ numParticles
 Pos
 Rand
 Vel0
+Vel
+Color
+
+m
+Pos
 Vel
 Color

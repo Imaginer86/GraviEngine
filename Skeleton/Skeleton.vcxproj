@@ -49,7 +49,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -77,12 +77,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Sources\Core\Camera.cpp" />
+    <ClCompile Include="..\Sources\Core\FileStream.cpp" />
     <ClCompile Include="..\Sources\Core\Input.cpp" />
     <ClCompile Include="..\Sources\Core\Master.cpp" />
-    <ClCompile Include="..\Sources\Core\RenderGL.cpp" />
     <ClCompile Include="..\Sources\Entity\Box.cpp" />
     <ClCompile Include="..\Sources\Entity\Line.cpp" />
     <ClCompile Include="..\Sources\Entity\Mass.cpp" />
+    <ClCompile Include="..\Sources\Entity\Shape.cpp" />
     <ClCompile Include="..\Sources\Entity\Sky.cpp" />
     <ClCompile Include="..\Sources\Entity\Smoke.cpp" />
     <ClCompile Include="..\Sources\Entity\Star.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="..\Sources\GameBase.cpp" />
     <ClCompile Include="..\Sources\Math\Random.cpp" />
     <ClCompile Include="..\Sources\Math\Tensus.cpp" />
+    <ClCompile Include="..\Sources\Render\RenderGL.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Skeleton.cpp" />
   </ItemGroup>
@@ -99,15 +101,15 @@
     <ClInclude Include="..\Sources\Constans.h" />
     <ClInclude Include="..\Sources\Core\Camera.h" />
     <ClInclude Include="..\Sources\Core\Defines.h" />
+    <ClInclude Include="..\Sources\Core\FileStream.h" />
     <ClInclude Include="..\Sources\Core\Input.h" />
     <ClInclude Include="..\Sources\Core\Master.h" />
-    <ClInclude Include="..\Sources\Core\Render.h" />
-    <ClInclude Include="..\Sources\Core\RenderGL.h" />
     <ClInclude Include="..\Sources\Entity\BaseEntity.h" />
     <ClInclude Include="..\Sources\Entity\Box.h" />
     <ClInclude Include="..\Sources\Entity\Entity.h" />
     <ClInclude Include="..\Sources\Entity\Line.h" />
     <ClInclude Include="..\Sources\Entity\Mass.h" />
+    <ClInclude Include="..\Sources\Entity\Shape.h" />
     <ClInclude Include="..\Sources\Entity\Sky.h" />
     <ClInclude Include="..\Sources\Entity\Smoke.h" />
     <ClInclude Include="..\Sources\Entity\Star.h" />
@@ -126,6 +128,8 @@
     <ClInclude Include="..\Sources\Math\Tensus.h" />
     <ClInclude Include="..\Sources\Math\Vector3f.h" />
     <ClInclude Include="..\Sources\Math\VectorField.h" />
+    <ClInclude Include="..\Sources\Render\Render.h" />
+    <ClInclude Include="..\Sources\Render\RenderGL.h" />
     <ClInclude Include="..\Sources\Types.h" />
     <ClInclude Include="Game.h" />
   </ItemGroup>

@@ -21,37 +21,17 @@ public:
 		return SingleGame;
 	}
 
-	virtual bool SaveData(const std::string& fileName);
-
-	virtual bool LoadData(const std::string& fileName);
+	virtual void Init();								// this method will call the init() method of every Entity;
 
 	virtual void Release();							// delete the entities created;
-
-	virtual void Init();								// this method will call the init() method of every mass;
 
 	virtual void Update(float32 dt);
 
 	virtual void Draw();
 
-	//virtual void SetSceneNum(unsigned sceneNum)
-	//{
-		//gSceneNum = sceneNum;
-	//}
+	virtual bool SaveData(const std::string& fileName);
 
-	//virtual unsigned GetSceneNum()
-	//{
-		//return gSceneNum;
-	//}
-
-	virtual void SetSceneName(const std::string& sceneName_)
-	{
-		gSceneName = sceneName_;
-	}
-
-	virtual std::string GetSceneName()
-	{
-		return gSceneName;
-	}
+	virtual bool LoadData(const std::string& fileName);
 
 	void AddMass(float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
 
@@ -123,7 +103,7 @@ public:
 		return bCollisions;
 	}
 
-	void SetGraviAcc(Vector3f graviAcc_)
+	void SetGraviAcc(const Vector3f& graviAcc_)
 	{
 		graviAcc = graviAcc_;
 	}
@@ -158,18 +138,33 @@ public:
 		return numSmokers;
 	}
 
+	void SetNumShapes(unsigned numShapes_)
+	{
+		numShapes = numShapes_;
+	}
+
 	Vector3f GetGraviAcc()
 	{
 		return graviAcc;
 	}
 
+	virtual void SetSceneName(const std::string& sceneName_)
+	{
+		gSceneName = sceneName_;
+	}
+
+	virtual std::string GetSceneName()
+	{
+		return gSceneName;
+	}
+
 private:
 	std::string  gSceneName;
-	//unsigned gSceneNum;
 
 	unsigned numMasses;
 	unsigned numBoxes;
 	unsigned numSmokers;
+	unsigned numShapes;
 
 	bool bGraviMasses;
 	bool bGraviAcc;
@@ -183,3 +178,17 @@ private:
 
 	Sky* mSky;
 };
+
+inline Game::Game()
+: numEntitys(0)
+, bGraviMasses(false)
+, bGraviAcc(false)
+, bWindAcc(false)
+, bCollisions(false)
+, graviAcc(0, 0, 0)
+{
+}
+
+inline Game::~Game()
+{
+}

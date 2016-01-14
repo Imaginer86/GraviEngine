@@ -6,11 +6,10 @@
 
 #include <windows.h>
 
-#include "RenderGL.h"
 #include "Camera.h"
-
 #include "../Constans.h"
 #include "../Math/Color.h"
+#include "../Render/RenderGL.h"
 
 using namespace Core;
 
@@ -75,7 +74,7 @@ long Master::WndProc(  void*  hWnd,				// Дескриптор нужного о
 		}
 	case WM_SIZE:              // Изменены размеры OpenGL окна
 		{
-			RenderGL::Instance().ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
+			Render::RenderGL::Instance().ReSizeGLScene( LOWORD(lParam), HIWORD(lParam) );	// Младшее слово=Width, старшее слово=Height
 			return 0;											// Возвращаемся
 		}
 	}
@@ -91,7 +90,7 @@ bool Master::Init(GameBase* gameBase_)
 	countDraw = 1;
 
 	// Создать наше OpenGL окно	
-	bool assert = !RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32);
+	bool assert = !Render::RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32);
 	if (assert)
 	{
 		std::cerr << "CreateWin Failed!" << std::endl;
@@ -191,13 +190,13 @@ void Master::Update(float32 dt)
 
 void Master::Draw()                // Здесь будет происходить вся прорисовка
 {
-	RenderGL::Instance().BeginDraw();	
+	Render::RenderGL::Instance().BeginDraw();	
 	gmGame->Draw();
 	if (gShowDebugInfo)
 	{
-		RenderGL::Instance().DrawDebugInfo();
+		Render::RenderGL::Instance().DrawDebugInfo();
 	}
-	RenderGL::Instance().EndDraw();
+	Render::RenderGL::Instance().EndDraw();
 
 	++countDraw;
 }
@@ -212,10 +211,10 @@ void Master::UpdateKeys()
 	if( !gSwitchFullscreen && gKeys[VK_F1] )				// Была ли нажата F1?
 	{
 		gSwitchFullscreen = true;
-		RenderGL::Instance().Release();					// Разрушаем текущее окно
-		RenderGL::Instance().SetFullScreen( !RenderGL::Instance().GetFullScreen() );		// Переключаем режим
+		Render::RenderGL::Instance().Release();					// Разрушаем текущее окно
+		Render::RenderGL::Instance().SetFullScreen( !Render::RenderGL::Instance().GetFullScreen() );		// Переключаем режим
 		// Пересоздаём наше OpenGL окно
-		gDone = !RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
+		gDone = !Render::RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
 	}
 
 	if (gSwitchFullscreen && !gKeys[VK_F1])
@@ -230,7 +229,7 @@ void Master::UpdateKeys()
 		gFirstLoad = true;
 		Release();		
 		gDone = !gmGame->LoadData(gmGame->GetSceneName());
-		RenderGL::Instance().SetGLLight();
+		Render::RenderGL::Instance().SetGLLight();
 	}
 
 	if (gReloadKeyPress && !gKeys[VK_F5])
@@ -256,7 +255,7 @@ void Master::UpdateKeys()
 
 		Release();
 		gDone = !gmGame->LoadData("data/quickSave.dat");
-		RenderGL::Instance().SetGLLight();
+		Render::RenderGL::Instance().SetGLLight();
 	}
 
 	if( gLoadKeyPress && !gKeys[VK_F9])
@@ -380,18 +379,18 @@ void Master::UpdateKeys()
 	if ( gKeys['L'] && !gLightOnKey )			// Клавиша 'L' нажата и не удерживается?
 	{
 		gLightOnKey=true;						// lp присвоили TRUE
-		RenderGL::Instance().SetLightOn(!RenderGL::Instance().GetLightOn());				// Переключение света TRUE/FALSE
-		if (RenderGL::Instance().GetLightOn())					// Если не свет
+		Render::RenderGL::Instance().SetLightOn(!Render::RenderGL::Instance().GetLightOn());				// Переключение света TRUE/FALSE
+		if (Render::RenderGL::Instance().GetLightOn())					// Если не свет
 		{
-			RenderGL::Instance().EnableLight();
+			Render::RenderGL::Instance().EnableLight();
 		}
 		else							// В противном случае
 		{
-			RenderGL::Instance().DisableLight();
+			Render::RenderGL::Instance().DisableLight();
 		}
 	}
 
-	if ( !gKeys['L'] )					// Клавиша 'L' Отжата?
+	if ( gLightOnKey && !gKeys['L'] )					// Клавиша 'L' Отжата?
 	{
 		gLightOnKey=false;						// Если так, то lp равно FALSE
 	}
@@ -424,7 +423,7 @@ void Master::UpdateKeys()
 			fileName += std::string(std::to_string(i + 1));
 			fileName += ".dat";			
 			gDone = !gmGame->LoadData(fileName);
-			RenderGL::Instance().SetGLLight();
+			Render::RenderGL::Instance().SetGLLight();
 		}
 	}
 }

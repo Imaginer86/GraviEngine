@@ -16,7 +16,7 @@ public:
 
 	void SetPos(const Vector3f& pos_)
 	{
-		this->pos = pos_;
+		pos = pos_;
 	}
 
 private:

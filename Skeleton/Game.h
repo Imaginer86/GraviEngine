@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "../Sources/Types.h"
-#include "../Sources/GameBase.h"
-#include "../Sources/Entity/Entity.h"
-#include "../Sources/Entity/Sky.h"
-#include "../Sources/Math/Math.h"
-#include "../Sources/Math/Quaternion.h"
+#include "Types.h"
+#include "GameBase.h"
+#include "Entity/Entity.h"
+#include "Entity/Sky.h"
+#include "Math/Math.h"
+#include "Math/Quaternion.h"
 
 
 class Game: public GameBase
@@ -41,7 +41,8 @@ public:
 
 	Vector3f GraviForce(int a, int b);
 
-	void Solve();							// no implementation because no forces are wanted in this basic container;
+	void SimVel(float32 dt);
+	void Solve(float32 dt);							// no implementation because no forces are wanted in this basic container;
  	void Simulate(float32 dt);					// Iterate the masses by the change in time;
 	void AddGraviAcc(float32 dt);
 	void AddWindAcc(float32 dt);
@@ -138,9 +139,9 @@ public:
 		return numSmokers;
 	}
 
-	void SetNumShapes(unsigned numShapes_)
+	void SetNumModels(unsigned numModels_)
 	{
-		numShapes = numShapes_;
+		numModels = numModels_;
 	}
 
 	Vector3f GetGraviAcc()
@@ -164,7 +165,7 @@ private:
 	unsigned numMasses;
 	unsigned numBoxes;
 	unsigned numSmokers;
-	unsigned numShapes;
+	unsigned numModels;
 
 	bool bGraviMasses;
 	bool bGraviAcc;

@@ -41,9 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Programming\Projects\GraviEngine\Sources;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>D:\Programming\Projects\GraviEngine\Sources;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -52,10 +54,13 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>GraviEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Programming\Projects\GraviEngine\Skeleton\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,64 +78,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>GraviEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Programming\Projects\GraviEngine\Skeleton\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Sources\Core\Camera.cpp" />
-    <ClCompile Include="..\Sources\Core\FileStream.cpp" />
-    <ClCompile Include="..\Sources\Core\Input.cpp" />
-    <ClCompile Include="..\Sources\Core\Master.cpp" />
-    <ClCompile Include="..\Sources\Entity\Box.cpp" />
-    <ClCompile Include="..\Sources\Entity\Line.cpp" />
-    <ClCompile Include="..\Sources\Entity\Mass.cpp" />
-    <ClCompile Include="..\Sources\Entity\Shape.cpp" />
-    <ClCompile Include="..\Sources\Entity\Sky.cpp" />
-    <ClCompile Include="..\Sources\Entity\Smoke.cpp" />
-    <ClCompile Include="..\Sources\Entity\Star.cpp" />
-    <ClCompile Include="..\Sources\Entity\Video.cpp" />
-    <ClCompile Include="..\Sources\Entity\Wave.cpp" />
-    <ClCompile Include="..\Sources\Entity\WaveOut.cpp" />
-    <ClCompile Include="..\Sources\GameBase.cpp" />
-    <ClCompile Include="..\Sources\Math\Random.cpp" />
-    <ClCompile Include="..\Sources\Math\Tensus.cpp" />
-    <ClCompile Include="..\Sources\Render\RenderGL.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Sources\Constans.h" />
-    <ClInclude Include="..\Sources\Core\Camera.h" />
-    <ClInclude Include="..\Sources\Core\Defines.h" />
-    <ClInclude Include="..\Sources\Core\FileStream.h" />
-    <ClInclude Include="..\Sources\Core\Input.h" />
-    <ClInclude Include="..\Sources\Core\Master.h" />
-    <ClInclude Include="..\Sources\Entity\BaseEntity.h" />
-    <ClInclude Include="..\Sources\Entity\Box.h" />
-    <ClInclude Include="..\Sources\Entity\Entity.h" />
-    <ClInclude Include="..\Sources\Entity\Line.h" />
-    <ClInclude Include="..\Sources\Entity\Mass.h" />
-    <ClInclude Include="..\Sources\Entity\Shape.h" />
-    <ClInclude Include="..\Sources\Entity\Sky.h" />
-    <ClInclude Include="..\Sources\Entity\Smoke.h" />
-    <ClInclude Include="..\Sources\Entity\Star.h" />
-    <ClInclude Include="..\Sources\Entity\Video.h" />
-    <ClInclude Include="..\Sources\Entity\Wave.h" />
-    <ClInclude Include="..\Sources\Entity\WaveOut.h" />
-    <ClInclude Include="..\Sources\GameBase.h" />
-    <ClInclude Include="..\Sources\Math\Color.h" />
-    <ClInclude Include="..\Sources\Math\Line.h" />
-    <ClInclude Include="..\Sources\Math\Math.h" />
-    <ClInclude Include="..\Sources\Math\Matrix3.h" />
-    <ClInclude Include="..\Sources\Math\Matrix4.h" />
-    <ClInclude Include="..\Sources\Math\Plane.h" />
-    <ClInclude Include="..\Sources\Math\Quaternion.h" />
-    <ClInclude Include="..\Sources\Math\Random.h" />
-    <ClInclude Include="..\Sources\Math\Tensus.h" />
-    <ClInclude Include="..\Sources\Math\Vector3f.h" />
-    <ClInclude Include="..\Sources\Math\VectorField.h" />
-    <ClInclude Include="..\Sources\Render\Render.h" />
-    <ClInclude Include="..\Sources\Render\RenderGL.h" />
-    <ClInclude Include="..\Sources\Types.h" />
     <ClInclude Include="Game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

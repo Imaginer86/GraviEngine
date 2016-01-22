@@ -4,6 +4,9 @@
 #include "Line.h"
 #include "Math.h"
 
+namespace Math
+{
+
 struct Plane
 {
 	float32 a, b, c, d;
@@ -61,4 +64,6 @@ inline Vector3f Plane::proj(Vector3f p)
 inline float32 Plane::distance(Vector3f p)
 {
 	return abs((a*p.x + b*p.y + c*p.z - d) / sqrt(a*a + b*b + c*c));
+}
+
 }

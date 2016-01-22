@@ -13,7 +13,9 @@ LightPosition
 GraveAcc
 
 numStars
+
 numEntities
+
 numMases
 numBoxes
 numSmokes

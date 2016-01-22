@@ -10,35 +10,41 @@
 
 void Shape::Draw()
 {
+	glPushMatrix();
+	glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+	glTranslatef(GetPos().x, GetPos().y, GetPos().z);
 
-	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	currentPart = 0;
-
-	CurrentCoord = 0;
-
-	CurrentCoordIndex = 0;
 	
-	for(currentPart; currentPart < numPart; currentPart++)
+	for(unsigned i = 0; i < CoordIndex.size(); ++i)
 	{
-		for(unsigned j = 0;  j  < NumCoordIndex[currentPart];)
+		for (unsigned j = 0; j < CoordIndex[i].size(); ++j)
 		{
-
-			Vector3f p1 = Coord[currentPart][CoordIndex[currentPart][CurrentCoordIndex]];
-			++CurrentCoord; ++CurrentCoordIndex; ++j;
-			Vector3f p2 = Coord[currentPart][CoordIndex[currentPart][CurrentCoordIndex]];
-			++CurrentCoord; ++CurrentCoordIndex; ++j;
-			Vector3f p3 = Coord[currentPart][CoordIndex[currentPart][CurrentCoordIndex]];
-			++CurrentCoord; ++CurrentCoordIndex; ++j;
+			Vector3f p1 = Coord[i][CoordIndex[i][j]];
+			++i;
+			if (i >= CoordIndex.size())
+				break;
+			//++CurrentCoord; ++CurrentCoordIndex; ++j;
+			Vector3f p2 = Coord[i][CoordIndex[i][j]];
+			//++CurrentCoord; ++CurrentCoordIndex; ++j;
+			++i;
+			if (i >= CoordIndex.size())
+				break;
+			Vector3f p3 = Coord[i][CoordIndex[i][j]];
+			//++CurrentCoord; ++CurrentCoordIndex; ++j;
+			++i;
+			if (i >= CoordIndex.size())
+				break;
+			Vector3f p4 = Coord[i][CoordIndex[i][j]];
+			//++CurrentCoord; ++CurrentCoordIndex; ++j;
 
 			//Vector3f p1 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
 			//Vector3f p2 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
 			//Vector3f p3 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
 			
-			Render::RenderGL::Instance().DrawTriangle(p1, p2, p3, Math::Color4f(0.5f, 0.5f, 0.5f, 0.75f));
+			Render::RenderGL::Instance().DrawTriangle(p1, p2, p3, GetColor());
+			Render::RenderGL::Instance().DrawTriangle(p3, p4, p1, GetColor());
 		}
-
-	CurrentCoord = 0;
-	CurrentCoordIndex = 0;
-
 	}
+
+	glPopMatrix();
 }

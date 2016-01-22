@@ -1,28 +1,30 @@
 ﻿#include "Game.h"
 
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 #include <list>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 #include <typeinfo>
 
 
-#include "../Sources/Constans.h"
+#include "Constans.h"
 
-#include "../Sources/Math/Math.h"
-#include "../Sources/Math/Plane.h"
-#include "../Sources/Math/Random.h"
+#include "Math/Math.h"
+#include "Math/Plane.h"
+#include "Math/Random.h"
 
-#include "../Sources/Core/Master.h"
-#include "../Sources/Core/Camera.h"
-#include "../Sources//Core/FileStream.h"
+#include "Core/Master.h"
+#include "Core/Camera.h"
+#include "Core/Node.h"
+#include "Core/FileStream.h"
 
-#include "../Sources/Entity/Mass.h"
-#include "../Sources/Entity/Box.h"
-#include "../Sources/Entity/Smoke.h"
-#include "../Sources/Entity/Shape.h"
-#include "../Sources/Entity/Sky.h"
+#include "Entity/Mass.h"
+#include "Entity/Box.h"
+#include "Entity/Smoke.h"
+#include "Entity/Shape.h"
+#include "Entity/Sky.h"
 
 unsigned countAddEntities = 0;
 
@@ -101,13 +103,23 @@ void Game::SetLine(float32 m, float32 r, float32 h, Vector3 pos, Quaternion q, C
 }
 */
 
+void Game::Draw()
+{
+	mSky->Draw();
+	for(unsigned i = 0; i < numEntitys; ++i)
+	{
+		Entities[i]->Draw();
+	}
+}
+
 void Game::Update(float32 dt)
 {
 	//static unsigned iteration = 0;
 	Init();										// Step 1: reset forces to zero	
+	//SimVel(dt);
 	if (bGraviMasses)
 	{
-		Solve();									// Step 2: apply forces		
+		Solve(dt);									// Step 2: apply forces		
 	}
 	if (bGraviAcc)
 	{
@@ -124,6 +136,33 @@ void Game::Update(float32 dt)
 	Simulate(dt);								// Step 3: iterate the masses by the change in time
 }
 
+void Game::SimVel(float32 dt)
+{
+	for(unsigned i = 0; i < numEntitys; ++i)
+	{
+		Entities[i]->simulateForce(dt);
+	}
+}
+
+void Game::Solve(float32 dt)
+{
+	dt;
+	for(unsigned a = 0; a < numEntitys; ++a)
+	{		
+		for(unsigned b = 0; b < numEntitys; ++b)
+		{			
+			if (a != b)
+			{
+				Vector3f force(GraviForce(a,b));
+				//if ( force.unitize() > Math::EPSILON )
+				//{
+				Entities[a]->applyForce(force); //Gravi Force
+				//}
+			}
+		}
+	}
+	// in advanced containers, this method will be overrided and some forces will act on masses
+}
 
 void Game::Init() /* this method will call the init() method of every mass */
 {	
@@ -133,7 +172,7 @@ void Game::Init() /* this method will call the init() method of every mass */
 
 void Game::AddGraviAcc(float32 dt)
 {
-	for (unsigned i = 0; i < numEntitys; i++)
+	for (unsigned i = 0; i < numEntitys; ++i)
 	{
 		if (typeid(*Entities[i]) == typeid(Mass))
 		{
@@ -149,7 +188,7 @@ void Game::AddGraviAcc(float32 dt)
 
 void Game::AddWindAcc(float32 dt)
 {
-	for (unsigned i = 0; i < numEntitys; i++)
+	for (unsigned i = 0; i < numEntitys; ++i)
 	{
 		if (typeid(*Entities[i]) == typeid(Smoke))
 		{
@@ -159,18 +198,18 @@ void Game::AddWindAcc(float32 dt)
 	}
 }
 
-
 void Game::Simulate(float32 dt) /* Iterate the masses by the change in time */
 {
-	for (unsigned i = 0; i < numEntitys; i++)		// We will iterate every mass
+	for (unsigned i = 0; i < numEntitys; ++i)		// We will iterate every mass
+	{
 		Entities[i]->simulateForce(dt);				// Iterate the mass and obtain new position and new velocity
+	}
 }
-
 
 void Game::Collision(float32 dt)
 {
-	for (unsigned a = 0; a < (numEntitys - 1); a++)
-		for (unsigned b = a + 1; b < numEntitys; b++)
+	for (unsigned a = 0; a < (numEntitys - 1); ++a)
+		for (unsigned b = a + 1; b < numEntitys; ++b)
 			if (a != b)
 			{
 				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Mass))
@@ -304,9 +343,9 @@ void Game::Collision(float32 dt)
 
 					int PI[6][4] = {{0, 1, 2, 3}, {4, 7, 6, 5}, {0, 4, 5, 1}, {2, 6, 7, 3}, {0, 3, 7, 4}, {1, 5, 6, 2}};
 
-					Plane PL[6];
+					Math::Plane PL[6];
 					for (int i = 0; i < 6; i++)
-						PL[i] = Plane(P[PI[i][0]], P[PI[i][1]], P[PI[i][2]]);
+						PL[i] = Math::Plane(P[PI[i][0]], P[PI[i][1]], P[PI[i][2]]);
 
 					for (int i = 0; i < 6; i++)
 					{
@@ -377,17 +416,6 @@ bool Game::InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, V
 	return true;
 }
 
-
-void Game::Draw()
-{
-	mSky->Draw();
-	for(unsigned i = 0; i < numEntitys; i++) 
-	{
-		Entities[i]->Draw();
-	}
-}
-
-
 Vector3f Game::GraviForce( int a, int b )
 {
 	Vector3f f;
@@ -425,27 +453,7 @@ Vector3f Game::GraviForce( int a, int b )
 	return f;
 }
 
-
 /* no implementation because no forces are wanted in this basic container */
-
-void Game::Solve() 
-{
-	for(unsigned a = 0; a < numEntitys; a++)
-	{
-		for(unsigned b = 0; b < numEntitys; b++)
-		{			
-			if (a != b)
-			{
-				Vector3f force(GraviForce(a,b));
-				//if ( force.unitize() > Math::EPSILON )
-				//{
-				Entities[a]->applyForce(force); //Gravi Force
-				//}
-			}
-		}
-	}
-	// in advanced containers, this method will be overrided and some forces will act on masses
-}
 
 void Game::SetNumStars(unsigned numStars, bool randomize /* = true */)
 {
@@ -599,6 +607,8 @@ bool Game::SaveData(const std::string& fileName)
 
 bool Game::LoadData(const std::string& fileName)
 {
+	std::cout << "Load " << fileName << std::endl;
+
 	SetSceneName(fileName);
 
 	std::ifstream dataFile(gSceneName, std::ios::in);
@@ -714,7 +724,7 @@ bool Game::LoadData(const std::string& fileName)
 	unsigned numShapes_;
 	dataFile >> numShapes_;
 	++line;
-	SetNumShapes(numShapes_);
+	SetNumModels(numShapes_);
 
 	++line;
 
@@ -830,7 +840,7 @@ bool Game::LoadData(const std::string& fileName)
 	}
 	*/
 
-	for (unsigned i = 0; i < numShapes; ++i)
+	for (unsigned i = 0; i < numModels; ++i)
 	{
 		float32 m;
 		Vector3f pos, vel;
@@ -842,140 +852,58 @@ bool Game::LoadData(const std::string& fileName)
 			>> vel.x >> vel.y >> vel.z
 			>> color.r >> color.g >> color.b >> color.a;
 		
-		unsigned numParts;
-		dataFile >> numParts;		
+		Shape* shape = new Shape(m, pos, vel, color);
+		shape->Init();
 
 		std::string fileName;
 		dataFile >> fileName;
 		Core::FileStream fileStream;
-		fileStream.OpenRead(fileName);
-		std::string str = fileStream.GetLine();
+		//fileStream.OpenRead(fileName);
+		fileStream.OpenXML(fileName);
 
-		Shape* shape = new Shape(m, pos, vel, color, numShapes);
-		shape->Init(numParts);
+		Core::Node node;
 
-		for(unsigned i = 0; i < numParts; ++i)
+		if(!fileStream.GetNode(node))
 		{
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
+			return false;
+		}
+
+//todo
+
+		Core::Node nodeChild, nodeChild_;
+		if (!node.GetChild("Transform", nodeChild))
+		{
+			nodeChild.GetChild("Transform", nodeChild_);
+			for(nodeChild_; !nodeChild.GetChild("Transform", nodeChild_) && nodeChild.NumChild() > 0; nodeChild_.GetChild("Transform", nodeChild));
+		}
+		
+		if (node.GetName() == "Transform")
+		{
+
+			std::string str = nodeChild_.GetName();
+			std::cout << "Load Model Part: " <<str << std::endl;
 
 			std::list<Vector3f> Coordinate;
-			std::list<int> CoordIndex;
+			std::list<unsigned> CoordIndex;
 
-			std::string str2;
-
-			for(unsigned i = 0; i < str.length(); ++i)
-			{
-				if (str[i] == '\"')
-				{
-					++i;
-					while(str[i] != '\"' && i < str.length())
-					{
-						str2 += str[i];
-						++i;
-					}
-				}
-			}
-
-			std::list<std::string> words;
-			for(unsigned i = 0; i < str2.length(); ++i)
-			{
-				std::string str;
-				while(str2[i] != ' ' &&i < str2.length())
-				{
-					str += str2[i];
-					++i;
-				}
-
-				words.push_back(str);
-			}
-
-			for(std::list<std::string>::iterator it = words.begin(); it != words.end(); ++it)
-			{
-				std::string str = *it;
-				std::stringstream ist (str);
-				long coordIndex = 0;
-				ist >> coordIndex;
-				if (coordIndex != -1)
-				{
-					CoordIndex.push_back(coordIndex);
-				}
-			}
-
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-
-			std::string str3;
-
-			for(unsigned i = 0; i < str.length(); ++i)
-			{
-				if (str[i] == '\"')
-				{
-					++i;
-					while(str[i] != '\"' && i < str.length())
-					{
-						str3 += str[i];
-						++i;
-					}
-				}
-			}
-
-			std::list<std::string> words2;
-			for(unsigned i = 0; i < str3.length(); ++i)
-			{
-				std::string str;
-				while(str3[i] != ' ' &&i < str3.length())
-				{
-					str += str3[i];
-					++i;
-				}
-
-				words2.push_back(str);
-			}
-
-			for(std::list<std::string>::iterator it = words2.begin(); it != words2.end(); ++it)
-			{
-				std::string str;
-				str += *it;
-				str += " ";
-				++it;
-				str += *it;
-				str += " ";
-				++it;
-				str += *it;
-				std::stringstream ist (str);
-				Vector3f v = Vector3f(0.0f, 0.0f, 0.0f);
-				ist >> v.x >> v.y >> v.z;
-				Coordinate.push_back(v);
-			}
-			
 			shape->AddPart(Coordinate.size(), CoordIndex.size());
+
 			for(std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
 			{
 				shape->AddCoord(*it);
 			}
-			for(std::list<int>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
+			for(std::list<unsigned>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
 			{
 				shape->AddIndex(*it);
 			}
-
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();
-			str = fileStream.GetLine();			
-			str = fileStream.GetLine();
+	
+			fileStream.Close();
 		}
-
-		fileStream.Close();		
 
 		Entities[countAddEntities] = shape;
 		++countAddEntities;
 	}
-	
+
 
 	dataFile.close();
 	return true;

@@ -14,6 +14,7 @@
 #include "../Core/Master.h"
 #include "../Core/Camera.h"
 #include "../Math/Quaternion.h"
+#include "../Math/Plane.h"
 #include "../Math/Vector3f.h"
 
 using namespace Math;
@@ -660,11 +661,12 @@ void RenderGL::DrawPlane(const Vector3f& pos_, const Vector3f& axic, const float
 
 void RenderGL::DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const
 {
-	glColor4f(color.r, color.g, color.b, color.a);
+	Math::Plane p(p1, p2, p3);
 
+	glColor4f(color.r, color.g, color.b, color.a);
 	glBegin(GL_TRIANGLES);       // Начало рисования четырехугольников
 	// Передняя грань
-	//glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
+	glNormal3f(p.a, p.b, p.c);     // Нормаль указывает на наблюдателя
 	glVertex3f(p1.x, p1.y, p1.z); // Точка 1 (Перед)
 	glVertex3f(p2.x, p2.y, p2.z); // Точка 1 (Перед)
 	glVertex3f(p3.x, p3.y, p3.z); // Точка 1 (Перед)

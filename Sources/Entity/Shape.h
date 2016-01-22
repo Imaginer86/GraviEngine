@@ -1,102 +1,70 @@
 ﻿#pragma once
+#include <vector>
 #include "Entity.h"
 
 class Shape: public Entity
 {
 public:
 
-	Shape();
-	Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_, unsigned numPart_);								// Constructor	
+	Shape(){};
+	Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_);								// Constructor	
 
 	virtual ~Shape();
 
-	void Init(unsigned numPart_)
-	{
-		numPart = numPart_;
-		Coord = new Vector3f*[numPart];
-		NumCoord = new unsigned[numPart];
-		CurrentCoord = 0;
-		CoordIndex = new unsigned*[numPart];
-		NumCoordIndex = new unsigned[numPart];
-		CurrentCoordIndex = 0;
-	}
+	virtual void Init() {}
+	virtual void Draw();
 
 	void AddIndex(unsigned index_)
-	{
-		CoordIndex[currentPart-1][CurrentCoordIndex] = index_;
-		++CurrentCoordIndex;
+	{	
+		//CoordIndex.resize(CoordIndex.size());
+		std::vector<unsigned>& vector = CoordIndex[CoordIndex.size() - 1];
+		vector.resize(vector.size());
+		vector[vector.size() - 1] = index_;
 	}
 
-	void AddCoord(const Vector3f& coord_)
+	void AddCoord(Vector3f& coord_)
 	{
-		Coord[currentPart-1][CurrentCoord] = coord_;
-		++CurrentCoord;
+		//Coord.resize(Coord.size());
+		std::vector<Vector3f>& vector = Coord[Coord.size() - 1];
+		vector.resize(vector.size());
+		vector[vector.size() - 1] = coord_;
 	}
 
 	void AddPart(unsigned numCoord_, unsigned numCoordIndex_)
 	{
-		Coord[currentPart] = new Vector3f[numCoord_];
-		NumCoord[currentPart] = numCoord_;
-		CurrentCoord = 0;
-		
-		CoordIndex[currentPart] = new unsigned[numCoordIndex_];
-		NumCoordIndex[currentPart] = numCoordIndex_;
-		CurrentCoordIndex = 0;
-				
-		++currentPart;		
+		Coord.resize(numCoord_);
+		CoordIndex.resize(numCoordIndex_);
 	}
 	
-	virtual void Draw();
-
-	void SetCurrentPart(unsigned currentPart_)
+	void SetNumPart(unsigned numPart)
 	{
-		currentPart = currentPart_;
+		Coord.resize(numPart);
+		CoordIndex.resize(numPart);
 	}
 
 private:
-	unsigned currentPart;
-	unsigned numPart;
-	Vector3f** Coord;
-	unsigned* NumCoord;
-	unsigned CurrentCoord;
-	unsigned** CoordIndex;
-	unsigned* NumCoordIndex;
-	unsigned CurrentCoordIndex;
-		
+	std::vector<std::vector<Vector3f>> Coord;
+	std::vector<std::vector<unsigned>> CoordIndex;		
 };
 
-inline Shape::Shape()
-: Entity()
-, currentPart(0)
-, numPart(0)
-, Coord(nullptr)
-, NumCoord(nullptr)
-, CoordIndex(nullptr)
-, NumCoordIndex(nullptr)
-{
-}
-
-
-inline Shape::Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_, unsigned numPart_)
+inline Shape::Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_)
 : Entity(m_, pos_, vel_, color_)
-, currentPart(0)
-, numPart(numPart_)
-, Coord(nullptr)
-, NumCoord(nullptr)
-, CoordIndex(nullptr)
-, NumCoordIndex(nullptr)
+//, numPart(numPart_)
+//, Coord(nullptr)
+//, NumCoord(nullptr)
+//, CoordIndex(nullptr)
+//, NumCoordIndex(nullptr)
 {
 }
 
 inline Shape::~Shape()
 {
-	for (unsigned i = 0; i < numPart; i++)
-	{
-		delete[] Coord[i];
-		delete[] CoordIndex[i];
-	}
-	delete[] NumCoord;
-	delete[] NumCoordIndex;
-	numPart = 0;
-
+	//for (std::list<Vector3f*>::iterator it = Coord.begin(); it != Coord.end(); ++it)
+	//{
+		//delete[] *it;
+	//}
+	//for (std::list<unsigned*>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
+	//{
+		//delete[] *it;
+	//}
 }

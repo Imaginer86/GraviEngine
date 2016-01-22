@@ -2,7 +2,7 @@
 #include <string>
 
 #include "Types.h"
-#include "../Sources/Math/Quaternion.h"
+#include "Math/Quaternion.h"
 
 class GameBase
 {

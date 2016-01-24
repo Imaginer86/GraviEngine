@@ -41,10 +41,10 @@
     <ClInclude Include="..\Sources\Core\Input.h" />
     <ClInclude Include="..\Sources\Core\Master.h" />
     <ClInclude Include="..\Sources\Core\Node.h" />
-    <ClInclude Include="..\Sources\Entity\BaseEntity.h" />
     <ClInclude Include="..\Sources\Entity\Box.h" />
     <ClInclude Include="..\Sources\Entity\Entity.h" />
     <ClInclude Include="..\Sources\Entity\Line.h" />
+    <ClInclude Include="..\Sources\Entity\Mash.h" />
     <ClInclude Include="..\Sources\Entity\Mass.h" />
     <ClInclude Include="..\Sources\Entity\Shape.h" />
     <ClInclude Include="..\Sources\Entity\Sky.h" />

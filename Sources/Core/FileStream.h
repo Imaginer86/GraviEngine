@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <list>
+//#include <list>
 #include <string>
 #include <fstream>
 
@@ -12,7 +12,7 @@ namespace Core
 	{
 	public:
 
-		FileStream();
+		FileStream(){};
 		virtual ~FileStream(){};
 
 		bool OpenRead(const std::string& fileName);
@@ -28,16 +28,11 @@ namespace Core
 
 		bool GetNode(Node& node_);
 		bool GetNode(std::string& node, const std::string& name);
+
 	private:
+
 		Node node;
-		//std::list<Node>::iterator currentNode;
-
-		std::fstream file;		
-	};
-
-	inline FileStream::FileStream()
-	{
-		//Nodes.clear();
-		//currentNode = Nodes.begin();
+		std::fstream file;
+		//std::filebuf fileBuf;;
 	};
 }

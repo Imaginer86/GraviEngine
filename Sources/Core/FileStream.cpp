@@ -1,4 +1,4 @@
-﻿#include "FileStream.h"
+#include "FileStream.h"
 
 #include <iostream>
 
@@ -33,8 +33,9 @@ bool FileStream::OpenWrite(const std::string& fileName)
 bool FileStream::OpenXML(const std::string& fileName)
 {
 	std::cout << "Open X3D " <<  fileName << std::endl;
-	file.open(fileName, std::ios::in);
-	if (file.is_open())
+	
+	//fileBuf.open(fileName, std::ios::in);
+	if (OpenRead(fileName))
 	{
 		Node node_;
 		while(ReadNode(node_))
@@ -66,57 +67,60 @@ std::string FileStream::GetLine()
 
 bool FileStream::GetNode(Node& node_)
 {
-	//if (currentNode == Nodes.end())
-	//{
-		//return false;
-	//}
-
 	node_ = node;
-	//++currentNode;
 	return true;
 }
 
 bool FileStream::ReadNode(Node& node_)
 {
-	Node nodeX;
 	std::string str;
-	for(file >> str; !file.eof() && (str.find('>') == -1 || str.size() > 1) ;file >> str)
-	{	
-		std::cout << str << " ";
-		int f = str.find('<');
-		std::cout << "f " << f << " ";
-		if ( f > -1)
+	file >> str;
+	int find = str.find('<');
+	if (find == -1)
+	{
+		return false;
+	}
+	else
+	{
+		while (find > -1)
 		{
-			std::string name(str.c_str() + 1, str.size());
-			nodeX.SetName(name);
-			std::cout << name << std::endl;
+			std::string nodeName = std::string(str.c_str() + 1, str.size() - 1);
+			Node nodeX;
+			nodeX.SetName(nodeName);
+			std::string key;
+			std::string value;
 
 			file >> str;
-			std::cout << str << " ";
-		
-				
-			if (str.find('<') > -1)
+
+			int find1 = str.find('=');
+			if (find1 > -1)
 			{
-				Node nodeChild;
-				while(ReadNode(nodeChild))
-				{
-					nodeX.AddChild(nodeChild);
-				}
+				key = std::string(str.c_str(), find1);
+				value = std::string(str.c_str() + find1, str.size() - find1);
+				nodeX.AddParam(key, value);
+				std::cout << "key " << key << std::endl;
+				std::cout << "value " << value << std::endl;
 			}
 			else
 			{
-				int pos;
-				if ( (pos = str.find('=')) > -1)
+				int find2 = str.find('>');
+				if (find2 > -1)
 				{
-					std::string value(str.c_str() + pos + 2, str.size() - pos + 1);
-					std::string key(str.c_str(), pos);						
-					
-					nodeX.AddParam(key, value);
+					node_.AddChild(nodeX);
+					std::cout << "Add " << node_.GetName() << " Child " << nodeX.GetName() << std::endl;
+					//return true;
+
+				}
+				else
+				{
+					std::cerr << "Cann't Read Node" << std::endl;
+					return false;
 				}
 			}
+
+			find = str.find('<');
 		}
-		node_  = nodeX;
+		return true;
 	}
-	std::cout << std::endl;
-	return true;
+
 }

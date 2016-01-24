@@ -1,4 +1,4 @@
-timeScale
+﻿timeScale
 UPF FPS UPS
 GraviMasses
 GraviAcc
@@ -46,3 +46,4 @@ m
 Pos
 Vel
 Color
+FileName.x3d

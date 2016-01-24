@@ -855,11 +855,12 @@ bool Game::LoadData(const std::string& fileName)
 		Shape* shape = new Shape(m, pos, vel, color);
 		shape->Init();
 
+		
 		std::string fileName;
-		dataFile >> fileName;
+		dataFile >> fileName;		
+		std::string fileNameL(fileName.begin(), fileName.end());
 		Core::FileStream fileStream;
-		//fileStream.OpenRead(fileName);
-		fileStream.OpenXML(fileName);
+		fileStream.OpenXML(fileNameL);
 
 		Core::Node node;
 
@@ -868,20 +869,16 @@ bool Game::LoadData(const std::string& fileName)
 			return false;
 		}
 
-//todo
+		fileStream.Close();
 
-		Core::Node nodeChild, nodeChild_;
-		if (!node.GetChild("Transform", nodeChild))
-		{
-			nodeChild.GetChild("Transform", nodeChild_);
-			for(nodeChild_; !nodeChild.GetChild("Transform", nodeChild_) && nodeChild.NumChild() > 0; nodeChild_.GetChild("Transform", nodeChild));
-		}
-		
-		if (node.GetName() == "Transform")
+
+		Core::Node nodeTransform;
+
+		if (node.GetNode("Transform", nodeTransform))
 		{
 
-			std::string str = nodeChild_.GetName();
-			std::cout << "Load Model Part: " <<str << std::endl;
+			std::string str = node.GetName();
+			std::cout << "Load Model Part: " << str << std::endl;
 
 			std::list<Vector3f> Coordinate;
 			std::list<unsigned> CoordIndex;

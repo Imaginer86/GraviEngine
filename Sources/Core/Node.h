@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <list>
 
 namespace Core
 {
@@ -24,6 +25,11 @@ namespace Core
 			return name;
 		}
 
+		unsigned SizeParam()
+		{
+			return Parameters.size();
+		}
+
 		void AddParam(const std::string& key_, const std::string& value_)
 		{
 			std::string key = key_;
@@ -35,12 +41,41 @@ namespace Core
 		{
 			std::map<std::string, std::string>::const_iterator ifind = Parameters.find( key );
 			
+			
+			
 			return ifind->second;
+		}
+
+		unsigned SizeChild()
+		{
+			return Nodes.size();
 		}
 
 		void AddChild(const Node& node_)
 		{
 			Nodes.push_back(node_);
+		}
+
+		bool GetNode(const std::string& name_, Node& node_)
+		{
+			if (name_ == name)
+			{
+				node_ = *this;
+				return true;
+			}
+			else
+			{
+				Node nodeChild;
+				if (GetChild(name_, nodeChild))
+				{
+					node_= nodeChild;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
 		}
 
 		bool GetChildFront(Node& node)
@@ -51,34 +86,36 @@ namespace Core
 			}
 			else
 			{
-				//node = *currentNode;
-				//++currentNode;
 				node = Nodes.front();
 				return true;
 			}
 		}
 
-		bool GetChild(const std::string& name, Node& node)
+		bool GetChild(const std::string& name_, Node& node_)
 		{
 			for(auto it = Nodes.begin(); it != Nodes.end(); ++it)
 			{
-				if (it->GetName() == name)
+				if (it->GetName() == name_)
 				{
-					node = *it;
+					node_ = *it;
+					return true;
+				}
+			}
+			for(auto it = Nodes.begin(); it != Nodes.end(); ++it)
+			{
+				Node nodeChild;				
+				if (it->GetChild(name_, nodeChild))
+				{
+					node_ = nodeChild;
 					return true;
 				}
 			}
 			return false;
 		}
 
-		unsigned NumChild()
-		{
-			return Nodes.size();
-		}
 	private:
 		std::string name;
 		std::map<std::string, std::string> Parameters;
 		std::list<Node> Nodes;
-		std::list<Node>::iterator currentNode;
 	};
 }

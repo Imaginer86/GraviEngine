@@ -20,11 +20,11 @@
 #include "Core/Node.h"
 #include "Core/FileStream.h"
 
-#include "Entity/Mass.h"
-#include "Entity/Box.h"
-#include "Entity/Smoke.h"
-#include "Entity/Shape.h"
-#include "Entity/Sky.h"
+#include "Physics/Mass.h"
+#include "Physics/Box.h"
+#include "Physics/Smoke.h"
+#include "Physics/Shape.h"
+#include "Physics/Sky.h"
 
 unsigned countAddEntities = 0;
 

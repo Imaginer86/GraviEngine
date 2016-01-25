@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "Types.h"
 #include "GameBase.h"
-#include "Entity/Entity.h"
-#include "Entity/Sky.h"
+#include "Physics/Entity.h"
+#include "Physics/Sky.h"
 #include "Math/Math.h"
 #include "Math/Quaternion.h"
 

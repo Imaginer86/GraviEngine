@@ -1,61 +1,20 @@
 ﻿#pragma once
-#include "../Math/Vector3f.h"
-#include "../Constans.h"
+#include "Mash.h"
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
-
 class Entity
 {
 public:
 	Entity();
-	virtual ~Entity();
-	Entity(const Vector3f& pos_);
-	Entity(const Entity& be_);
-
-	Vector3f GetPos()
-	{
-		return pos;
-	}
-
-	void SetPos(const Vector3f& pos_)
-	{
-		pos = pos_;
-	}
-
-private:
-	Vector3f pos;
-};
-
-inline Entity::Entity()
-:pos(0.0, 0.0, 0.0)
-{
-}
-
-inline Entity::~Entity()
-{
-}
-
-inline Entity::Entity(const Vector3f& pos_)
-:pos(pos_)
-{
-}
-
-inline Entity::Entity(const Entity& be_)
-{
-	*this = be_;
-}
-
-
-class Entity
-{
-public:
-	Entity();
-
 	Entity(float32 m_, const Vector3f& pos_, const Vector3f& vel_, const Math::Color4f& color_);
+	virtual ~Entity(){};
 
-	virtual ~Entity();
-
-	void applyForce(Vector3f& force_)
+	virtual void init()
+	{
+		force = Vector3f(0.0f, 0.0f, 0.0f);
+	}
+	
+	virtual void applyForce(const Vector3f& force_)
 	{
 		this->force += force_;					// The external force is added to the force of the mass
 	}
@@ -74,13 +33,6 @@ public:
 		// Change in position is velocity times the change in time
 	}
 
-	virtual void init()
-	{
-		force = Vector3f(0.0f, 0.0f, 0.0f);
-	}
-
-	virtual void Draw() {}
-
 	float32 GetMass()
 	{
 		return m;
@@ -91,6 +43,15 @@ public:
 		this->m = mass;
 	}
 
+	Vector3f GetPos()
+	{
+		return pos;
+	}
+
+	void SetPos(Vector3f pos_)
+	{
+		this->pos = pos_;
+	}
 
 	Vector3f GetVel()
 	{
@@ -112,14 +73,19 @@ public:
 		this->color = color_;
 	}
 
+	virtual void Draw() {}
+
 private:
+	Mash* Mashes;
 	float32 m;
+	Vector3f pos;
 	Vector3f vel;
 	Vector3f force;
 	Math::Color4f color;
 };
 
 inline Entity::Entity()
+:pos(0.0f, 0.0f, 0.0f)
 ,vel(0.0f, 0.0f, 0.0)	
 ,force(0.0f, 0.0f, 0.0)
 ,color(1.0f, 1.0f, 1.0f, 1.0)
@@ -127,14 +93,9 @@ inline Entity::Entity()
 }
 
 inline Entity::Entity(float32 m_, const Vector3f& pos_, const Vector3f& vel_, const Math::Color4f& color_)
-:BaseEntity(pos_)
+:pos(pos_)
 ,m(m_)
 ,vel(vel_)
 ,color(color_)
 ,force(0.0f, 0.0f, 0.0f)
 {}
-
-inline Entity::~Entity()
-{
-
-}

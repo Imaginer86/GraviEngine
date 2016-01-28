@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Types.h"
+#include "../Math/Vector2f.h"
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
@@ -7,17 +7,11 @@ namespace Render
 {
 	class Render
 	{
-	protected:
-
-		Render()
-		{
-		}
-
 	public:
 
-		virtual ~Render()
-		{
-		}
+		Render(){}
+
+		virtual ~Render(){}
 
 		//static Render& Instance()
 		//{
@@ -39,7 +33,7 @@ namespace Render
 		virtual void SetGLLight() = 0;
 		virtual int LoadGLTextures() = 0;
 
-		//virtual void SetLight(const float32 *LightAmbient, const float32 *gLightDiffuse, const float32 *gLightPosition) = 0;
+		//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition) = 0;
 
 		virtual void EnableLight() = 0;
 		virtual void DisableLight() = 0;
@@ -51,9 +45,9 @@ namespace Render
 
 		virtual void DrawDebugInfo() = 0;
 		virtual void DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const = 0;
-		virtual void DrawPlane(const Vector3f& pos, const Vector3f& axic, const float32 angle, const ::Math::Color4f& color) const = 0;
-		virtual void DrawBox(const Vector3f& pos, const Vector3f& size, const Vector3f& axic, const float32 angle, const ::Math::Color4f& color) const  = 0;
-		virtual void DrawSphere(const Vector3f& pos, const float32 r, const ::Math::Color4f& color) const  = 0;
+		virtual void DrawPlane(const Vector3f& pos, const Vector2f& size, const Vector3f& axic, const float angle, const ::Math::Color4f& color) const = 0;
+		virtual void DrawBox(const Vector3f& pos, const Vector3f& size, const Vector3f& axic, const float angle, const ::Math::Color4f& color) const  = 0;
+		virtual void DrawSphere(const Vector3f& pos, const float r, const ::Math::Color4f& color) const  = 0;
 
 		virtual void SetLightOn(bool LightOn_) = 0;
 		virtual bool GetLightOn() = 0;

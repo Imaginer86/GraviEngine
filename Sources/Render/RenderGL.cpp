@@ -40,8 +40,8 @@ GLuint	gFontBase;				// Base Display List For The Font Set
 //GLUquadricObj	*q;										// Quadratic For Drawing A Sphere
 //
 //extern unsigned gSceneNum;
-//extern float32 gTimeScale;
-//extern float32 gTime;
+//extern float gTimeScale;
+//extern float gTime;
 //
 // RGB Image Structure
 //
@@ -124,7 +124,7 @@ void RenderGL::KillFont()									// Delete The Font
 
 void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 {
-	float32		length = 0;								// Used To Find The Length Of The Text
+	float		length = 0;								// Used To Find The Length Of The Text
 	char		text[256];								// Holds Our String
 	va_list		ap;										// Pointer To List Of Arguments
 
@@ -507,7 +507,7 @@ void RenderGL::BeginDraw()
 
 	Quaternion q = Camera::Instance().GetQuaternion();
 	Vector3f cameraAxic;
-	float32 cameraAngle;
+	float cameraAngle;
 	q.toAxisAngle(cameraAxic, cameraAngle);
 	glRotatef(cameraAngle, cameraAxic.x, cameraAxic.y, cameraAxic.z);
 
@@ -549,7 +549,7 @@ void RenderGL::DrawDebugInfo()
 	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
 	Quaternion q = Camera::Instance().GetQuaternion();
 	Vector3f axic;
-	float32 angle;
+	float angle;
 	q.toAxisAngle(axic, angle);
 	glTranslatef(0.0f, -1.0f, 0);
 	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
@@ -560,7 +560,7 @@ void RenderGL::DrawDebugInfo()
 	//SetGLLight();
 }
 
-void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& color) const
+void RenderGL::DrawSphere(const Vector3f& pos, const float r, const Color4f& color) const
 {
 	GLUquadricObj *quadratic;
 	quadratic = gluNewQuadric();
@@ -600,7 +600,7 @@ void RenderGL::DrawSphere(const Vector3f& pos, const float32 r, const Color4f& c
 
 }
 
-void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3f& axic, const float32 angle, const Color4f& color) const
+void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3f& axic, const float angle, const Color4f& color) const
 {
 	glPushMatrix();
 
@@ -654,9 +654,29 @@ void RenderGL::DrawBox(const Vector3f& pos_, const Vector3f& size, const Vector3
 	glPopMatrix();
 }
 
-void RenderGL::DrawPlane(const Vector3f& pos_, const Vector3f& axic, const float32 angle, const Color4f& color) const
+void RenderGL::DrawPlane(const Vector3f& pos, const Vector2f& size, const Vector3f& axic, const float angle, const ::Math::Color4f& color) const
 {
-	pos_;axic; angle; color;
+	glPushMatrix();
+
+	glTranslatef(pos.x, pos.y, pos.z);
+
+	glRotatef(angle, axic.x, axic.y, axic.z);	
+	
+
+	glColor4f(color.r, color.g, color.b, color.a);
+
+	glBegin(GL_QUADS);       // Начало рисования четырехугольников
+	// Передняя грань
+	glNormal3f( 0.0f, 0.0f, 1.0f);     // Нормаль указывает на наблюдателя
+
+	glVertex3f(- size.x / 2.0f, - size.y / 2.0f, pos.z / 2.0f); // Точка 1 (Перед)
+	glVertex3f(- size.x / 2.0f, + size.y / 2.0f, pos.z / 2.0f); // Точка 2 (Перед)
+	glVertex3f(+ size.x / 2.0f, + size.y / 2.0f, pos.z / 2.0f); // Точка 3 (Перед)
+	glVertex3f(+ size.x / 2.0f, - size.y / 2.0f, pos.z / 2.0f); // Точка 4 (Перед)
+
+	glEnd();
+
+	glPopMatrix();	
 }
 
 void RenderGL::DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const

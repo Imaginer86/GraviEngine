@@ -4,7 +4,9 @@
 #include <GL\gl.h>
 #include <GL\glu.h>
 
-void Wave::Update(float32 dt_)
+using namespace Physics;
+
+void Wave::Update(float dt_)
 {
 	this->tGame += 5*dt_;
 }
@@ -13,7 +15,7 @@ void Wave::Draw()
 {
 	glPushMatrix();
 
-	float32 hangle = 360.0f/float32(numRo);
+	float hangle = 360.0f/float(numRo);
 
 	glTranslatef(0.0f, 4.0f, 0.0f);
 
@@ -32,10 +34,10 @@ void Wave::Draw()
 	{
 		for (unsigned ro = 0; ro < numRo; ro++)
 		{
-			float32 angle0 = Math::degreesToRadians(hangle*ro);
-			float32 angle1 = Math::degreesToRadians(hangle*(ro + 1));
-			float32 dist0 = r*w;
-			float32 dist1 = (r + 1)*w;
+			float angle0 = Math::degreesToRadians(hangle*ro);
+			float angle1 = Math::degreesToRadians(hangle*(ro + 1));
+			float dist0 = r*w;
+			float dist1 = (r + 1)*w;
 
 			pos0 = Vector3f(dist0*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist0 - tGame)) / (dist0 + tGame), dist0*sin(angle0));
 			pos1 = Vector3f(dist1*cos(angle0), 3 * sqrt(tGame) * sin(2 * (dist1 - tGame)) / (dist1 + tGame), dist1*sin(angle0));

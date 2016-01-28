@@ -166,7 +166,7 @@ void Master::Tick(long dtick)
 	{
 		for (i; i < UPF; ++i)
 		{
-			float32 dt = float32(dtick) * TicksPerSrcond;
+			float dt = float(dtick) * TicksPerSrcond;
 			Update(dt);
 		}
 	}
@@ -179,7 +179,7 @@ void Master::Tick(long dtick)
 	++countTick;
 }
 
-void Master::Update(float32 dt)
+void Master::Update(float dt)
 {	
 	gTime += gTimeScale*dt;
 	gmGame->Update(gTimeScale*dt);

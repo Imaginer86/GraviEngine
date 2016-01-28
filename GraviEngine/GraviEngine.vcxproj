@@ -22,10 +22,11 @@
     <ClCompile Include="..\Sources\Math\Tensus.cpp" />
     <ClCompile Include="..\Sources\Physics\Box.cpp" />
     <ClCompile Include="..\Sources\Physics\Line.cpp" />
-    <ClCompile Include="..\Sources\Physics\Mass.cpp" />
+    <ClCompile Include="..\Sources\Physics\Plane.cpp" />
     <ClCompile Include="..\Sources\Physics\Shape.cpp" />
     <ClCompile Include="..\Sources\Physics\Sky.cpp" />
     <ClCompile Include="..\Sources\Physics\Smoke.cpp" />
+    <ClCompile Include="..\Sources\Physics\Sphere.cpp" />
     <ClCompile Include="..\Sources\Physics\Star.cpp" />
     <ClCompile Include="..\Sources\Physics\Transform.cpp" />
     <ClCompile Include="..\Sources\Physics\Video.cpp" />
@@ -53,16 +54,18 @@
     <ClInclude Include="..\Sources\Math\Quaternion.h" />
     <ClInclude Include="..\Sources\Math\Random.h" />
     <ClInclude Include="..\Sources\Math\Tensus.h" />
+    <ClInclude Include="..\Sources\Math\Vector2f.h" />
     <ClInclude Include="..\Sources\Math\Vector3f.h" />
     <ClInclude Include="..\Sources\Math\VectorField.h" />
     <ClInclude Include="..\Sources\Physics\Box.h" />
     <ClInclude Include="..\Sources\Physics\Entity.h" />
     <ClInclude Include="..\Sources\Physics\Line.h" />
     <ClInclude Include="..\Sources\Physics\Mash.h" />
-    <ClInclude Include="..\Sources\Physics\Mass.h" />
+    <ClInclude Include="..\Sources\Physics\Plane.h" />
     <ClInclude Include="..\Sources\Physics\Shape.h" />
     <ClInclude Include="..\Sources\Physics\Sky.h" />
     <ClInclude Include="..\Sources\Physics\Smoke.h" />
+    <ClInclude Include="..\Sources\Physics\Sphere.h" />
     <ClInclude Include="..\Sources\Physics\Star.h" />
     <ClInclude Include="..\Sources\Physics\Transform.h" />
     <ClInclude Include="..\Sources\Physics\Video.h" />
@@ -71,7 +74,6 @@
     <ClInclude Include="..\Sources\Render\Render.h" />
     <ClInclude Include="..\Sources\Render\RenderGL.h" />
     <ClInclude Include="..\Sources\SceneBase.h" />
-    <ClInclude Include="..\Sources\Types.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79508FD0-94D2-48BB-994B-080F40938F69}</ProjectGuid>

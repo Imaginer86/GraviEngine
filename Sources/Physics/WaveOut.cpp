@@ -5,11 +5,12 @@
 #include <GL\glu.h>
 
 using namespace Math;
+using namespace Physics;
 
-bool Intersect(float32 x1, float32 y1, float32 x2, float32 y2, float32 x3, float32 y3, float32 x4, float32 y4, Vector3f& pos)
+bool Intersect(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, Vector3f& pos)
 {
-//	float32 ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
-	float32 ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
+//	float ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
+	float ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / ((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1));
 
 	if (ub >= 0 && ub <= 1)
 	{
@@ -26,7 +27,7 @@ void WaveOut::Draw()
 {
 	glPushMatrix();
 
-	float32 hangle = 360.0f/float32(numRo);
+	float hangle = 360.0f/float(numRo);
 
 	glBegin(GL_QUADS);       // Начало рисования четырехугольников
 
@@ -42,10 +43,10 @@ void WaveOut::Draw()
 	{
 		for (unsigned ro = 0; ro < numRo /2; ro++)
 		{
-			float32 angle0 = degreesToRadians(hangle*float32(ro));
-			float32 angle1 = degreesToRadians(hangle*float32(ro + 1));
-			//float32 dist0 = r*w;
-			float32 dist1 = (r + 1)*w;
+			float angle0 = degreesToRadians(hangle*float(ro));
+			float angle1 = degreesToRadians(hangle*float(ro + 1));
+			//float dist0 = r*w;
+			float dist1 = (r + 1)*w;
 
 			//pos0 = Vector3(dist0*cosf(angle0), 0.0f, dist0*sinf(angle0));
 			pos1 = Vector3f(dist1*cos(angle0), 0.0f, dist1*sin(angle0));

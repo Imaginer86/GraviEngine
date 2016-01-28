@@ -2,6 +2,9 @@
 #include "../Math/Quaternion.h"
 #include "../Math/Vector3f.h"
 
+namespace Physics
+{
+
 class Star
 {
 public:
@@ -14,3 +17,5 @@ public:
 	Quaternion	q;
 	Vector3f R;
 };
+
+}

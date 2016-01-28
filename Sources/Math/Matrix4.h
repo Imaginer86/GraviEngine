@@ -12,20 +12,20 @@
 class Matrix4
 {
 	friend Vector3f operator*(const Vector3f &lhs, const Matrix4 &rhs);
-	friend Matrix4 operator*(float32 scalar, const Matrix4 &rhs);
+	friend Matrix4 operator*(float scalar, const Matrix4 &rhs);
 
 public:
 	static const Matrix4 IDENTITY;
 
 	Matrix4() {}
-	Matrix4(float32 m11, float32 m12, float32 m13, float32 m14,
-		float32 m21, float32 m22, float32 m23, float32 m24,
-		float32 m31, float32 m32, float32 m33, float32 m34,
-		float32 m41, float32 m42, float32 m43, float32 m44);
+	Matrix4(float m11, float m12, float m13, float m14,
+		float m21, float m22, float m23, float m24,
+		float m31, float m32, float m33, float m34,
+		float m41, float m42, float m43, float m44);
 	~Matrix4() {}
 
-	float32 *operator[](int row);
-	const float32 *operator[](int row) const;
+	float *operator[](int row);
+	const float *operator[](int row) const;
 
 	bool operator==(const Matrix4 &rhs) const;
 	bool operator!=(const Matrix4 &rhs) const;
@@ -33,22 +33,22 @@ public:
 	Matrix4 &operator+=(const Matrix4 &rhs);
 	Matrix4 &operator-=(const Matrix4 &rhs);
 	Matrix4 &operator*=(const Matrix4 &rhs);
-	Matrix4 &operator*=(float32 scalar);
-	Matrix4 &operator/=(float32 scalar);
+	Matrix4 &operator*=(float scalar);
+	Matrix4 &operator/=(float scalar);
 
 	Matrix4 operator+(const Matrix4 &rhs) const;
 	Matrix4 operator-(const Matrix4 &rhs) const;
 	Matrix4 operator*(const Matrix4 &rhs) const;
-	Matrix4 operator*(float32 scalar) const;
-	Matrix4 operator/(float32 scalar) const;
+	Matrix4 operator*(float scalar) const;
+	Matrix4 operator/(float scalar) const;
 
-	//void fromHeadPitchRoll(float32 headDegrees, float32 pitchDegrees, float32 rollDegrees);
+	//void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
 	void identity();
-	//void rotate(const Vector3 &axis, float32 degrees);
-	//void toHeadPitchRoll(float32 &headDegrees, float32 &pitchDegrees, float32 &rollDegrees) const;
+	//void rotate(const Vector3 &axis, float degrees);
+	//void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
 
 private:
-	float32 mtx[4][4];
+	float mtx[4][4];
 };
 
 inline Vector3f operator*(const Vector3f &lhs, const Matrix4 &rhs)
@@ -58,15 +58,15 @@ inline Vector3f operator*(const Vector3f &lhs, const Matrix4 &rhs)
 		(lhs.x * rhs.mtx[0][2]) + (lhs.y * rhs.mtx[1][2]) + (lhs.z * rhs.mtx[2][2]));
 }
 
-inline Matrix4 operator*(float32 scalar, const Matrix4 &rhs)
+inline Matrix4 operator*(float scalar, const Matrix4 &rhs)
 {
 	return rhs * scalar;
 }
 
-inline Matrix4::Matrix4(float32 m11, float32 m12, float32 m13, float32 m14,
-						float32 m21, float32 m22, float32 m23, float32 m24,
-						float32 m31, float32 m32, float32 m33, float32 m34,
-						float32 m41, float32 m42, float32 m43, float32 m44)
+inline Matrix4::Matrix4(float m11, float m12, float m13, float m14,
+						float m21, float m22, float m23, float m24,
+						float m31, float m32, float m33, float m34,
+						float m41, float m42, float m43, float m44)
 {
 	mtx[0][0] = m11, mtx[0][1] = m12, mtx[0][2] = m13, mtx[0][3] = m14;
 	mtx[1][0] = m21, mtx[1][1] = m22, mtx[1][2] = m23, mtx[1][3] = m24;
@@ -74,12 +74,12 @@ inline Matrix4::Matrix4(float32 m11, float32 m12, float32 m13, float32 m14,
 	mtx[3][0] = m41, mtx[3][1] = m42, mtx[3][2] = m43, mtx[3][3] = m44;
 }
 
-inline float32 *Matrix4::operator[](int row)
+inline float *Matrix4::operator[](int row)
 {
 	return mtx[row];
 }
 
-inline const float32 *Matrix4::operator[](int row) const
+inline const float *Matrix4::operator[](int row) const
 {
 	return mtx[row];
 }
@@ -159,7 +159,7 @@ inline Matrix4 &Matrix4::operator*=(const Matrix4 &rhs)
 	return *this;
 }
 
-inline Matrix4 &Matrix4::operator*=(float32 scalar)
+inline Matrix4 &Matrix4::operator*=(float scalar)
 {
 	mtx[0][0] *= scalar, mtx[0][1] *= scalar, mtx[0][2] *= scalar, mtx[0][3] *= scalar;
 	mtx[1][0] *= scalar, mtx[1][1] *= scalar, mtx[1][2] *= scalar, mtx[1][3] *= scalar;
@@ -168,7 +168,7 @@ inline Matrix4 &Matrix4::operator*=(float32 scalar)
 	return *this;
 }
 
-inline Matrix4 &Matrix4::operator/=(float32 scalar)
+inline Matrix4 &Matrix4::operator/=(float scalar)
 {
 	mtx[0][0] /= scalar, mtx[0][1] /= scalar, mtx[0][2] /= scalar, mtx[0][3] /= scalar;
 	mtx[1][0] /= scalar, mtx[1][1] /= scalar, mtx[1][2] /= scalar, mtx[1][3] /= scalar;
@@ -198,14 +198,14 @@ inline Matrix4 Matrix4::operator*(const Matrix4 &rhs) const
 	return tmp;
 }
 
-inline Matrix4 Matrix4::operator*(float32 scalar) const
+inline Matrix4 Matrix4::operator*(float scalar) const
 {
 	Matrix4 tmp(*this);
 	tmp *= scalar;
 	return tmp;
 }
 
-inline Matrix4 Matrix4::operator/(float32 scalar) const
+inline Matrix4 Matrix4::operator/(float scalar) const
 {
 	Matrix4 tmp(*this);
 	tmp /= scalar;
@@ -220,17 +220,17 @@ inline void Matrix4::identity()
 	mtx[3][0] = 0.0f, mtx[3][1] = 0.0f, mtx[3][2] = 0.0f, mtx[3][3] = 1.0f;
 }
 
-//inline void Matrix4::fromHeadPitchRoll(float32 headDegrees, float32 pitchDegrees, float32 rollDegrees)
+//inline void Matrix4::fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees)
 //{
 
 //}
 
 /*
-inline void Matrix4::toHeadPitchRoll(float32 &headDegrees, float32 &pitchDegrees, float32 &rollDegrees) const
+inline void Matrix4::toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const
 {
- 	float32 D = -asinf( mtx[0][2]);
+ 	float D = -asinf( mtx[0][2]);
  	pitchDegrees = D;        // Считаем ось Y 
- 	float32 C           =  cosf( pitchDegrees );
+ 	float C           =  cosf( pitchDegrees );
  	pitchDegrees    *= Math::RADIANS;
  
  	if ( fabs( C ) > 0.005 )             // ось зафиксирована? 

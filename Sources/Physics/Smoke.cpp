@@ -3,8 +3,9 @@
 #include "../Render/RenderGL.h"
 
 using namespace Math;
+using namespace Physics;
 
-void Smoke::Init(float32 m_, const Vector3f& pos_, const Vector3f& rand_, const Vector3f& vel0_, const Vector3f& vel_, const Color4f& color_, unsigned numParticles_, bool createCollision_)
+void Smoke::Init(float m_, const Vector3f& pos_, const Vector3f& rand_, const Vector3f& vel0_, const Vector3f& vel_, const Color4f& color_, unsigned numParticles_, bool createCollision_)
 {
 	numParticles = numParticles_;
 	createCollision = createCollision_;
@@ -52,7 +53,7 @@ void Smoke::Draw()
 	}
 }
 
-void Smoke::applyAcc(Vector3f& acc, float32 dt)
+void Smoke::applyAcc(Vector3f& acc, float dt)
 {
 	for (unsigned i = 0; i < numParticles; i++)
 	{
@@ -62,7 +63,7 @@ void Smoke::applyAcc(Vector3f& acc, float32 dt)
 }
 
 
-void Smoke::simulateForce(float32 dt)
+void Smoke::simulateForce(float dt)
 {
 	for (unsigned i = 0; i < numParticles; i++)
 	{
@@ -70,7 +71,7 @@ void Smoke::simulateForce(float32 dt)
 	}
 }
 
-void Smoke::ApplyWind(float32 dt)
+void Smoke::ApplyWind(float dt)
 {
 	Vector3f windAcc = GetVel();
 	applyAcc(windAcc, dt);

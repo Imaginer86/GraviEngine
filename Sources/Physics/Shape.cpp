@@ -8,6 +8,8 @@
 #include "../Math/Color.h"
 #include "../Render/RenderGL.h"
 
+using namespace Physics;
+
 void Shape::Draw()
 {
 	glPushMatrix();

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "../Types.h"
 #include "../Math/Vector3f.h"
 #include "../Math/Quaternion.h"
 
@@ -18,13 +17,13 @@ public:
 		return SingleCamera;
 	}
 
-	void RotateUpDown(float32 anglef);
+	void RotateUpDown(float anglef);
 
-	void RotateLR(float32 angle);
+	void RotateLR(float angle);
 
-	void MoveCamera(float32 speed);		
+	void MoveCamera(float speed);		
 
-	void MoveLRCamera(float32 speed);
+	void MoveLRCamera(float speed);
 
 	Vector3f GetView();
 

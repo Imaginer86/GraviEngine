@@ -6,6 +6,9 @@
 
 //#include "Star.h"
 
+namespace Physics
+{
+
 class Sky
 {
 public:
@@ -35,9 +38,11 @@ public:
 private:
 	unsigned numStars;
 	//Quaternion *q;
-	float32 RMax;
-	float32 RMin;
+	float RMax;
+	float RMin;
 	Vector3f *Pos;
-	float32 *r;
+	float *r;
 	Math::Color4f *color;
 };
+
+}

@@ -5,6 +5,10 @@
 #include <fstream>
 
 #include "Node.h"
+#include "../Math/Vector2f.h"
+#include "../Math/Vector3f.h"
+#include "../Math/Quaternion.h"
+#include "../Math/Color.h"
 
 namespace Core
 {
@@ -20,14 +24,23 @@ namespace Core
 
 		bool OpenXML(const std::string& fileName);
 
-		bool ReadNode(Node& node_);
-
 		void Close();
 
-		std::string GetLine();
+		bool Eof();
+
+		bool ReadNode(Node& node_);
 
 		bool GetNode(Node& node_);
 		bool GetNode(std::string& node, const std::string& name);
+
+		std::string GetString();
+		bool GetBool();
+		float GetFloat();
+		unsigned GetUnsigned();
+		Vector2f GetVector2f();
+		Vector3f GetVector3f();
+		Quaternion GetQuaternion();
+		Math::Color4f GetColor();
 
 	private:
 

@@ -15,8 +15,8 @@ public:
 
 	void randomize();
 
-	float32 randf();
-	float32 randfd();
+	float randf();
+	float randfd();
 
-	float32 randf(float32 a, float32 b);
+	float randf(float a, float b);
 };

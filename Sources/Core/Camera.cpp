@@ -30,7 +30,7 @@ Camera::~Camera()
 //	this->q.fromAxisAngle(view-pos, (view-pos).dotProduct(Up));
 //}
 
-void Camera::RotateUpDown(float32 anglef)
+void Camera::RotateUpDown(float anglef)
 {
 	Quaternion qn;
 	qn.fromAxisAngle(Vector3f(-1, 0, 0), anglef);
@@ -39,7 +39,7 @@ void Camera::RotateUpDown(float32 anglef)
 	q.normalize();
 }
 
-void Camera::RotateLR(float32 anglef)
+void Camera::RotateLR(float anglef)
 {
 	Vector3f axic(0, 1, 0);
 	Quaternion qn;
@@ -57,13 +57,13 @@ void Camera::RotateLR(float32 anglef)
  	return view;
 }
 
-void Camera::MoveCamera(float32 speed)
+void Camera::MoveCamera(float speed)
 {
 	Vector3f v = GetView();
 	pos += v*speed;
 }
 
-void Camera::MoveLRCamera(float32 speed)
+void Camera::MoveLRCamera(float speed)
 {
 	Vector3f b(0,-1,0);
 	Vector3f v = GetView();

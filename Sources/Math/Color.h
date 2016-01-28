@@ -3,10 +3,10 @@
 namespace Math
 {
 	struct Color4f{
-		float32 r;
-		float32 g;
-		float32 b;
-		float32 a;
+		float r;
+		float g;
+		float b;
+		float a;
 
 		Color4f()
 		:r(0.0f)
@@ -15,7 +15,7 @@ namespace Math
 		,a(0.0f)
 		{}
 
-		Color4f(float32 r, float32 g, float32 b, float32 a)
+		Color4f(float r, float g, float b, float a)
 		:r(r)
 		,g(g)
 		,b(b)

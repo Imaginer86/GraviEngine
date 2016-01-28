@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <string>
 
-#include "Types.h"
 #include "Math/Quaternion.h"
 
 class GameBase
@@ -25,7 +24,7 @@ public:
 
 	virtual void Release() = 0;							// delete the entities created;
 
-	virtual void Update(float32 dt) = 0;
+	virtual void Update(float dt) = 0;
 
 	virtual void Draw() = 0;
 

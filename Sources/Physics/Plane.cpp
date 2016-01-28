@@ -1,9 +1,10 @@
-﻿#include "Box.h"
+﻿#include "Plane.h"
+
 #include "../Render/RenderGL.h"
 
 using namespace Physics;
 
-void Box::simulateForce(float dt)
+void Plane::simulateForce(float dt)
 {
 	Entity::simulateForce(dt);
 	Quaternion rotate = qVel;	
@@ -15,10 +16,10 @@ void Box::simulateForce(float dt)
 	q *= rotate;
 }
 
-void Box::Draw()
+void Plane::Draw()
 {
 	Vector3f axic;
 	float angle;
 	q.toAxisAngle(axic, angle);
-	Render::RenderGL::Instance().DrawBox(GetPos(), size, axic, angle, GetColor());
+	Render::RenderGL::Instance().DrawPlane(GetPos(), size, axic, angle, GetColor());
 }

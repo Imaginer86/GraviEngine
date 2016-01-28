@@ -1,9 +1,10 @@
-﻿#include "Mass.h"
+﻿#include "Sphere.h"
 #include "../Render/RenderGL.h"
 
 using namespace Math;
+using namespace Physics;
 
-void Mass::Set(float32 m_, float32 r_, Vector3f pos_, Vector3f vel_, Color4f color_)
+void Sphere::Set(float m_, float r_, Vector3f pos_, Vector3f vel_, Color4f color_)
 {
 	r = r_;
 	SetPos(pos_);
@@ -12,7 +13,7 @@ void Mass::Set(float32 m_, float32 r_, Vector3f pos_, Vector3f vel_, Color4f col
 	SetMass(m_);
 }
 
-void Mass::Draw()
+void Sphere::Draw()
 {
 	Render::RenderGL::Instance().DrawSphere(GetPos(), r, GetColor());
 }

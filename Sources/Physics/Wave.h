@@ -2,6 +2,9 @@
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
+namespace Physics
+{
+
 class Wave
 {
 public:
@@ -10,7 +13,7 @@ public:
 	{}
 	virtual ~Wave(){}
 
-	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float32 w_, const Math::Color4f& _color)
+	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float w_, const Math::Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -18,12 +21,14 @@ public:
 		w = w_;
 		color = _color;
 	}
-	virtual void Update(float32 dt_);
+	virtual void Update(float dt_);
 	virtual void Draw();
 private:
-	float32 tGame;
+	float tGame;
 	Vector3f pos;
 	unsigned numR, numRo;
-	float32 w;
+	float w;
 	Math::Color4f color;
 };
+
+}

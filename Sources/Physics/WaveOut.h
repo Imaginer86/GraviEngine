@@ -2,6 +2,9 @@
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
+namespace Physics
+{
+
 class WaveOut
 {
 public:
@@ -9,7 +12,7 @@ public:
 	{}
 	virtual ~WaveOut(){}
 
-	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float32 w_, float32 width_, float32 height_, const Math::Color4f& _color)
+	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float w_, float width_, float height_, const Math::Color4f& _color)
 	{
 		pos = pos_;
 		numR = numR_;
@@ -23,7 +26,9 @@ public:
 private:
 	Vector3f pos, posW;
 	unsigned numR, numRo;
-	float32 w;
-	float32 width, height;
+	float w;
+	float width, height;
 	Math::Color4f color;
 };
+
+}

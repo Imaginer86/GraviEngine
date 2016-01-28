@@ -1,9 +1,10 @@
 ﻿#pragma once
-#include "Types.h"
 #include "GameBase.h"
 #include "Physics/Entity.h"
 #include "Physics/Sky.h"
 #include "Math/Math.h"
+#include "Math/Vector2f.h"
+#include "Math/Vector3f.h"
 #include "Math/Quaternion.h"
 
 
@@ -25,7 +26,7 @@ public:
 
 	virtual void Release();							// delete the entities created;
 
-	virtual void Update(float32 dt);
+	virtual void Update(float dt);
 
 	virtual void Draw();
 
@@ -33,20 +34,24 @@ public:
 
 	virtual bool LoadData(const std::string& fileName);
 
-	void AddMass(float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
+	void AddSphere(float m, float r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
 
-	void AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
+	void AddPlane(float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
+
+	void AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
 
 	void AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
 
+	bool AddModel(const std::string& fileName, const float m, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
+
 	Vector3f GraviForce(int a, int b);
 
-	void SimVel(float32 dt);
-	void Solve(float32 dt);							// no implementation because no forces are wanted in this basic container;
- 	void Simulate(float32 dt);					// Iterate the masses by the change in time;
-	void AddGraviAcc(float32 dt);
-	void AddWindAcc(float32 dt);
-	void Collision(float32 dt);
+	void SimVel(float dt);
+	void Solve(float dt);							// no implementation because no forces are wanted in this basic container;
+ 	void Simulate(float dt);					// Iterate the masses by the change in time;
+	void AddGraviAcc(float dt);
+	void AddWindAcc(float dt);
+	void Collision(float dt);
 
 	bool InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3);
 
@@ -64,14 +69,14 @@ public:
 		return numEntitys;
 	}
 
-	void SetBGraviMasses(bool bGraviMasses_)
+	void SetBGraviSpherees(bool bGraviSpherees_)
 	{
-		bGraviMasses = bGraviMasses_;
+		bGraviSpherees = bGraviSpherees_;
 	}
 
-	bool GetBGraviMasses()
+	bool GetBGraviSpherees()
 	{
-		return bGraviMasses;
+		return bGraviSpherees;
 	}
 
 	void SetBGraviAcc(bool bGraviAcc_)
@@ -109,14 +114,14 @@ public:
 		graviAcc = graviAcc_;
 	}
 
-	void SetNumMasses(unsigned numMasses_)
+	void SetNumSpherees(unsigned numSpherees_)
 	{
-		numMasses = numMasses_;
+		numSpherees = numSpherees_;
 	}
 
-	unsigned GetNumMasses()
+	unsigned GetNumSpherees()
 	{
-		return numMasses;
+		return numSpherees;
 	}
 
 	void SetNumBoxes(unsigned numBoxes_)
@@ -162,27 +167,30 @@ public:
 private:
 	std::string  gSceneName;
 
-	unsigned numMasses;
+	unsigned countAddEntities;
+
+	unsigned numSpherees;
 	unsigned numBoxes;
 	unsigned numSmokers;
 	unsigned numModels;
 
-	bool bGraviMasses;
+	bool bGraviSpherees;
 	bool bGraviAcc;
 	bool bWindAcc;
 	bool bCollisions;
 
 	unsigned numEntitys;
-	Entity** Entities;
+	Physics::Entity** Entities;
 
 	Vector3f graviAcc;
 
-	Sky* mSky;
+	Physics::Sky* mSky;
 };
 
 inline Game::Game()
-: numEntitys(0)
-, bGraviMasses(false)
+: countAddEntities(0)
+, numEntitys(0)
+, bGraviSpherees(false)
 , bGraviAcc(false)
 , bWindAcc(false)
 , bCollisions(false)

@@ -23,7 +23,7 @@
 // 
 // }
 // 
-// void GameBase::Update(float32 dt)
+// void GameBase::Update(float dt)
 // {
 // 	dt;
 // }

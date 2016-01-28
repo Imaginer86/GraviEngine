@@ -5,7 +5,9 @@
 #include "../Render/RenderGL.h"
 #include "../Math/Math.h"
 
-static const float32 dist = 20;
+using namespace Physics;
+
+static const float dist = 20;
 
 Star::Star()
 {
@@ -46,5 +48,5 @@ void Star::Draw()
 {
  	//Vector3 s = this->q.rotate(Vector3(this->R.x, this->R.y, this->R.z));
 	//Color4f color = Color4f(Math::randf(), Math::randf() + 1.0f, Math::randf(), Math::randf());	
-	//RenderGL::Instance().DrawSphere(R, float32(rand()) / float32(RAND_MAX), color);
+	//RenderGL::Instance().DrawSphere(R, float(rand()) / float(RAND_MAX), color);
 }

@@ -2,14 +2,17 @@
 #include <vector>
 #include "Entity.h"
 
+namespace Physics
+{
+
 class Shape: public Entity
 {
 public:
 
 	Shape(){};
-	Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_);								// Constructor	
+	Shape(float m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_);								// Constructor	
 
-	virtual ~Shape();
+	virtual ~Shape(){}
 
 	virtual void Init() {}
 	virtual void Draw();
@@ -47,7 +50,7 @@ private:
 	std::vector<std::vector<unsigned>> CoordIndex;		
 };
 
-inline Shape::Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_)
+inline Shape::Shape(float m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_)
 : Entity(m_, pos_, vel_, color_)
 //, numPart(numPart_)
 //, Coord(nullptr)
@@ -57,14 +60,4 @@ inline Shape::Shape(float32 m_, Vector3f pos_, Vector3f vel_, Math::Color4f colo
 {
 }
 
-inline Shape::~Shape()
-{
-	//for (std::list<Vector3f*>::iterator it = Coord.begin(); it != Coord.end(); ++it)
-	//{
-		//delete[] *it;
-	//}
-	//for (std::list<unsigned*>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
-	//{
-		//delete[] *it;
-	//}
 }

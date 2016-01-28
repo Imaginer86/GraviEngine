@@ -58,11 +58,69 @@ void FileStream::Close()
 	file.close();
 }
 
-std::string FileStream::GetLine()
+bool FileStream::Eof()
+{
+	return file.eof();
+}
+
+std::string FileStream::GetString()
 {
 	std::string str;
 	file >> str;
 	return str;
+}
+
+bool FileStream::GetBool()
+{
+	bool res;
+	file >> res;
+	return res;
+}
+
+float FileStream::GetFloat()
+{
+	float res;
+	file >> res;
+	return res;
+}
+
+unsigned FileStream::GetUnsigned()
+{
+	unsigned res;
+	file >> res;
+	return res;
+}
+
+Vector2f FileStream::GetVector2f()
+{
+	float x, y;
+	file >> x >> y;
+	Vector2f res(x, y);
+	return res;
+}
+
+Vector3f FileStream::GetVector3f()
+{
+	float x, y, z;
+	file >> x >> y >> z;
+	Vector3f res(x, y, z);
+	return res;
+}
+
+Quaternion FileStream::GetQuaternion()
+{
+	float x, y, z, w;
+	file >> x >> y >> z >> w;
+	Quaternion res(w, x, y, z);
+	return res;
+}
+
+Math::Color4f FileStream::GetColor()
+{
+	float r, g, b, a;
+	file >> r >> g >> b >> a;
+	Math::Color4f res(r, g, b, a);
+	return res;
 }
 
 bool FileStream::GetNode(Node& node_)

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <string>
-#include "../Types.h"
 #include "../GameBase.h"
 #include "../Math/Color.h"
 
@@ -22,7 +21,7 @@ namespace Core
 		bool Init(GameBase* gameBase_);
 		void Run();
 		void Tick(long dtick);
-		void Update(float32 dt);
+		void Update(float dt);
 		void Draw();
 		void Release();
 		void UpdateKeys();
@@ -32,17 +31,17 @@ namespace Core
 			unsigned  wParam,            // Дополнительная информация
 			unsigned  lParam);            // Дополнительная информация
 
-		float32 GetGTime()
+		float GetGTime()
 		{
 			return gTime;
 		}
 
-		void SetGTimeScale(float32 gTimeScale_)
+		void SetGTimeScale(float gTimeScale_)
 		{
 			gTimeScale = gTimeScale_;
 		}
 
-		float32 GetGTimeScale()
+		float GetGTimeScale()
 		{
 			return gTimeScale;
 		}
@@ -154,12 +153,12 @@ namespace Core
 		unsigned gfps, gups, gtps;
 		unsigned FPR, UPR, UPF;
 
-		float32 gTime;
-		float32 gTimeScale;
+		float gTime;
+		float gTimeScale;
 
-		float32 gAngleScale;
-		float32 gMoveScale;
-		float32 gShiftScale;
+		float gAngleScale;
+		float gMoveScale;
+		float gShiftScale;
 
 		unsigned gcWidth;
 		unsigned gcHeight;
@@ -181,7 +180,7 @@ namespace Core
 	,gTime(0.0)
 	,gTimeScale(1.0)
 	,gAngleScale(1.0)
-	,gMoveScale(1.0)
+	,gMoveScale(10.0)
 	,gShiftScale(1.0)
 	,countUpdate(0)
 	,countDraw(0)

@@ -13,20 +13,16 @@ LightPosition
 GraveAcc
 
 numStars
-
 numEntities
 
-numMases
-numBoxes
-numSmokes
-numShapes
-
+Sphere
 m
 r
 Pos
 Vel
 Color
 
+Box
 m
 Size
 Pos
@@ -35,6 +31,7 @@ AngleQ
 AngleVelQ
 Color
 
+Smoker
 numParticles
 Pos
 Rand
@@ -42,6 +39,7 @@ Vel0
 Vel
 Color
 
+Model
 m
 Pos
 Vel

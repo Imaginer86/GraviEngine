@@ -9,7 +9,7 @@ namespace Math
 
 struct Plane
 {
-	float32 a, b, c, d;
+	float a, b, c, d;
 	Plane()
 	: a(0.0f)
 	, b(0.0f)
@@ -17,20 +17,20 @@ struct Plane
 	, d(0.0f)
 	{}
 	
-	Plane(float32 a_, float32 b_, float32 c_, float32 d_)
+	Plane(float a_, float b_, float c_, float d_)
 	: a(a_)
 	, b(b_)
 	, c(c_)
 	, d(d_)
 	{}
 
-	Plane(Vector3f p1, Vector3f p2, Vector3f p3);
+	Plane(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3);
 
 	Vector3f proj(Vector3f p);
-	float32 distance(Vector3f p);
+	float distance(Vector3f p);
 };
 
-inline Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3)
+inline Plane::Plane(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3)
 {
 	Matrix3 A(	1.0f, p1.y, p1.z,
 				1.0f, p2.y, p2.z,
@@ -53,7 +53,7 @@ inline Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3)
 
 inline Vector3f Plane::proj(Vector3f p)
 {
-	float32 nn = a*a + b*b + c*c;
+	float nn = a*a + b*b + c*c;
 	Vector3f pr;
 	pr.x = (b*b*p.x + c*c*p.x - a*b*p.y - a*c*p.z - a*d) / nn;
 	pr.y = (a*a*p.y + c*c*p.y - a*b*p.x - b*c*p.z - b*d) / nn;
@@ -61,7 +61,7 @@ inline Vector3f Plane::proj(Vector3f p)
 	return pr;
 }
 
-inline float32 Plane::distance(Vector3f p)
+inline float Plane::distance(Vector3f p)
 {
 	return abs((a*p.x + b*p.y + c*p.z - d) / sqrt(a*a + b*b + c*c));
 }

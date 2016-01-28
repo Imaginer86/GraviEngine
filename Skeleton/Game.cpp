@@ -20,13 +20,12 @@
 #include "Core/Node.h"
 #include "Core/FileStream.h"
 
-#include "Physics/Mass.h"
+#include "Physics/Sphere.h"
+#include "Physics/Plane.h"
 #include "Physics/Box.h"
 #include "Physics/Smoke.h"
 #include "Physics/Shape.h"
 #include "Physics/Sky.h"
-
-unsigned countAddEntities = 0;
 
 void Game::Release() /* delete the masses created */
 {
@@ -36,7 +35,7 @@ void Game::Release() /* delete the masses created */
 	}
 
 	numEntitys = 0;
-	numMasses = 0;
+	numSpherees = 0;
 	numBoxes = 0;
 	numSmokers = 0;
 
@@ -54,45 +53,96 @@ void Game::SetNumEntities(unsigned numEntities_)
 	//{
 		//Entities[i] = new Entity;
 	//}
-	Entities = new Entity*[numEntitys];
+	Entities = new Physics::Entity*[numEntitys];
 }
 
 
-void Game::AddMass( float32 m, float32 r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color )
+void Game::AddSphere( float m, float r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color )
 {	
 	
-	Mass* mass = new Mass(m, r, pos, vel, color);
+	Physics::Sphere* mass = new Physics::Sphere(m, r, pos, vel, color);
 	Entities[countAddEntities] = mass;
 	++countAddEntities;
 }
 
-void Game::AddBox(float32 m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
+void Game::AddPlane(float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
 {
-	Box *box = new Box;	
-	box->SetMass(m);
-	box->SetPos(pos);
-	box->SetVel(vel);
-	box->SetSize(size);
-	box->SetAngleQ(q);
-	box->SetAngleVelQ(qVel);
-	box->SetColor(color);
+	Physics::Plane *plane = new Physics::Plane(m, size, pos, vel, q, qVel, color);
+	Entities[countAddEntities] = plane;
+	++countAddEntities;
+}
+
+void Game::AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
+{
+	Physics::Box *box = new Physics::Box(m, size, pos, vel, q, qVel, color);
 	Entities[countAddEntities] = box;
 	++countAddEntities;
 }
 
 void Game::AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numEntitys, bool createCollision)
 {
-	Smoke *smoke = new Smoke;
+	Physics::Smoke *smoke = new Physics::Smoke;
 	smoke->Init(1.0f, pos, rand, vel0, vel, color, numEntitys, createCollision);
 	Entities[countAddEntities] = smoke;
 	++countAddEntities;
 }
 
+bool Game::AddModel(const std::string& fileName, const float m, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color)
+{
+	Physics::Shape* shape = new Physics::Shape(m, pos, vel, color);
+	shape->Init();
+
+	Core::FileStream fileStream;
+	if (!fileStream.OpenXML(fileName))
+	{
+		return false;
+	}
+
+	Core::Node node;
+
+	if(!fileStream.GetNode(node))
+	{
+		return false;
+	}
+
+	fileStream.Close();
+
+
+	Core::Node nodeTransform;
+
+	if (node.GetNode("Transform", nodeTransform))
+	{
+
+		std::string str = node.GetName();
+		std::cout << "Load Model Part: " << str << std::endl;
+
+		std::list<Vector3f> Coordinate;
+		std::list<unsigned> CoordIndex;
+
+		shape->AddPart(Coordinate.size(), CoordIndex.size());
+
+		for(std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
+		{
+			shape->AddCoord(*it);
+		}
+		for(std::list<unsigned>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
+		{
+			shape->AddIndex(*it);
+		}
+	
+		fileStream.Close();
+	}
+
+	Entities[countAddEntities] = shape;
+	++countAddEntities;
+	return true;
+}
+
 /*
-void Game::SetLine(float32 m, float32 r, float32 h, Vector3 pos, Quaternion q, Color4f color)
+void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color)
 {
 	Line *line = new Line;
-	line->SetMass(m);
+	line->SetSphere(m);
 	line->SetR(r);
 	line->SetH(h);
 	line->SetPos(pos);
@@ -112,12 +162,12 @@ void Game::Draw()
 	}
 }
 
-void Game::Update(float32 dt)
+void Game::Update(float dt)
 {
 	//static unsigned iteration = 0;
 	Init();										// Step 1: reset forces to zero	
 	//SimVel(dt);
-	if (bGraviMasses)
+	if (bGraviSpherees)
 	{
 		Solve(dt);									// Step 2: apply forces		
 	}
@@ -136,7 +186,7 @@ void Game::Update(float32 dt)
 	Simulate(dt);								// Step 3: iterate the masses by the change in time
 }
 
-void Game::SimVel(float32 dt)
+void Game::SimVel(float dt)
 {
 	for(unsigned i = 0; i < numEntitys; ++i)
 	{
@@ -144,14 +194,17 @@ void Game::SimVel(float32 dt)
 	}
 }
 
-void Game::Solve(float32 dt)
+void Game::Solve(float dt)
 {
 	dt;
 	for(unsigned a = 0; a < numEntitys; ++a)
 	{		
 		for(unsigned b = 0; b < numEntitys; ++b)
 		{			
-			if (a != b)
+			if (a != b 
+				&& Math::closeEnough(Entities[a]->GetVel().x, Entities[b]->GetVel().x)
+				&& Math::closeEnough(Entities[a]->GetVel().y, Entities[b]->GetVel().y)
+				&& Math::closeEnough(Entities[a]->GetVel().z, Entities[b]->GetVel().z))
 			{
 				Vector3f force(GraviForce(a,b));
 				//if ( force.unitize() > Math::EPSILON )
@@ -170,15 +223,15 @@ void Game::Init() /* this method will call the init() method of every mass */
 		Entities[i]->init();						// call init() method of the mass
 }
 
-void Game::AddGraviAcc(float32 dt)
+void Game::AddGraviAcc(float dt)
 {
 	for (unsigned i = 0; i < numEntitys; ++i)
 	{
-		if (typeid(*Entities[i]) == typeid(Mass))
+		if (typeid(*Entities[i]) == typeid(Physics::Sphere))
 		{
 			Entities[i]->applyAcc(graviAcc, dt);
 		}
-		if (typeid(*Entities[i]) == typeid(Smoke))
+		if (typeid(*Entities[i]) == typeid(Physics::Smoke))
 		{
 			Entities[i]->applyAcc(graviAcc, dt);
 			//Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);			
@@ -186,19 +239,19 @@ void Game::AddGraviAcc(float32 dt)
 	}
 }
 
-void Game::AddWindAcc(float32 dt)
+void Game::AddWindAcc(float dt)
 {
 	for (unsigned i = 0; i < numEntitys; ++i)
 	{
-		if (typeid(*Entities[i]) == typeid(Smoke))
+		if (typeid(*Entities[i]) == typeid(Physics::Smoke))
 		{
-			Smoke* smoke = dynamic_cast<Smoke*>(Entities[i]);
+			Physics::Smoke* smoke = dynamic_cast<Physics::Smoke*>(Entities[i]);
 			smoke->ApplyWind(dt);
 		}
 	}
 }
 
-void Game::Simulate(float32 dt) /* Iterate the masses by the change in time */
+void Game::Simulate(float dt) /* Iterate the masses by the change in time */
 {
 	for (unsigned i = 0; i < numEntitys; ++i)		// We will iterate every mass
 	{
@@ -206,22 +259,22 @@ void Game::Simulate(float32 dt) /* Iterate the masses by the change in time */
 	}
 }
 
-void Game::Collision(float32 dt)
+void Game::Collision(float dt)
 {
-	for (unsigned a = 0; a < (numEntitys - 1); ++a)
+	for (unsigned a = 0; a < numEntitys; ++a)
 		for (unsigned b = a + 1; b < numEntitys; ++b)
 			if (a != b)
 			{
-				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Mass))
+				if (typeid(*Entities[a]) == typeid(Physics::Sphere) && typeid(*Entities[b]) == typeid(Physics::Sphere))
 				{
-					Mass *ma = dynamic_cast<Mass*>(Entities[a]);
-					Mass *mb = dynamic_cast<Mass*>(Entities[b]);
-					float32 dist = (ma->GetPos() - mb->GetPos()).length();
-					float32 r2 = ma->GetR() + mb->GetR();
+					Physics::Sphere *ma = dynamic_cast<Physics::Sphere*>(Entities[a]);
+					Physics::Sphere *mb = dynamic_cast<Physics::Sphere*>(Entities[b]);
+					float dist = (ma->GetPos() - mb->GetPos()).length();
+					float r2 = ma->GetR() + mb->GetR();
 					if (dist < r2)
 					{
-						float32 v = (ma->GetVel() - mb->GetVel()).length();
-						float32 dc = (dist - r2) / v;
+						float v = (ma->GetVel() - mb->GetVel()).length();
+						float dc = (dist - r2) / v;
 						if (dc <= 0.0f)
 						{
 							Vector3f p1 = ma->GetPos();
@@ -242,8 +295,8 @@ void Game::Collision(float32 dt)
 							Vector3f v1t = Vector3f(p1p2.x*pn1.x*pn1.x + p1p2.x*(pn1.x*pn1.y - pn1.z) + p1p2.x*(pn1.x*pn1.z + pn1.y),
 								p1p2.y*(pn1.y*pn1.x + pn1.z) + p1p2.y*pn1.y*pn1.y + p1p2.y*(pn1.y*pn1.z - pn1.x),
 								p1p2.z*(pn1.z*pn1.x - pn1.y) + p1p2.z*(pn1.z*pn1.y + pn1.x) + p1p2.z*pn1.z*pn1.z);
-							float32 v1n = v1.dotProduct(p1p2);
-							//float32 v1ts = v1.dotProduct(v1t);
+							float v1n = v1.dotProduct(p1p2);
+							//float v1ts = v1.dotProduct(v1t);
 
 
 							Vector3f p2p1 = p1 - p2;
@@ -256,12 +309,12 @@ void Game::Collision(float32 dt)
 								p2p1.y*(pn2.y*pn2.x + pn2.z) + p2p1.y*pn2.y*pn2.y + p2p1.y*(pn2.y*pn2.z - pn2.x),
 								p2p1.z*(pn2.z*pn2.x - pn2.y) + p2p1.z*(pn2.z*pn2.y + pn2.x) + p2p1.z*pn2.z*pn2.z);
 
-							float32 v2n = v2.dotProduct(p2p1);
-							//float32 v2ts = v2.dotProduct(v2t);
+							float v2n = v2.dotProduct(p2p1);
+							//float v2ts = v2.dotProduct(v2t);
 
 
-							float32 m1 = ma->GetMass();
-							float32 m2 = mb->GetMass();
+							float m1 = ma->GetMass();
+							float m2 = mb->GetMass();
 
 
 							Vector3f v11 = v1t - p1p2*v1n + ((p1p2*m1*v1n + p2p1*m2*v2n) / (m1 + m2))*2.0f;
@@ -280,8 +333,8 @@ void Game::Collision(float32 dt)
 							dist = (ma->GetPos() - mb->GetPos()).length();
 							r2 = ma->GetR() + mb->GetR();
 
-							//float32 t1 = v11.length() + v1.length();
-							//float32 t2 = v22.length() + v2.length();
+							//float t1 = v11.length() + v1.length();
+							//float t2 = v22.length() + v2.length();
 
 							//ma->simulateForce(dt);
 							//mb->simulateForce(dt);
@@ -293,29 +346,28 @@ void Game::Collision(float32 dt)
 						}
 					}
 				}
-
-				if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Box) || typeid(*Entities[a]) == typeid(Box) && typeid(*Entities[b]) == typeid(Mass))
+				else if (typeid(*Entities[a]) == typeid(Physics::Sphere) && typeid(*Entities[b]) == typeid(Physics::Box) || typeid(*Entities[a]) == typeid(Physics::Box) && typeid(*Entities[b]) == typeid(Physics::Sphere))
 				{
-					Mass *mass = nullptr;
-					Box *box = nullptr;
-					if (typeid(*Entities[a]) == typeid(Mass) && typeid(*Entities[b]) == typeid(Box))
+					Physics::Sphere *mass = nullptr;
+					Physics::Box *box = nullptr;
+					if (typeid(*Entities[a]) == typeid(Physics::Sphere) && typeid(*Entities[b]) == typeid(Physics::Box))
 					{
-						mass = dynamic_cast<Mass*>(Entities[a]);
-						box = dynamic_cast<Box*>(Entities[b]);						
+						mass = dynamic_cast<Physics::Sphere*>(Entities[a]);
+						box = dynamic_cast<Physics::Box*>(Entities[b]);						
 					}
-					else if (typeid(*Entities[b]) == typeid(Mass) && typeid(*Entities[a]) == typeid(Box))
+					else if (typeid(*Entities[b]) == typeid(Physics::Sphere) && typeid(*Entities[a]) == typeid(Physics::Box))
 					{
-						mass = dynamic_cast<Mass*>(Entities[b]);
-						box = dynamic_cast<Box*>(Entities[a]);
+						mass = dynamic_cast<Physics::Sphere*>(Entities[b]);
+						box = dynamic_cast<Physics::Box*>(Entities[a]);
 					}
 					Vector3f pm = mass->GetPos();
-					float32 rm = mass->GetR();
+					float rm = mass->GetR();
 					Vector3f vm = mass->GetVel();
 
 					Vector3f pb = box->GetPos();
 					Quaternion q = box->GetAngleQ();
 					Vector3f axicb;
-					float32 angleb;
+					float angleb;
 					q.toAxisAngle(axicb, angleb);
 					Quaternion q1;
 					q1.fromAxisAngle(axicb, -angleb);
@@ -350,9 +402,9 @@ void Game::Collision(float32 dt)
 					for (int i = 0; i < 6; i++)
 					{
 						Vector3f pr = PL[i].proj(pm);
-						//float32 t = PL[i].a*pr.x + PL[i].b*pr.y + PL[i].c*pr.z+PL[i].d;
-						//float32 d = PL[i].distance(pm);
-						float32 d = (pm - pr).length();
+						//float t = PL[i].a*pr.x + PL[i].b*pr.y + PL[i].c*pr.z+PL[i].d;
+						//float d = PL[i].distance(pm);
+						float d = (pm - pr).length();
 						//std::cout  << " distance i " << i << ": " << d << std::endl;
 						if (d < rm)
 						{
@@ -368,8 +420,8 @@ void Game::Collision(float32 dt)
 								{
 
 								
-									float32 sina = abs(PL[i].a*vm.x + PL[i].b*vm.y + PL[i].c*vm.z)/(sqrt(PL[i].a*PL[i].a + PL[i].b*PL[i].b + PL[i].c*PL[i].c)*vm.length());
-									float32 angle = 90.0f - Math::radiansToDegrees(asin(sina));
+									float sina = abs(PL[i].a*vm.x + PL[i].b*vm.y + PL[i].c*vm.z)/(sqrt(PL[i].a*PL[i].a + PL[i].b*PL[i].b + PL[i].c*PL[i].c)*vm.length());
+									float angle = 90.0f - Math::radiansToDegrees(asin(sina));
 									Quaternion q;
 									q.fromAxisAngle(axic, -2.0f*angle);
 									q.normalize();
@@ -386,7 +438,90 @@ void Game::Collision(float32 dt)
 							}
 						}
 					}
+				}
+				else if (typeid(*Entities[a]) == typeid(Physics::Sphere) && typeid(*Entities[b]) == typeid(Physics::Plane) || typeid(*Entities[a]) == typeid(Physics::Plane) && typeid(*Entities[b]) == typeid(Physics::Sphere))
+				{
+					Physics::Sphere *mass = nullptr;
+					Physics::Plane *plane = nullptr;
+					if (typeid(*Entities[a]) == typeid(Physics::Sphere) && typeid(*Entities[b]) == typeid(Physics::Plane))
+					{
+						mass = dynamic_cast<Physics::Sphere*>(Entities[a]);
+						plane = dynamic_cast<Physics::Plane*>(Entities[b]);						
+					}
+					else if (typeid(*Entities[b]) == typeid(Physics::Sphere) && typeid(*Entities[a]) == typeid(Physics::Plane))
+					{
+						mass = dynamic_cast<Physics::Sphere*>(Entities[b]);
+						plane = dynamic_cast<Physics::Plane*>(Entities[a]);
+					}
+					Vector3f pm = mass->GetPos();
+					float rm = mass->GetR();
+					Vector3f vm = mass->GetVel();
 
+					Vector3f pb = plane->GetPos();
+					Quaternion q = plane->GetAngleQ();
+					Vector3f axicb;
+					float angleb;
+					q.toAxisAngle(axicb, angleb);
+					Quaternion q1;
+					q1.fromAxisAngle(axicb, -angleb);
+					Vector2f size = plane->GetSize();
+					size *= 0.5f;
+
+					Vector2f diff = size;
+
+					Vector3f P[4];
+					P[0] = pb + Vector3f(-diff.x, -diff.y, 0.0f);
+					P[1] = pb + Vector3f(-diff.x, diff.y, 0.0f);
+					P[2] = pb + Vector3f(diff.x, diff.y, 0.0f);
+					P[3] = pb + Vector3f(diff.x, -diff.y, 0.0f);
+
+					for (int i = 0; i < 4; ++i)
+					{
+						Vector3f d = P[i] - pb;
+						d = q1.rotate(d);
+						P[i] = pb + d;
+					}
+
+					Vector3f p0 = P[0];
+					Vector3f p1 = P[1];
+					Vector3f p2 = P[2];
+					Vector3f p3 = P[3];
+					Math::Plane PL = Math::Plane(p0, p1, p2);
+
+					Vector3f pr = PL.proj(pm);
+					float d = (pm - pr).length();
+					
+					if (d < rm)
+					{
+						if (InterPlanePoint(pr, p0, p1, p2, p3) || InterPlanePoint(pr, p3, p2, p1, p0))
+						{
+							Vector3f n(PL.a, PL.b, PL.c);
+							n.unitize();
+							Vector3f axic;
+							axic = n*vm;
+								
+							if (axic.unitize() > Math::EPSILON)
+							{
+
+								
+								float sina = abs(PL.a*vm.x + PL.b*vm.y + PL.c*vm.z)/(sqrt(PL.a*PL.a + PL.b*PL.b + PL.c*PL.c)*vm.length());
+								float angle = 90.0f - Math::radiansToDegrees(asin(sina));
+								Quaternion q;
+								q.fromAxisAngle(axic, -2.0f*angle);
+								q.normalize();
+								//std::cout << "angle" << angle << std::endl;
+								//std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
+								vm = q.rotate(vm);
+								//std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
+							}
+							//else
+							//{
+								//vm = -vm;
+							//}
+							mass->SetVel(-vm);
+
+						}
+					}
 				}
 			}
 }
@@ -395,7 +530,7 @@ bool Game::InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, V
 {
 	Vector3f p10 = p1 - p0;
 	Vector3f pm0 = pr - p0;
-	float32 cosa = p10.dotProduct(pm0)/(p10.length()*pm0.length());
+	float cosa = p10.dotProduct(pm0)/(p10.length()*pm0.length());
 	if ( cosa < 0.0f || cosa > 1.0f)
 		return false;
 	Vector3f p21 = p2 - p1;
@@ -419,10 +554,10 @@ bool Game::InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, V
 Vector3f Game::GraviForce( int a, int b )
 {
 	Vector3f f;
-	float32 gforce;
+	float gforce;
 
 	Vector3f Dif;
-	float32 r;
+	float r;
 
 	Vector3f t =  Entities[a]->GetPos();
 
@@ -432,7 +567,7 @@ Vector3f Game::GraviForce( int a, int b )
 	
 	f = Entities[b]->GetPos() - Entities[a]->GetPos();
 	
-	gforce = float32( G * double(Entities[a]->GetMass() * Entities[b]->GetMass()/(r * r))  );
+	gforce = float( G * double(Entities[a]->GetMass() * Entities[b]->GetMass()/(r * r))  );
 	
 	//if (r < minDistG)
 	if (r < Math::EPSILON)
@@ -457,7 +592,7 @@ Vector3f Game::GraviForce( int a, int b )
 
 void Game::SetNumStars(unsigned numStars, bool randomize /* = true */)
 {
-	mSky = new Sky;
+	mSky = new Physics::Sky;
 
 
 	if (randomize)
@@ -475,15 +610,15 @@ bool Game::SaveData(const std::string& fileName)
 		return false;
 
 	char space = ' ';
-	float32 timeScale = Core::Master::Instance().GetGTimeScale();
+	float timeScale = Core::Master::Instance().GetGTimeScale();
 	dataFile << timeScale << std::endl;
 
 	unsigned UPF, FPS, UPS;
 	UPF = Core::Master::Instance().GetUPF(), FPS = Core::Master::Instance().GetGFPS(), UPS = Core::Master::Instance().GetGUPS();
 	dataFile << UPF << space << FPS << space << UPS << space << std::endl;
 	
-	bool bGraviMasses = GetBGraviMasses();
-	dataFile << bGraviMasses << std::endl;
+	bool bGraviSpherees = GetBGraviSpherees();
+	dataFile << bGraviSpherees << std::endl;
 
 	bool bGraviAcc = GetBGraviAcc();
 	dataFile << bGraviAcc << std::endl;
@@ -496,7 +631,7 @@ bool Game::SaveData(const std::string& fileName)
 	
 	Vector3f cameraPos = Core::Camera::Instance().GetPos();
 	Vector3f cameraAxic;
-	float32 cameraAngle;
+	float cameraAngle;
 	Core::Camera::Instance().GetQuaternion().toAxisAngle(cameraAxic, cameraAngle);
 	
 	dataFile << cameraPos.x << space << cameraPos.y << space << cameraPos.z << space << std::endl
@@ -519,8 +654,8 @@ bool Game::SaveData(const std::string& fileName)
 
 	dataFile << numEntities << std::endl;
 
-	int numMass = GetNumMasses();	
-	dataFile << numMass << std::endl;
+	int numSphere = GetNumSpherees();	
+	dataFile << numSphere << std::endl;
 
 	int numBoxs = GetNumBoxes();
 	dataFile << numBoxs << std::endl;
@@ -528,16 +663,16 @@ bool Game::SaveData(const std::string& fileName)
 	unsigned numSmokers = GetNumSmokers();	
 	dataFile << numSmokers << std::endl;
 	
-	float32 m;
-	float32 r;
+	float m;
+	float r;
 	Vector3f pos;
 	Vector3f vel;		
 	Math::Color4f color;
 
 	unsigned i = 0;
-	for (i; i < numMasses; ++i)
+	for (i; i < numSpherees; ++i)
 	{
-		Mass* M = dynamic_cast<Mass*>(Entities[i]);
+		Physics::Sphere* M = dynamic_cast<Physics::Sphere*>(Entities[i]);
 
 		m = M->GetMass();
 		r = M->GetR();
@@ -554,7 +689,7 @@ bool Game::SaveData(const std::string& fileName)
 	}
 	for(i; i < numBoxes; ++i)
 	{
-		Box* B = dynamic_cast<Box*>(Entities[i]);
+		Physics::Box* B = dynamic_cast<Physics::Box*>(Entities[i]);
 
 		m = B->GetMass();
 		Vector3f size = B->GetSize();
@@ -563,11 +698,11 @@ bool Game::SaveData(const std::string& fileName)
 		color = B->GetColor();
 		Quaternion q = B->GetAngleQ();
 		Vector3f angleAxic;
-		float32 angle;
+		float angle;
 		q.toAxisAngle(angleAxic, angle);
 		Quaternion qVel = B->GetAngleVelQ();
 		Vector3f angleVelAxic;
-		float32 angleVel;
+		float angleVel;
 		qVel.toAxisAngle(angleVelAxic, angleVel);
 				
 		dataFile << m << std::endl
@@ -580,7 +715,7 @@ bool Game::SaveData(const std::string& fileName)
 	}
 	for (i; i < numSmokers; ++i)
 	{
-		Smoke* S = dynamic_cast<Smoke*>(Entities[i]);
+		Physics::Smoke* S = dynamic_cast<Physics::Smoke*>(Entities[i]);
 
 		pos = S->GetPos();		
 		Vector3f vel0 = S->GetVel0();
@@ -611,55 +746,50 @@ bool Game::LoadData(const std::string& fileName)
 
 	SetSceneName(fileName);
 
-	std::ifstream dataFile(gSceneName, std::ios::in);
+	//std::ifstream dataFile(gSceneName, std::ios::in);
 
-	if (!dataFile.is_open())
+	//if (!dataFile.is_open())
+
+	Core::FileStream dataFile;
+	if (!dataFile.OpenRead(fileName))
+	{
+		std::cerr << "Can not open file " << fileName << std::endl;
 		return false;
+	}
 
-	unsigned line = 0;
-
-	float32 timeScale;
-	dataFile >> timeScale;
-	++line;
+	float timeScale = dataFile.GetFloat();
+	//dataFile >> timeScale;
 	Core::Master::Instance().SetGTimeScale(timeScale);
 
-	unsigned UPF, FPR, UPR;
-	dataFile >> UPF>> FPR >> UPR;
-	++line;
+	unsigned UPF = dataFile.GetUnsigned();
+	unsigned FPR = dataFile.GetUnsigned();
+	unsigned UPR = dataFile.GetUnsigned();
+	//dataFile >> UPF>> FPR >> UPR;
 	Core::Master::Instance().SetUPF(UPF), Core::Master::Instance().SetFPR(FPR), Core::Master::Instance().SetUPR(UPR);
 	
-	bool bGraviMasses_;
-	dataFile >> bGraviMasses_;
-	++line;
-	SetBGraviMasses(bGraviMasses_);
+	bool bGraviSpherees_ = dataFile.GetBool();
+	//dataFile >> bGraviSpherees_;
+	SetBGraviSpherees(bGraviSpherees_);
 
-	bool bGraviAcc_;
-	dataFile >> bGraviAcc_;
-	++line;
+	bool bGraviAcc_ = dataFile.GetBool();
+	//dataFile >> bGraviAcc_;
 	SetBGraviAcc(bGraviAcc_);
 
-	bool bWindAcc_;
-	dataFile >> bWindAcc_;
-	++line;
+	bool bWindAcc_ = dataFile.GetBool();
+	//dataFile >> bWindAcc_;
 	SetBWindAcc(bWindAcc_);
 
-	bool bCollisions_;
-	dataFile >> bCollisions_;
-	++line;
+	bool bCollisions_ = dataFile.GetBool();
+	//dataFile >> bCollisions_;
 	SetBCollisions(bCollisions_);
 
-	Vector3f cameraPos;
-	Vector3f cameraAxic;
-	float32 cameraAngle;
-	bool gUpdateCamera;
-
-	dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z		
-		>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z	>> cameraAngle
-		>> gUpdateCamera;
-	++line;
-	++line;
-	++line;
-
+	Vector3f cameraPos = dataFile.GetVector3f();
+	Vector3f cameraAxic = dataFile.GetVector3f();
+	float cameraAngle = dataFile.GetFloat();
+	bool gUpdateCamera = dataFile.GetBool();
+	//dataFile >> cameraPos.x >> cameraPos.y >> cameraPos.z		
+		//>> cameraAxic.x >> cameraAxic.y >> cameraAxic.z	>> cameraAngle
+		//>> gUpdateCamera;
 	Core::Master::Instance().SetGUpdateCamera(gUpdateCamera);
 
 	if (Core::Master::Instance().GetGUpdateCamera() || Core::Master::Instance().GetGFirstLoad())
@@ -675,149 +805,172 @@ bool Game::LoadData(const std::string& fileName)
 		Core::Camera::Instance().SetQuaternion(q);
 	}
 
-	Math::Color4f LightAmbient, LightDiffuse;
-	Vector3f LightPosition;
-	dataFile >> LightAmbient.r >> LightAmbient.g >> LightAmbient.b >> LightAmbient.a;
-	++line;
-	dataFile >> LightDiffuse.r >> LightDiffuse.g >> LightDiffuse.b >> LightDiffuse.a;
-	++line;
-	dataFile >> LightPosition.x >> LightPosition.y >> LightPosition.z;
-	++line;
+	Math::Color4f LightAmbient = dataFile.GetColor();
+	Math::Color4f LightDiffuse = dataFile.GetColor();
+	Vector3f LightPosition = dataFile.GetVector3f();
+	//dataFile >> LightAmbient.r >> LightAmbient.g >> LightAmbient.b >> LightAmbient.a;
+	//dataFile >> LightDiffuse.r >> LightDiffuse.g >> LightDiffuse.b >> LightDiffuse.a;
+	//dataFile >> LightPosition.x >> LightPosition.y >> LightPosition.z;
 	Core::Master::Instance().SetLightAmbient(LightAmbient);
 	Core::Master::Instance().SetLightDiffuse(LightDiffuse);
 	Core::Master::Instance().SetLightPosition(LightPosition);
 
-	Vector3f graviAcc_;
-
-	dataFile >> graviAcc_.x >> graviAcc_.y >> graviAcc_.z;
-	++line;
+	Vector3f graviAcc_ = dataFile.GetVector3f();
+	//dataFile >> graviAcc_.x >> graviAcc_.y >> graviAcc_.z;
 	SetGraviAcc(graviAcc_);
 
-	++line;
-
-	unsigned numStars_;
-	dataFile >> numStars_;
-	++line;
+	unsigned numStars_ = dataFile.GetUnsigned();
+	//dataFile >> numStars_;
 	SetNumStars(numStars_ /*,false*/);
 	
-	unsigned numEntities_;
-	dataFile >> numEntities_;
-	++line;
-
+	unsigned numEntities_ = dataFile.GetUnsigned();
+	//dataFile >> numEntities_;
 	SetNumEntities(numEntities_);
 
-	unsigned numMasses_;
-	dataFile >> numMasses_;
-	++line;
-	SetNumMasses(numMasses_);
+	//unsigned numSpherees_;
+	//dataFile >> numSpherees_;
+	//SetNumSpherees(numSpherees_);
 
-	unsigned numBoxes_;
-	dataFile >> numBoxes_;
-	++line;
-	SetNumBoxes(numBoxes_);
+	//unsigned numBoxes_;
+	//dataFile >> numBoxes_;
+	//SetNumBoxes(numBoxes_);
+	//unsigned numSmokers_;
+	//dataFile >> numSmokers_;
+	//SetNumSmokers(numSmokers_);
 
-	unsigned numSmokers_;
-	dataFile >> numSmokers_;
-	++line;
-	SetNumSmokers(numSmokers_);
+	//unsigned numShapes_;
+	//dataFile >> numShapes_;
+	//SetNumModels(numShapes_);
 
-	unsigned numShapes_;
-	dataFile >> numShapes_;
-	++line;
-	SetNumModels(numShapes_);
-
-	++line;
-
-	for (unsigned i = 0; i < numMasses; i++)
+	while(countAddEntities < numEntitys)
 	{
-		float32 m, r;
-		Vector3f pos, vel;
-		//bool isLight = false;
-		Math::Color4f color;
-		dataFile >> m >> r
-			>> pos.x >> pos.y >> pos.z
-			>> vel.x >> vel.y >> vel.z
-			//>> isLight
-			>> color.r >> color.g >> color.b >> color.a;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		AddMass(m, r, pos, vel, /*isLight,*/ color);
+		std::string str = dataFile.GetString();
+		if (str == "Sphere")
+		{		
+			float m = dataFile.GetFloat();
+			float r = dataFile.GetFloat();
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			//bool isLight = false;
+			Math::Color4f color = dataFile.GetColor();
+			AddSphere(m, r, pos, vel, /*isLight,*/ color);
+		}
+		else if (str == "Box")
+		{
+			float m = dataFile.GetFloat();
+			Vector3f size = dataFile.GetVector3f();
+			Vector3f pos = dataFile.GetVector3f();			
+			Vector3f vel = dataFile.GetVector3f();			
+			Vector3f angleAxic = dataFile.GetVector3f();
+			float angle = dataFile.GetFloat();
+			Vector3f angleVelAxic = dataFile.GetVector3f();
+			float angleVel = dataFile.GetFloat();
+			Math::Color4f color = dataFile.GetColor();
+			//dataFile >> m
+				//>> size.x >> size.y >> size.z
+				//>> pos.x >> pos.y >> pos.z
+				//>> vel.x >> vel.y >> vel.z
+				//>> q.x >> q.y >> q.z >> angle
+				//>> qVel.x >> qVel.y >> qVel.z >> angleVel
+				//>> color.r >> color.g >> color.b >> color.a;
+			angle = Math::degreesToRadians(angle);
+			angleVel = Math::degreesToRadians(angleVel);
+
+			Quaternion q;
+			q.w = cos(angle / 2.0f);
+			q.x *= sin(angle / 2.0f);
+			q.y *= sin(angle / 2.0f);
+			q.z *= sin(angle / 2.0f);
+
+			Quaternion qVel;
+			qVel.w = cos(angleVel / 2.0f);
+			qVel.x *= sin(angleVel / 2.0f);
+			qVel.y *= sin(angleVel / 2.0f);
+			qVel.z *= sin(angleVel / 2.0f);
+
+			AddBox(m, size, pos, vel, q, qVel, color);
+		}
+		else if (str == "Smoker")
+		{
+			unsigned numParticless = dataFile.GetUnsigned();
+			bool createCollision = dataFile.GetBool();
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f rand = dataFile.GetVector3f();
+			Vector3f vel0 = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			Math::Color4f color = dataFile.GetColor();			
+
+			//dataFile >> numParticless
+			//>> createCollision
+			//>> pos.x >> pos.y >> pos.z
+			//>> rand.x >> rand.y >> rand.z
+			//>> vel0.x >> vel0.y >> vel0.z
+			//>> vel.x >> vel.y >> vel.z
+			//>> color.r >> color.g >> color.b >> color.a;
+
+			AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
+		}
+		else if (str == "Model")
+		{
+			float m = dataFile.GetFloat();
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			Math::Color4f color = dataFile.GetColor();	
+			//dataFile >> m 
+				//>> pos.x >> pos.y >> pos.z 
+				//>> vel.x >> vel.y >> vel.z
+				//>> color.r >> color.g >> color.b >> color.a;
+			std::string fileNameModel = dataFile.GetString();
+			//dataFile >> fileName;
+			AddModel(fileNameModel, m, pos, vel, color);
+		}
+		else if (str == "Plane")
+		{
+			float m = dataFile.GetFloat();
+			Vector2f size = dataFile.GetVector2f();
+			Vector3f pos = dataFile.GetVector3f();			
+			Vector3f vel = dataFile.GetVector3f();			
+			Vector3f angleAxic = dataFile.GetVector3f();
+			float angle = dataFile.GetFloat();
+			Vector3f angleVelAxic = dataFile.GetVector3f();
+			float angleVel = dataFile.GetFloat();
+			Math::Color4f color = dataFile.GetColor();
+			//dataFile >> m
+				//>> size.x >> size.y >> size.z
+				//>> pos.x >> pos.y >> pos.z
+				//>> vel.x >> vel.y >> vel.z
+				//>> q.x >> q.y >> q.z >> angle
+				//>> qVel.x >> qVel.y >> qVel.z >> angleVel
+				//>> color.r >> color.g >> color.b >> color.a;
+			//angle = Math::degreesToRadians(angle);
+			//angleVel = Math::degreesToRadians(angleVel);
+
+			Quaternion q;
+			q.fromAxisAngle(angleAxic, angle);
+			//q.w = cos(angle / 2.0f);
+			//q.x *= sin(angle / 2.0f);
+			//q.y *= sin(angle / 2.0f);
+			//q.z *= sin(angle / 2.0f);
+
+			q.normalize();
+
+			Quaternion qVel;
+			qVel.fromAxisAngle(angleVelAxic, angleVel);
+			//qVel.w = cos(angleVel / 2.0f);
+			//qVel.x *= sin(angleVel / 2.0f);
+			//qVel.y *= sin(angleVel / 2.0f);
+			//qVel.z *= sin(angleVel / 2.0f);
+
+			qVel.normalize();
+
+			AddPlane(m, size, pos, vel, q, qVel, color);
+		}
+		else
+		{
+			std::cerr << "Can not open file " << fileName << std::endl;
+			return false;
+		}
 	}
-
-	++line;
-
-	for (unsigned i = 0; i < numBoxes; i++)
-	{
-		float32 m = 0.0;
-		Vector3f pos, size, vel;
-		Math::Color4f color;
-		Quaternion q;
-		Quaternion qVel;
-		float32 angle, angleVel;
-		Vector3f angleAxic, angleVelAxic;
-		dataFile >> m
-			>> size.x >> size.y >> size.z
-			>> pos.x >> pos.y >> pos.z
-			>> vel.x >> vel.y >> vel.z
-			>> q.x >> q.y >> q.z >> angle
-			>> qVel.x >> qVel.y >> qVel.z >> angleVel
-			>> color.r >> color.g >> color.b >> color.a;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		angle = Math::degreesToRadians(angle);
-		angleVel = Math::degreesToRadians(angleVel);
-		q.w = cos(angle / 2.0f);
-		q.x *= sin(angle / 2.0f);
-		q.y *= sin(angle / 2.0f);
-		q.z *= sin(angle / 2.0f);
-
-		qVel.w = cos(angleVel / 2.0f);
-		qVel.x *= sin(angleVel / 2.0f);
-		qVel.y *= sin(angleVel / 2.0f);
-		qVel.z *= sin(angleVel / 2.0f);
-
-		AddBox(m, size, pos, vel, q, qVel, color);
-	}
-
-	++line;
-
-	for (unsigned i = 0; i < numSmokers; i++)
-	{
-		unsigned numParticless = 0;
-		Vector3f pos;
-		Vector3f rand;
-		Vector3f vel0;
-		Vector3f vel;
-		Math::Color4f color;
-		bool createCollision;
-
-		dataFile >> numParticless
-		>> createCollision
-		>> pos.x >> pos.y >> pos.z
-		>> rand.x >> rand.y >> rand.z
-		>> vel0.x >> vel0.y >> vel0.z
-		>> vel.x >> vel.y >> vel.z
-		>> color.r >> color.g >> color.b >> color.a;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-		++line;
-
-		AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
-	}
-
-	++line;
 
 	/*	
 	int numLines = 0;
@@ -825,12 +978,12 @@ bool Game::LoadData(const std::string& fileName)
 	//Game::Instance().SetNumLines(numLines);
 	for(int i = 0; i < numLines; i++)
 	{
-	float32 m = 0.0f, r = 0.0f, h = 0.0f;
+	float m = 0.0f, r = 0.0f, h = 0.0f;
 	Vector3 pos;
 	Color4f color;
 	Quaternion q;
 	Vector3 u;
-	float32 w = 0.0f;
+	float w = 0.0f;
 	dataFile >> m >> r >> h
 	>> pos.x >> pos.y >> pos.z
 	>> u.x >> u.y >> u.z >> w
@@ -839,69 +992,6 @@ bool Game::LoadData(const std::string& fileName)
 	Game::Instance().SetLine(m, r, h, pos, q, color);
 	}
 	*/
-
-	for (unsigned i = 0; i < numModels; ++i)
-	{
-		float32 m;
-		Vector3f pos, vel;
-		Math::Color4f color;
-		
-
-		dataFile >> m 
-			>> pos.x >> pos.y >> pos.z 
-			>> vel.x >> vel.y >> vel.z
-			>> color.r >> color.g >> color.b >> color.a;
-		
-		Shape* shape = new Shape(m, pos, vel, color);
-		shape->Init();
-
-		
-		std::string fileName;
-		dataFile >> fileName;		
-		std::string fileNameL(fileName.begin(), fileName.end());
-		Core::FileStream fileStream;
-		fileStream.OpenXML(fileNameL);
-
-		Core::Node node;
-
-		if(!fileStream.GetNode(node))
-		{
-			return false;
-		}
-
-		fileStream.Close();
-
-
-		Core::Node nodeTransform;
-
-		if (node.GetNode("Transform", nodeTransform))
-		{
-
-			std::string str = node.GetName();
-			std::cout << "Load Model Part: " << str << std::endl;
-
-			std::list<Vector3f> Coordinate;
-			std::list<unsigned> CoordIndex;
-
-			shape->AddPart(Coordinate.size(), CoordIndex.size());
-
-			for(std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
-			{
-				shape->AddCoord(*it);
-			}
-			for(std::list<unsigned>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
-			{
-				shape->AddIndex(*it);
-			}
-	
-			fileStream.Close();
-		}
-
-		Entities[countAddEntities] = shape;
-		++countAddEntities;
-	}
-
-
-	dataFile.close();
+	dataFile.Close();
 	return true;
 }

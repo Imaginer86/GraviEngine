@@ -4,8 +4,9 @@
 #include "../Render/RenderGL.h"
 
 using namespace Math;
+using namespace Physics;
 
-const float32 dist = 1000;
+const float dist = 1000;
 
 Sky::Sky()
 {
@@ -29,16 +30,16 @@ void Sky::Init(unsigned numStars_)
 	//RMax = Random::Instance().randf() * 3.0f;		
 
 	Pos = new Vector3f[numStars];
-	r = new float32[numStars];
+	r = new float[numStars];
 	color = new Color4f[numStars];
 
 	Vector3f n(0.0, 1.0, 0.0);
-	float32 dist;
+	float dist;
 	for (unsigned i = 0; i < this->numStars; i++)
 	{
 		Vector3f axic = Vector3f(Random::Instance().randf(-1.0f, 1.0f), Random::Instance().randf(-1.0f, 1.0f), Random::Instance().randf(-1.0f, 1.0f));
 		axic.unitize();
-		float32 angle = 360.0f * Random::Instance().randf();
+		float angle = 360.0f * Random::Instance().randf();
 		Quaternion q;
 		q.fromAxisAngle(axic, angle);
 		dist = RMin + (RMax - RMin)*Random::Instance().randf();

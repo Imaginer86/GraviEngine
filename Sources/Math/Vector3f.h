@@ -11,7 +11,7 @@ public:
     {
     }
 
-    Vector3f(float32 x, float32 y, float32 z)			// Constructor that initializes this Vector3 to the intended values of x, y and z
+    Vector3f(float x, float y, float z)			// Constructor that initializes this Vector3 to the intended values of x, y and z
 	: x(x)
 	, y(y)
 	, z(z)
@@ -25,7 +25,7 @@ public:
 // 	{
 // 	}
 
-    void Set(float32 x_, float32 y_, float32 z_)
+    void Set(float x_, float y_, float z_)
     {
         x = x_;
         y = y_;
@@ -50,12 +50,12 @@ public:
         return Vector3f(x - v.x, y - v.y, z - v.z);
     }
 
-    Vector3f operator* (float32 value)			// operator* is used to scale a Vector3 by a value. This value multiplies the Vector3's x, y and z.
+    Vector3f operator* (float value)			// operator* is used to scale a Vector3 by a value. This value multiplies the Vector3's x, y and z.
     {
         return Vector3f(x * value, y * value, z * value);
     }
 
-    Vector3f operator/ (float32 value)			// operator/ is used to scale a Vector3 by a value. This value divides the Vector3's x, y and z.
+    Vector3f operator/ (float value)			// operator/ is used to scale a Vector3 by a value. This value divides the Vector3's x, y and z.
     {
         return Vector3f(x / value, y / value, z / value);
     }
@@ -76,7 +76,7 @@ public:
         return *this;
     }
 
-    Vector3f& operator*= (float32 value)			// operator*= is used to scale this Vector3 by a value.
+    Vector3f& operator*= (float value)			// operator*= is used to scale this Vector3 by a value.
     {
         x *= value;
         y *= value;
@@ -84,7 +84,7 @@ public:
         return *this;
     }
 
-    Vector3f& operator/= (float32 value)			// operator/= is used to scale this Vector3 by a value.
+    Vector3f& operator/= (float value)			// operator/= is used to scale this Vector3 by a value.
     {
         x /= value;
         y /= value;
@@ -108,19 +108,19 @@ public:
 		return res;
 	}
 
-	float32 dotProduct(Vector3f v)
+	float dotProduct(Vector3f v)
 	{
 		return this->x*v.x + this->y*v.y + this->z*v.z;
 	}
 
-    float32 length()								// length() returns the length of this Vector3
+    float length()								// length() returns the length of this Vector3
     {
         return sqrt(x*x + y*y + z*z);
     };			   		
 
-    float32 unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
+    float unitize()								// unitize() normalizes this Vector3 that its direction remains the same but its length is 1.
     {
-        float32 length = this->length();
+        float length = this->length();
 
         if (length == 0)
             return 0.0;
@@ -133,7 +133,7 @@ public:
 
     Vector3f unit()								// unit() returns a new Vector3. The returned value is a unitized version of this Vector3.
     {
-        float32 length = this->length();
+        float length = this->length();
 
         if (length == 0)
             return *this;
@@ -142,12 +142,12 @@ public:
     }
 
 //private:
-    float32 x;									// the x value of this Vector3
-    float32 y;									// the y value of this Vector3
-    float32 z;									// the z value of this Vector3
+    float x;									// the x value of this Vector3
+    float y;									// the y value of this Vector3
+    float z;									// the z value of this Vector3
 };
 
-// float32 DistanceV3(Vector3 v1, Vector3 v2)
+// float DistanceV3(Vector3 v1, Vector3 v2)
 // {
 //  	return (v1 - v2).length();
 // }

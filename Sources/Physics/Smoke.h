@@ -3,6 +3,8 @@
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
+namespace Physics
+{
 class Smoke: public Entity
 {
 public:
@@ -17,13 +19,13 @@ public:
 		return E[i];
 	}
 
-	virtual void Init( float32 m_, const Vector3f& pos_, const Vector3f& rand_, const Vector3f& vel0_, const Vector3f& vel_, const Math::Color4f& color_, unsigned numParticles_, bool createCollision_);
+	virtual void Init( float m_, const Vector3f& pos_, const Vector3f& rand_, const Vector3f& vel0_, const Vector3f& vel_, const Math::Color4f& color_, unsigned numParticles_, bool createCollision_);
 	virtual void Draw();
 
-	virtual void applyAcc(Vector3f& acc, float32 dt);
-	virtual void simulateForce(float32 dt);
+	virtual void applyAcc(Vector3f& acc, float dt);
+	virtual void simulateForce(float dt);
 
-	void ApplyWind(float32 dt);
+	void ApplyWind(float dt);
 
 	void SetVel0(const Vector3f& vel0_)
 	{
@@ -58,7 +60,7 @@ private:
 };
 
 inline Smoke::Smoke()
-//:Entity(float32 m_, Vector3f(0.0f, 0.0f, 0.0f), 1.0f, Vector3f(0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f))
+//:Entity(float m_, Vector3f(0.0f, 0.0f, 0.0f), 1.0f, Vector3f(0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f))
 //:E(nullptr)
 //,rand(0.0f, 0.0f, 0.0f)
 //,vel0(0.0f, 0.0f, 0.0f)
@@ -71,4 +73,5 @@ inline Smoke::Smoke()
 inline Smoke::~Smoke()
 {
 	delete[] E;
+}
 }

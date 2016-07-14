@@ -6,7 +6,7 @@
 using namespace Math;
 using namespace Physics;
 
-const float dist = 1000;
+//const float dist = 1000;
 
 Sky::Sky()
 {
@@ -34,7 +34,6 @@ void Sky::Init(unsigned numStars_)
 	color = new Color4f[numStars];
 
 	Vector3f n(0.0, 1.0, 0.0);
-	float dist;
 	for (unsigned i = 0; i < this->numStars; i++)
 	{
 		Vector3f axic = Vector3f(Random::Instance().randf(-1.0f, 1.0f), Random::Instance().randf(-1.0f, 1.0f), Random::Instance().randf(-1.0f, 1.0f));
@@ -42,7 +41,7 @@ void Sky::Init(unsigned numStars_)
 		float angle = 360.0f * Random::Instance().randf();
 		Quaternion q;
 		q.fromAxisAngle(axic, angle);
-		dist = RMin + (RMax - RMin)*Random::Instance().randf();
+		float dist = RMin + (RMax - RMin)*Random::Instance().randf();
 
 		
 		Pos[i] =  q.rotate(n*dist);

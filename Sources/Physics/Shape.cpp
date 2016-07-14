@@ -22,29 +22,13 @@ void Shape::Draw()
 		for (unsigned j = 0; j < CoordIndex[i].size(); ++j)
 		{
 			Vector3f p1 = Coord[i][CoordIndex[i][j]];
-			++i;
-			if (i >= CoordIndex.size())
-				break;
-			//++CurrentCoord; ++CurrentCoordIndex; ++j;
+			++j;
 			Vector3f p2 = Coord[i][CoordIndex[i][j]];
-			//++CurrentCoord; ++CurrentCoordIndex; ++j;
-			++i;
-			if (i >= CoordIndex.size())
-				break;
+			++j;
 			Vector3f p3 = Coord[i][CoordIndex[i][j]];
-			//++CurrentCoord; ++CurrentCoordIndex; ++j;
-			++i;
-			if (i >= CoordIndex.size())
-				break;
-			Vector3f p4 = Coord[i][CoordIndex[i][j]];
-			//++CurrentCoord; ++CurrentCoordIndex; ++j;
-
-			//Vector3f p1 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
-			//Vector3f p2 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
-			//Vector3f p3 = Coord[currentPart][CoordIndex[currentPart][j]]; ++j;
 			
 			Render::RenderGL::Instance().DrawTriangle(p1, p2, p3, GetColor());
-			Render::RenderGL::Instance().DrawTriangle(p3, p4, p1, GetColor());
+			//Render::RenderGL::Instance().DrawTriangle(p3, p4, p1, GetColor());
 		}
 	}
 

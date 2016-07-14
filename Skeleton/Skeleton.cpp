@@ -13,7 +13,7 @@
 
 void main()
 {
-	if (!Game::Instance().LoadData("data/data2.dat"))
+	if (!Game::Instance().LoadData("data/data1.dat"))
 	{
 		std::cerr << "Error LoadData" << std::endl;
 	}

@@ -22,16 +22,16 @@ namespace Core
 		bool OpenRead(const std::string& fileName);
 		bool OpenWrite(const std::string& fileName);
 
-		bool OpenXML(const std::string& fileName);
+		//bool OpenXML(const std::string& fileName);
 
 		void Close();
 
 		bool Eof();
 
-		bool ReadNode(Node& node_);
+		//bool ReadNode(Node& node_, const std::string& str0 = "");
 
-		bool GetNode(Node& node_);
-		bool GetNode(std::string& node, const std::string& name);
+		//bool GetNode(Node& node_);
+		//bool GetNode(std::string& node, const std::string& name);
 
 		std::string GetString();
 		bool GetBool();
@@ -41,10 +41,10 @@ namespace Core
 		Vector3f GetVector3f();
 		Quaternion GetQuaternion();
 		Math::Color4f GetColor();
-
+		bool GetParameter(const std::string& paramName);
 	private:
 
-		Node node;
+		//Node node;
 		std::fstream file;
 		//std::filebuf fileBuf;;
 	};

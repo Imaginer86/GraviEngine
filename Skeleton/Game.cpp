@@ -27,6 +27,12 @@
 #include "Physics/Shape.h"
 #include "Physics/Sky.h"
 
+void Game::Init() /* this method will call the init() method of every mass */
+{	
+	for (unsigned i = 0; i < numEntitys; i++)		// We will init() every mass
+		Entities[i]->init();						// call init() method of the mass
+}
+
 void Game::Release() /* delete the masses created */
 {
 	for (unsigned i = 0; i < numEntitys; ++i)
@@ -44,6 +50,40 @@ void Game::Release() /* delete the masses created */
 
 	mSky->Release();
 	delete mSky;
+}
+
+void Game::Update(float dt)
+{
+	//static unsigned iteration = 0;
+	Init();										// Step 1: reset forces to zero	
+	//SimVel(dt);
+	if (bGraviSpherees)
+	{
+		Solve(dt);									// Step 2: apply forces		
+	}
+	if (bGraviAcc)
+	{
+		AddGraviAcc(dt);		
+	}
+	if (bWindAcc)
+	{
+		AddWindAcc(dt);
+	}
+	if (bCollisions)
+	{
+		Collision(dt);
+	}
+	Simulate(dt);								// Step 3: iterate the masses by the change in time
+}
+
+
+void Game::Draw()
+{
+	mSky->Draw();
+	for(unsigned i = 0; i < numEntitys; ++i)
+	{
+		Entities[i]->Draw();
+	}
 }
 
 void Game::SetNumEntities(unsigned numEntities_)
@@ -93,45 +133,78 @@ bool Game::AddModel(const std::string& fileName, const float m, const Vector3f& 
 	shape->Init();
 
 	Core::FileStream fileStream;
-	if (!fileStream.OpenXML(fileName))
-	{
+	if (!fileStream.OpenRead(fileName))
 		return false;
-	}
+	
 
-	Core::Node node;
+//	Core::Node node;
 
-	if(!fileStream.GetNode(node))
+//	if(!fileStream.GetNode(node))
+//	{
+//		return false;
+//	}
+
+	//Core::Node nodeTransform;
+
+	std::string str;
+
+	std::cout << "Load Model Part: " << str << std::endl;
+
+	while(!fileStream.Eof())
 	{
-		return false;
-	}
+		std::list<unsigned> CoordIndex;
+		fileStream.GetParameter("coordIndex");
+		CoordIndex.push_back(1);
+		unsigned coordIndex;
+		do
+		{
+			str = fileStream.GetString();
+			if (str == "\"" || str == "")
+				break;
+			if (str == "-1")
+				continue;
+			coordIndex = std::stoi(str);
+			CoordIndex.push_back(coordIndex);
+		} while (true);
 
-	fileStream.Close();
-
-
-	Core::Node nodeTransform;
-
-	if (node.GetNode("Transform", nodeTransform))
-	{
-
-		std::string str = node.GetName();
-		std::cout << "Load Model Part: " << str << std::endl;
 
 		std::list<Vector3f> Coordinate;
-		std::list<unsigned> CoordIndex;
+		fileStream.GetParameter("point");
+		Coordinate.push_back(Vector3f(0.0f, 0.0f, 0.0f));
+		fileStream.GetFloat();
+		fileStream.GetFloat();
+		Vector3f coord;
+		do
+		{
+			str = fileStream.GetString();
+			if (str == "\"" || str == "")
+				break;
+			float x = std::stof(str);
+			float y = fileStream.GetFloat();
+			float z = fileStream.GetFloat();
+			coord = Vector3f(x, y, z);
+			Coordinate.push_back(coord);
+		} while (true);
 
-		shape->AddPart(Coordinate.size(), CoordIndex.size());
+		if (str == "")
+			break;
 
-		for(std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
+
+		//shape->AddPart(Coordinate.size(), CoordIndex.size());
+		shape->AddPart();
+
+
+		for (std::list<Vector3f>::iterator it = Coordinate.begin(); it != Coordinate.end(); ++it)
 		{
 			shape->AddCoord(*it);
 		}
-		for(std::list<unsigned>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
+		for (std::list<unsigned>::iterator it = CoordIndex.begin(); it != CoordIndex.end(); ++it)
 		{
 			shape->AddIndex(*it);
 		}
-	
-		fileStream.Close();
 	}
+	
+	fileStream.Close();
 
 	Entities[countAddEntities] = shape;
 	++countAddEntities;
@@ -152,39 +225,6 @@ void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f
 	Entities.push_back(line);
 }
 */
-
-void Game::Draw()
-{
-	mSky->Draw();
-	for(unsigned i = 0; i < numEntitys; ++i)
-	{
-		Entities[i]->Draw();
-	}
-}
-
-void Game::Update(float dt)
-{
-	//static unsigned iteration = 0;
-	Init();										// Step 1: reset forces to zero	
-	//SimVel(dt);
-	if (bGraviSpherees)
-	{
-		Solve(dt);									// Step 2: apply forces		
-	}
-	if (bGraviAcc)
-	{
-		AddGraviAcc(dt);		
-	}
-	if (bWindAcc)
-	{
-		AddWindAcc(dt);
-	}
-	if (bCollisions)
-	{
-		Collision(dt);
-	}
-	Simulate(dt);								// Step 3: iterate the masses by the change in time
-}
 
 void Game::SimVel(float dt)
 {
@@ -215,12 +255,6 @@ void Game::Solve(float dt)
 		}
 	}
 	// in advanced containers, this method will be overrided and some forces will act on masses
-}
-
-void Game::Init() /* this method will call the init() method of every mass */
-{	
-	for (unsigned i = 0; i < numEntitys; i++)		// We will init() every mass
-		Entities[i]->init();						// call init() method of the mass
 }
 
 void Game::AddGraviAcc(float dt)
@@ -604,6 +638,8 @@ void Game::SetNumStars(unsigned numStars, bool randomize /* = true */)
 
 bool Game::SaveData(const std::string& fileName)
 {
+	//todo
+	return true;
 	std::ofstream dataFile(fileName, std::ios::out);
 
 	if (!dataFile.is_open())
@@ -765,7 +801,9 @@ bool Game::LoadData(const std::string& fileName)
 	unsigned FPR = dataFile.GetUnsigned();
 	unsigned UPR = dataFile.GetUnsigned();
 	//dataFile >> UPF>> FPR >> UPR;
-	Core::Master::Instance().SetUPF(UPF), Core::Master::Instance().SetFPR(FPR), Core::Master::Instance().SetUPR(UPR);
+	Core::Master::Instance().SetUPF(UPF);
+	Core::Master::Instance().SetFPR(FPR);
+	Core::Master::Instance().SetUPR(UPR);
 	
 	bool bGraviSpherees_ = dataFile.GetBool();
 	//dataFile >> bGraviSpherees_;
@@ -890,6 +928,47 @@ bool Game::LoadData(const std::string& fileName)
 
 			AddBox(m, size, pos, vel, q, qVel, color);
 		}
+		else if (str == "Plane")
+		{
+			float m = dataFile.GetFloat();
+			Vector2f size = dataFile.GetVector2f();
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			Vector3f angleAxic = dataFile.GetVector3f();
+			float angle = dataFile.GetFloat();
+			Vector3f angleVelAxic = dataFile.GetVector3f();
+			float angleVel = dataFile.GetFloat();
+			Math::Color4f color = dataFile.GetColor();
+			//dataFile >> m
+			//>> size.x >> size.y >> size.z
+			//>> pos.x >> pos.y >> pos.z
+			//>> vel.x >> vel.y >> vel.z
+			//>> q.x >> q.y >> q.z >> angle
+			//>> qVel.x >> qVel.y >> qVel.z >> angleVel
+			//>> color.r >> color.g >> color.b >> color.a;
+			//angle = Math::degreesToRadians(angle);
+			//angleVel = Math::degreesToRadians(angleVel);
+
+			Quaternion q;
+			q.fromAxisAngle(angleAxic, angle);
+			//q.w = cos(angle / 2.0f);
+			//q.x *= sin(angle / 2.0f);
+			//q.y *= sin(angle / 2.0f);
+			//q.z *= sin(angle / 2.0f);
+
+			q.normalize();
+
+			Quaternion qVel;
+			qVel.fromAxisAngle(angleVelAxic, angleVel);
+			//qVel.w = cos(angleVel / 2.0f);
+			//qVel.x *= sin(angleVel / 2.0f);
+			//qVel.y *= sin(angleVel / 2.0f);
+			//qVel.z *= sin(angleVel / 2.0f);
+
+			qVel.normalize();
+
+			AddPlane(m, size, pos, vel, q, qVel, color);
+		}
 		else if (str == "Smoker")
 		{
 			unsigned numParticless = dataFile.GetUnsigned();
@@ -923,47 +1002,6 @@ bool Game::LoadData(const std::string& fileName)
 			std::string fileNameModel = dataFile.GetString();
 			//dataFile >> fileName;
 			AddModel(fileNameModel, m, pos, vel, color);
-		}
-		else if (str == "Plane")
-		{
-			float m = dataFile.GetFloat();
-			Vector2f size = dataFile.GetVector2f();
-			Vector3f pos = dataFile.GetVector3f();			
-			Vector3f vel = dataFile.GetVector3f();			
-			Vector3f angleAxic = dataFile.GetVector3f();
-			float angle = dataFile.GetFloat();
-			Vector3f angleVelAxic = dataFile.GetVector3f();
-			float angleVel = dataFile.GetFloat();
-			Math::Color4f color = dataFile.GetColor();
-			//dataFile >> m
-				//>> size.x >> size.y >> size.z
-				//>> pos.x >> pos.y >> pos.z
-				//>> vel.x >> vel.y >> vel.z
-				//>> q.x >> q.y >> q.z >> angle
-				//>> qVel.x >> qVel.y >> qVel.z >> angleVel
-				//>> color.r >> color.g >> color.b >> color.a;
-			//angle = Math::degreesToRadians(angle);
-			//angleVel = Math::degreesToRadians(angleVel);
-
-			Quaternion q;
-			q.fromAxisAngle(angleAxic, angle);
-			//q.w = cos(angle / 2.0f);
-			//q.x *= sin(angle / 2.0f);
-			//q.y *= sin(angle / 2.0f);
-			//q.z *= sin(angle / 2.0f);
-
-			q.normalize();
-
-			Quaternion qVel;
-			qVel.fromAxisAngle(angleVelAxic, angleVel);
-			//qVel.w = cos(angleVel / 2.0f);
-			//qVel.x *= sin(angleVel / 2.0f);
-			//qVel.y *= sin(angleVel / 2.0f);
-			//qVel.z *= sin(angleVel / 2.0f);
-
-			qVel.normalize();
-
-			AddPlane(m, size, pos, vel, q, qVel, color);
 		}
 		else
 		{

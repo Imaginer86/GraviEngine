@@ -31,8 +31,18 @@ AngleQ
 AngleVelQ
 Color
 
+Plane
+m
+Size2
+Pos
+Vel
+AngleQ
+AngleVelQ
+Color
+
 Smoker
 numParticles
+createCollision
 Pos
 Rand
 Vel0

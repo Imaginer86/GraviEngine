@@ -21,6 +21,7 @@ void Smoke::Init(float m_, const Vector3f& pos_, const Vector3f& rand_, const Ve
 		
 		Vector3f r = Vector3f((Random::Instance().randf() - 0.5f) * 2.0f * rand.x, (Random::Instance().randf() - 0.5f) * 2.0f * rand.y, (Random::Instance().randf() - 0.5f) * 2.0f * rand.z);
 		Vector3f posEntity = GetPos() + r;
+		E[i].SetPos(posEntity);
 
 		bool flag = true;
 

@@ -30,31 +30,30 @@ bool FileStream::OpenWrite(const std::string& fileName)
 	}
 }
 
-bool FileStream::OpenXML(const std::string& fileName)
-{
-	std::cout << "Open X3D " <<  fileName << std::endl;
+//bool FileStream::OpenXML(const std::string& fileName)
+//{
+//	std::cout << "Open X3D " <<  fileName << std::endl;
 	
 	//fileBuf.open(fileName, std::ios::in);
-	if (OpenRead(fileName))
-	{
-		Node node_;
-		while(ReadNode(node_))
-		{
-			std::cout << node.GetName() << std::endl;
-			return false;
-		}
-		node = node_;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+//	if (OpenRead(fileName))
+//	{
+//		Node node_;
+//		while(ReadNode(node_))
+//		{
+//			std::cout << node_.GetName() << std::endl;
+			//return false;
+//		}
+//		node = node_;
+///		return true;
+//	}
+//	else
+//	{
+//		return false;
+//	}
+//}
 
 void FileStream::Close()
 {
-	std::cout << "Close X3D." << std::endl;
 	file.close();
 }
 
@@ -123,62 +122,79 @@ Math::Color4f FileStream::GetColor()
 	return res;
 }
 
-bool FileStream::GetNode(Node& node_)
-{
-	node_ = node;
-	return true;
-}
-
-bool FileStream::ReadNode(Node& node_)
+bool FileStream::GetParameter(const std::string& paramName)
 {
 	std::string str;
-	file >> str;
-	int find = str.find('<');
-	if (find == -1)
-	{
-		return false;
-	}
+	do
+		file >> str;
+	while (!Eof() && str.find(paramName) == std::string::npos);	
+	if (Eof())
+		return true;
 	else
+		return false;
+}
+
+//bool FileStream::GetNode(Node& node_)
+//{
+	//node_ = node;
+	//return true;
+//}
+
+//bool FileStream::ReadNode(Node& node_, const std::string& str0)
+//{
+//todo
+/*
+	std::string str;
+	if (str0 == std::string(""))
+		file >> str;
+	if (str[0] != '<') 
+		return false;
+	std::string nodeName = str.substr(1);
+	node_.SetName(nodeName);
+	str = std::string("");
+
+	std::string strAdd;
+	do
 	{
-		while (find > -1)
+		file >> strAdd;
+		if (strAdd.find('<') != std::string::npos)
 		{
-			std::string nodeName = std::string(str.c_str() + 1, str.size() - 1);
 			Node nodeX;
-			nodeX.SetName(nodeName);
-			std::string key;
-			std::string value;
+			if (!ReadNode(nodeX, strAdd))
+				return false;
+			node_.AddChild(nodeX);
+			file >> strAdd;
+		}
+		str += std::string(" ") + strAdd;
+	} while (!strAdd.empty() && strAdd.find('>') == std::string::npos);
 
-			file >> str;
+	std::string key = str.substr(std::size_t(0), str.find('='));
+	std::string value = str.substr(str.find('=') + 2, str.length() - 4);
+	node.AddParam(key, value);
+	std::cout << "key " << key << std::endl;
+	std::cout << "value " << value << std::endl;
+*/
 
-			int find1 = str.find('=');
-			if (find1 > -1)
+//while (str.find('>') == std::string::npos);
+	/*
+		else
+		{
+			int find2 = str.find('>');
+			if (find2 > -1)
 			{
-				key = std::string(str.c_str(), find1);
-				value = std::string(str.c_str() + find1, str.size() - find1);
-				nodeX.AddParam(key, value);
-				std::cout << "key " << key << std::endl;
-				std::cout << "value " << value << std::endl;
+				//node_.AddChild(nodeX);
+				//std::cout << "Add " << node_.GetName() << " Child " << nodeX.GetName() << std::endl;
+				//return true;
+
 			}
 			else
 			{
-				int find2 = str.find('>');
-				if (find2 > -1)
-				{
-					node_.AddChild(nodeX);
-					std::cout << "Add " << node_.GetName() << " Child " << nodeX.GetName() << std::endl;
-					//return true;
-
-				}
-				else
-				{
-					std::cerr << "Cann't Read Node" << std::endl;
-					return false;
-				}
+				std::cerr << "Cann't Read Node" << std::endl;
+				return false;
 			}
-
-			find = str.find('<');
 		}
-		return true;
+		//find = str.find('<');
 	}
+	*/
 
-}
+//}

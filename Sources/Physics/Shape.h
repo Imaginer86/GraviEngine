@@ -19,24 +19,28 @@ public:
 
 	void AddIndex(unsigned index_)
 	{	
-		//CoordIndex.resize(CoordIndex.size());
-		std::vector<unsigned>& vector = CoordIndex[CoordIndex.size() - 1];
-		vector.resize(vector.size());
-		vector[vector.size() - 1] = index_;
+		CoordIndex.back().push_back(index_);
+		//std::vector<unsigned>& vector = CoordIndex[CoordIndex.size() - 1];
+		//vector.resize(vector.size());
+		//vector[vector.size() - 1] = index_;
 	}
 
 	void AddCoord(Vector3f& coord_)
 	{
-		//Coord.resize(Coord.size());
-		std::vector<Vector3f>& vector = Coord[Coord.size() - 1];
-		vector.resize(vector.size());
-		vector[vector.size() - 1] = coord_;
+		Coord.back().push_back(coord_);
+		//std::vector<Vector3f>& vector = Coord[Coord.size() - 1];
+		//vector.resize(vector.size());
+		//vector[vector.size() - 1] = coord_;
 	}
 
-	void AddPart(unsigned numCoord_, unsigned numCoordIndex_)
+	void AddPart(/*unsigned numCoord_, unsigned numCoordIndex_*/)
 	{
-		Coord.resize(numCoord_);
-		CoordIndex.resize(numCoordIndex_);
+		//Coord.resize(numCoord_);
+		//CoordIndex.resize(numCoordIndex_);
+		std::vector<Vector3f> coord;
+		Coord.push_back(coord);
+		std::vector<unsigned> coordIndex;
+		CoordIndex.push_back(coordIndex);
 	}
 	
 	void SetNumPart(unsigned numPart)

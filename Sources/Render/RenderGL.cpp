@@ -512,9 +512,9 @@ bool RenderGL::Init()
 		//return false;									// Return False
 	//}
 
-	GLbyte *pBytes;
-	GLint iWidth, iHeight, iComponents;
-	GLenum eFormat;
+	//GLbyte *pBytes;
+	//GLint iWidth, iHeight, iComponents;
+	//GLenum eFormat;
 
 
 	glEnable(GL_DEPTH_TEST);	// Hidden surface removal
@@ -544,18 +544,19 @@ bool RenderGL::Init()
 
 
 	// Load texture
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	pBytes = LoadTGA("data/Stone.tga", &iWidth, &iHeight, &iComponents, &eFormat);
-	glTexImage2D(GL_TEXTURE_2D, 0, iComponents, iWidth, iHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBytes);
-	free(pBytes);
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//pBytes = LoadTGA("data/Stone.tga", &iWidth, &iHeight, &iComponents, &eFormat);
+	//glTexImage2D(GL_TEXTURE_2D, 0, iComponents, iWidth, iHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBytes);
+	//free(pBytes);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glEnable(GL_TEXTURE_2D);
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	//glEnable(GL_TEXTURE_2D);
 
 
 
@@ -639,6 +640,8 @@ void RenderGL::BeginDraw()
 
 
 	SetGLLight();
+
+	/*
 
 	//Test
 
@@ -729,6 +732,7 @@ void RenderGL::BeginDraw()
 
 	// Restore the matrix state
 	glPopMatrix();
+	*/
 
 }
 

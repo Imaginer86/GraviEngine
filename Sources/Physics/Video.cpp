@@ -12,15 +12,15 @@
 using namespace Physics;
 
 	// Пользовательские переменные
-	float  angle;              // Для вращения
+	//float  angle;              // Для вращения
 	int    next;               // Для анимации
 	int    frame = 0;            // Счётчик кадров
-	int    effect = 0;             // Текущий эффект
-	bool   sp;                 // Пробел нажат?
-	bool   env = false;           // Показ среды(По умолчанию включен)
-	bool   ep;                 // 'E' нажато?
-	bool   bg = true;            // Фон(по умолчанию включен)
-	bool   bp;                 // 'B' нажато?
+	//int    effect = 0;             // Текущий эффект
+	//bool   sp;                 // Пробел нажат?
+	//bool   env = false;           // Показ среды(По умолчанию включен)
+	//bool   ep;                 // 'E' нажато?
+	//bool   bg = true;            // Фон(по умолчанию включен)
+	//bool   bp;                 // 'B' нажато?
 
 
 	
@@ -144,7 +144,7 @@ bool Video::Initialize(const std::string& szFile) //Инициализация
 	//g_keys = keys;
 
 	// Начало инициализации
-	angle = 0.0f;                             // Установка угла в ноль
+	//angle = 0.0f;                             // Установка угла в ноль
 	hdd = DrawDibOpen();                      // Получение контекста устройства
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);    // Черный фон
 	glClearDepth(1.0f);                      // Установка буфера глубины
@@ -183,7 +183,7 @@ void Video::Deinitialize(void) //Вся деиницилизация здесь
 
 void Video::Update(unsigned long milliseconds) // Движение обновляется тут
 {
-	angle += (float)(milliseconds) / 60.0f; // Обновление angle на основе времени
+	//angle += (float)(milliseconds) / 60.0f; // Обновление angle на основе времени
 
 	next += milliseconds;  // Увеличение next основанное на таймере (миллисекундах)
 	frame = next / mpf;       // Вычисление текущего кадра
@@ -229,101 +229,6 @@ void Video::Draw(void)         // Прорисовка сцены
 	glEnd();             // Конец рисования
 
 	glPopMatrix();
-
-
-	/*
-	
-	if (bg)                // Фоновое изображение показывать?
-	{
-		//glLoadIdentity();    // Сброс матрицы просмотра
-		glBegin(GL_QUADS);   // Начало прорисовки фонового рисунка
-		// Передняя грань
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(11.0f, 8.3f, -20.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(-11.0f, 8.3f, -20.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(-11.0f, -8.3f, -20.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(11.0f, -8.3f, -20.0f);
-		glEnd();             // Конец рисования
-	}
-	
-	glLoadIdentity();     // Сброс матрицы
-	glTranslatef(0.0f, 0.0f, -10.0f); // На десять единиц в экран
-	if (env)               // Включено отображение эффектов
-	{
-		glEnable(GL_TEXTURE_GEN_S); // Вкл. автогенерация координат текстуры по S (Новое)
-		glEnable(GL_TEXTURE_GEN_T); // Вкл. автогенерация координат текстуры по T (Новое)
-	}
-
-	glRotatef(angle*2.3f, 1.0f, 0.0f, 0.0f); // Немного вращает объекты по оси x
-	glRotatef(angle*1.8f, 0.0f, 1.0f, 0.0f); // Делает то же самое только по оси y
-	glTranslatef(0.0f, 0.0f, 2.0f); // После вращения перемещение
-
-	switch (effect) // Какой эффект?
-	{
-	case 0: // Эффект  0 - Куб
-		glRotatef(angle*1.3f, 1.0f, 0.0f, 0.0f); // Вращение по оси x
-		glRotatef(angle*1.1f, 0.0f, 1.0f, 0.0f); // Вращение по оси y
-		glRotatef(angle*1.2f, 0.0f, 0.0f, 1.0f); // Вращение по оси z
-		glBegin(GL_QUADS); // Начало рисования куба
-		//Передняя грань
-		glNormal3f(0.0f, 0.0f, 0.5f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-		//Задняя грань
-		glNormal3f(0.0f, 0.0f, -0.5f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-		//Верхняя грань
-		glNormal3f(0.0f, 0.5f, 0.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-		// Нижняя грань
-		glNormal3f(0.0f, -0.5f, 0.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-		// Правая грань
-		glNormal3f(0.5f, 0.0f, 0.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
-		// Левая грань
-		glNormal3f(-0.5f, 0.0f, 0.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
-		glEnd();            // Конец рисования нашего куба
-		break;              // Конец нулевого эффекта
-
-	case 1: // Эффект 1 - сфера
-		glRotatef(angle*1.3f, 1.0f, 0.0f, 0.0f); // Вращение по оси x
-		glRotatef(angle*1.1f, 0.0f, 1.0f, 0.0f); // Вращение по оси y
-		glRotatef(angle*1.2f, 0.0f, 0.0f, 1.0f); // Вращение по оси z
-		gluSphere(quadratic, 1.3f, 20, 20); // Прорисовка сферы
-		break; //Конец прорисовки сферы
-
-	case 2: // Эффект 2 - цилиндр
-		glRotatef(angle*1.3f, 1.0f, 0.0f, 0.0f);    // Вращение по оси x
-		glRotatef(angle*1.1f, 0.0f, 1.0f, 0.0f);    // Вращение по оси y
-		glRotatef(angle*1.2f, 0.0f, 0.0f, 1.0f);    // Вращение по оси z
-		glTranslatef(0.0f, 0.0f, -1.5f);               // Центр цилиндра
-		gluCylinder(quadratic, 1.0f, 1.0f, 3.0f, 32, 32); // Прорисовка цилиндра
-		break; //Конец прорисовки цилиндра
-	}
-
-	if (env) // Включено наложение окружения?
-	{
-		glDisable(GL_TEXTURE_GEN_S); // Вкл. автогенерация координат текстуры по S (Новое)
-		glDisable(GL_TEXTURE_GEN_T); // Вкл. автогенерация координат текстуры по T (Новое)
-	}*/
 
 	glFlush();              // Визуализация
 }

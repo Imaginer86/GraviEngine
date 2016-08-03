@@ -31,6 +31,7 @@
     <ClCompile Include="..\Sources\Physics\Wave.cpp" />
     <ClCompile Include="..\Sources\Physics\WaveOut.cpp" />
     <ClCompile Include="..\Sources\Render\RenderGL.cpp" />
+    <ClCompile Include="..\Sources\Render\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Sources\Constans.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="..\Sources\Physics\WaveOut.h" />
     <ClInclude Include="..\Sources\Render\Render.h" />
     <ClInclude Include="..\Sources\Render\RenderGL.h" />
+    <ClInclude Include="..\Sources\Render\Texture.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79508FD0-94D2-48BB-994B-080F40938F69}</ProjectGuid>

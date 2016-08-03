@@ -1,11 +1,3 @@
-// Skeleton.cpp : Defines the entry point for the console application.
-//
-//#include "stdafx.h"
-//int _tmain(int argc, _TCHAR* argv[])
-//{
-	//return 0;
-//}
-
 #include <iostream>
 
 #include "Game.h"
@@ -13,15 +5,21 @@
 
 void main()
 {
-	if (!Game::Instance().LoadData("data/data1.dat"))
+	if (Game::Instance().LoadData("data/data2.dat"))
 	{
-		std::cerr << "Error LoadData" << std::endl;
+		if (Core::Master::Instance().Init(&Game::Instance()))
+		{
+			Core::Master::Instance().Run();
+			Core::Master::Instance().Release();			
+		}
+		else
+		{
+			std::cerr << "Error Init Core::Master" << std::endl;
+		}
+
 	}
 	else
 	{
-		Core::Master::Instance().Init(&Game::Instance());
-		Core::Master::Instance().Run();
-		Core::Master::Instance().Release();
+		std::cerr << "Error LoadData" << std::endl;
 	}
 }
-

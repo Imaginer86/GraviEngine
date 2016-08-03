@@ -110,7 +110,7 @@ void Master::Release()
 
 void Master::Run()
 {
-	unsigned lastTickCount = ::GetTickCount();		// Get Tick Count
+	unsigned lastTickCount = ::GetTickCount64();		// Get Tick Count
 	unsigned tickCount, dtick, count;
 	tickCount = 0, dtick = 0, count = 0;
 
@@ -136,7 +136,7 @@ void Master::Run()
 			// Прорисовываем сцену.
 			if( gActive )          // Активна ли программа?
 			{
-				tickCount = ::GetTickCount();			// Get The Tick Count
+				tickCount = ::GetTickCount64();			// Get The Tick Count
 				UpdateKeys();
 				
 				if ( count > 1000 )

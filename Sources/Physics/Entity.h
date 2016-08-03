@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mash.h"
+//#include "Mash.h"
 #include "../Math/Vector3f.h"
 #include "../Math/Color.h"
 
@@ -32,7 +32,8 @@ public:
 
 	virtual void simulateForce(float dt)
 	{
-		vel += (force / m) * dt;				// Change in velocity is added to the velocity.
+		if (m != 0.0f)
+			vel += (force / m) * dt;				// Change in velocity is added to the velocity.
 		// The change is proportinal with the acceleration (force / m) and change in time
 
 		SetPos(GetPos() + vel * dt);						// Change in position is added to the position.
@@ -80,7 +81,7 @@ public:
 	}	
 
 private:
-	Mash* Mashes;
+	//Mash* Mashes;
 	float m;
 	Vector3f pos;
 	Vector3f vel;

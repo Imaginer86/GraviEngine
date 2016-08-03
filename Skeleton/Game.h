@@ -35,14 +35,11 @@ public:
 	virtual bool LoadData(const std::string& fileName);
 
 	void AddSphere(float m, float r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
-
 	void AddPlane(float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
-
 	void AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
-
 	void AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
-
 	bool AddModel(const std::string& fileName, const float m, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
+	bool AddVideo(const std::string& fileName, const float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
 
 	Vector3f GraviForce(int a, int b);
 

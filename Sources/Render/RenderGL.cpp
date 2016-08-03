@@ -10,6 +10,8 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
+//#include "Texture.h"
+
 #include "../GameBase.h"
 #include "../Core/Master.h"
 #include "../Core/Camera.h"
@@ -21,6 +23,24 @@ using namespace Math;
 using namespace Core;
 using namespace Render;
 
+#pragma pack(1)
+typedef struct
+{
+	GLbyte	identsize;              // Size of ID field that follows header (0)
+	GLbyte	colorMapType;           // 0 = None, 1 = paletted
+	GLbyte	imageType;              // 0 = none, 1 = indexed, 2 = rgb, 3 = grey, +8=rle
+	unsigned short	colorMapStart;          // First colour map entry
+	unsigned short	colorMapLength;         // Number of colors
+	unsigned char 	colorMapBits;   // bits per palette entry
+	unsigned short	xstart;                 // image x origin
+	unsigned short	ystart;                 // image y origin
+	unsigned short	width;                  // width in pixels
+	unsigned short	height;                 // height in pixels
+	GLbyte	bits;                   // bits per pixel (8 16, 24, 32)
+	GLbyte	descriptor;             // image descriptor
+} TGAHEADER;
+#pragma pack(8)
+
 HDC		hDC = nullptr;              // Приватный контекст устройства GDI
 HGLRC	hRC	 = nullptr;              // Постоянный контекст рендеринга
 HWND	hWnd = nullptr;              // Здесь будет хранится дескриптор окна
@@ -28,6 +48,8 @@ HINSTANCE  rhInstance = nullptr;              // Здесь будет хран�
 
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
+
+GLuint texture[1];
 
 //extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 //extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
@@ -77,6 +99,66 @@ RenderGL::~RenderGL()
 //	}
 //	return NULL;										// If Load Failed Return NULL
 //}	
+
+signed char *RenderGL::LoadTGA(const char *szFileName, int *iWidth, int *iHeight, int *iComponents, unsigned int *eFormat)
+{
+	FILE *pFile;
+	TGAHEADER tgaHeader;
+	unsigned long lImageSize;
+	short sDepth;
+	GLbyte *pBits = NULL;
+
+	*iWidth = 0;
+	*iHeight = 0;
+	*eFormat = GL_BGR_EXT;
+	*iComponents = GL_RGB8;
+
+	pFile = fopen(szFileName, "rb");
+	if (pFile == NULL)
+		return NULL;
+
+	fread(&tgaHeader, 18, 1, pFile);
+
+	*iWidth = tgaHeader.width;
+	*iHeight = tgaHeader.height;
+	sDepth = tgaHeader.bits / 8;
+
+	if (tgaHeader.bits != 8 && tgaHeader.bits != 24 && tgaHeader.bits != 32)
+		return NULL;
+
+	lImageSize = tgaHeader.width * tgaHeader.height * sDepth;
+
+	pBits = (GLbyte*)malloc(lImageSize * sizeof(GLbyte)); //!!!
+	if (pBits == NULL)
+		return NULL;
+
+	if (fread(pBits, lImageSize, 1, pFile) != 1)
+	{
+		free(pBits);
+		return NULL;
+	}
+
+	switch (sDepth)
+	{
+	case 3:     // Most likely case
+		*eFormat = GL_BGR_EXT;
+		*iComponents = GL_RGB8;
+		break;
+	case 4:
+		*eFormat = GL_BGRA_EXT;
+		*iComponents = GL_RGBA8;
+		break;
+	case 1:
+		*eFormat = GL_LUMINANCE;
+		*iComponents = GL_LUMINANCE8;
+		break;
+	};
+
+	fclose(pFile);
+
+	return pBits;
+}
+
 
 
 void RenderGL::BuildFont()								// Build Our Bitmap Font
@@ -149,11 +231,16 @@ void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	glPopMatrix();
 }
 
-int RenderGL::LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
+int RenderGL::LoadGLTextures()
 {
-	int Status = TRUE;									// Status Indicator
+	return 1;
+}
 
-	return Status;
+//int RenderGL::LoadGLTextures()                                    // Load Bitmaps And Convert To Textures
+//{
+//	int Status = TRUE;									// Status Indicator
+
+//	return Status;
 
 	/*
 	AUX_RGBImageRec *TextureImage[4];					// Create Storage Space For The Textures
@@ -186,7 +273,7 @@ int RenderGL::LoadGLTextures()                                    // Load Bitmap
 	}
 	return Status;										// Return The Status
 	*/
-}
+//}
 
 GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изменить размер и инициализировать окно GL
 {
@@ -420,21 +507,57 @@ void RenderGL::DisableLight()
 
 bool RenderGL::Init()
 {
-	if (!LoadGLTextures())								// If Loading The Textures Failed
-	{
-		return false;									// Return False
-	}
+	//if (!LoadGLTextures())								// If Loading The Textures Failed
+	//{
+		//return false;									// Return False
+	//}
+
+	GLbyte *pBytes;
+	GLint iWidth, iHeight, iComponents;
+	GLenum eFormat;
+
+
+	glEnable(GL_DEPTH_TEST);	// Hidden surface removal
+	glFrontFace(GL_CCW);		// Counter clock-wise polygons face out
+	glEnable(GL_CULL_FACE);		// Do not calculate inside of jet
+
 	//glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
-	glClearDepth(1.0f);              // Разрешить очистку буфера глубины
-	glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
+	//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
+	//glClearDepth(1.0f);              // Разрешить очистку буфера глубины
+	//glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
 	//glDepthFunc(GL_LEQUAL);            // Тип теста глубины
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
-	glEnable(GL_COLOR_MATERIAL);
+	//glEnable(GL_COLOR_MATERIAL);
 
 	//glEnable(GL_TEXTURE_2D);
 
 	SetGLLight();
+
+	// Enable color tracking
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Set Material properties to follow glColor values
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+	// Black blue background
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+
+	// Load texture
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	pBytes = LoadTGA("data/Stone.tga", &iWidth, &iHeight, &iComponents, &eFormat);
+	glTexImage2D(GL_TEXTURE_2D, 0, iComponents, iWidth, iHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBytes);
+	free(pBytes);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glEnable(GL_TEXTURE_2D);
+
+
 
 	BuildFont();				// Build The Font
 
@@ -516,6 +639,97 @@ void RenderGL::BeginDraw()
 
 
 	SetGLLight();
+
+	//Test
+
+	Vector3f vNormal;
+	Vector3f vCorners[5] = { { 0.0f, .80f, 0.0f },     // Top           0
+	{ -0.5f, 0.0f, -.50f },    // Back left     1
+	{ 0.5f, 0.0f, -0.50f },    // Back right    2
+	{ 0.5f, 0.0f, 0.5f },      // Front right   3
+	{ -0.5f, 0.0f, 0.5f } };    // Front left    4
+
+								// Clear the window with current clearing color
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Save the matrix state and do the rotations
+	glPushMatrix();
+	// Move object back and do in place rotation
+	glTranslatef(0.0f, -0.25f, -4.0f);
+	//glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+	//glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+
+	// Draw the Pyramid
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	// Bottom section - two triangles
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(vCorners[2].x, vCorners[2].y, vCorners[2].z);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[4].x, vCorners[4].y, vCorners[4].z);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(vCorners[1].x, vCorners[1].y, vCorners[1].z);
+
+
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(vCorners[2].x, vCorners[2].y, vCorners[2].z);
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(vCorners[3].x, vCorners[3].y, vCorners[3].z);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[4].x, vCorners[4].y, vCorners[4].z);
+
+	// Front Face
+	//gltGetNormalVector(vCorners[0], vCorners[4], vCorners[3], vNormal);
+	//glNormal3fv(vNormal);
+	glTexCoord2f(0.5f, 1.0f);
+	glVertex3f(vCorners[0].x, vCorners[0].y, vCorners[0].z);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[4].x, vCorners[4].y, vCorners[4].z);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(vCorners[3].x, vCorners[3].y, vCorners[3].z);
+
+	// Left Face
+	//gltGetNormalVector(vCorners[0], vCorners[1], vCorners[4], vNormal);
+	//glNormal3fv(vNormal);
+	glTexCoord2f(0.5f, 1.0f);
+	glVertex3f(vCorners[0].x, vCorners[0].y, vCorners[0].z);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[1].x, vCorners[1].y, vCorners[1].z);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(vCorners[4].x, vCorners[4].y, vCorners[4].z);
+
+	// Back Face
+	//gltGetNormalVector(vCorners[0], vCorners[2], vCorners[1], vNormal);
+	//glNormal3fv(vNormal);
+	glTexCoord2f(0.5f, 1.0f);
+	glVertex3f(vCorners[0].x, vCorners[0].y, vCorners[0].z);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[2].x, vCorners[2].y, vCorners[2].z);
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(vCorners[1].x, vCorners[1].y, vCorners[1].z);
+
+	// Right Face
+	//gltGetNormalVector(vCorners[0], vCorners[3], vCorners[2], vNormal);
+	//glNormal3fv(vNormal);
+	glTexCoord2f(0.5f, 1.0f);
+	glVertex3f(vCorners[0].x, vCorners[0].y, vCorners[0].z);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(vCorners[3].x, vCorners[3].y, vCorners[3].z);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(vCorners[2].x, vCorners[2].y, vCorners[2].z);
+	glEnd();
+
+
+	// Restore the matrix state
+	glPopMatrix();
+
 }
 
 void RenderGL::EndDraw()
@@ -526,10 +740,11 @@ void RenderGL::EndDraw()
 
 void RenderGL::DrawDebugInfo()
 {
+	glDisable(GL_TEXTURE_2D);
 	//DisableLight();
 	glLoadIdentity();
 	//glPushMatrix();
-	glColor3f(0.5f, 0.5f, 0.5f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glTranslatef(-33.0f, 18.0f, -50.0f);
 	//glScalef(0.5f, 0.5f, 0.5f);	
 	glPrint("Scene #: %s", Master::Instance().GetGMGame()->GetSceneName().c_str());
@@ -558,6 +773,7 @@ void RenderGL::DrawDebugInfo()
 	glPopMatrix();
 	glLoadIdentity();
 	//SetGLLight();
+	glEnable(GL_TEXTURE_2D);
 }
 
 void RenderGL::DrawSphere(const Vector3f& pos, const float r, const Color4f& color) const

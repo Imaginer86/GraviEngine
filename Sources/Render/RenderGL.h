@@ -54,6 +54,8 @@ namespace Render
 
 
 	private:
+
+		signed char *LoadTGA(const char *szFileName, int *iWidth, int *iHeight, int *iComponents, unsigned int *eFormat);
 		bool LightOn;      // Свет ВКЛ / ВЫКЛ
 		bool Fullscreen;
 	};

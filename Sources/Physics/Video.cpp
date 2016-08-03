@@ -1,18 +1,23 @@
 ﻿#include "Video.h"
+#include <windows.h>								// Header File For Windows
+#include <vfw.h>
+
+#include <GL\gl.h>
+#include <GL\glu.h>
+
 #include "../Constans.h"
 
-//GL_Window*  g_window;
-//Video::Keys*      g_keys;
-
 #pragma comment( lib, "vfw32.lib" )    // Искать VFW32.lib при линковке
+
+using namespace Physics;
 
 	// Пользовательские переменные
 	float  angle;              // Для вращения
 	int    next;               // Для анимации
 	int    frame = 0;            // Счётчик кадров
-	int    effect = 3;             // Текущий эффект
+	int    effect = 0;             // Текущий эффект
 	bool   sp;                 // Пробел нажат?
-	bool   env = true;           // Показ среды(По умолчанию включен)
+	bool   env = false;           // Показ среды(По умолчанию включен)
 	bool   ep;                 // 'E' нажато?
 	bool   bg = true;            // Фон(по умолчанию включен)
 	bool   bp;                 // 'B' нажато?
@@ -58,7 +63,7 @@ void Video::flipIt(void* buffer) // Функция меняющая красны
 	}
 }
 
-void Video::OpenAVI(LPCSTR szFile)  // Вскрытие AVI файла (szFile)
+void Video::OpenAVI(const std::string& szFile)  // Вскрытие AVI файла (szFile)
 {
 	//TCHAR  title[100];         // Будет содержать заголовок
 	AVISTREAMINFO    psi;       // Указатель на структуру содержащую информацию о потоке
@@ -66,7 +71,7 @@ void Video::OpenAVI(LPCSTR szFile)  // Вскрытие AVI файла (szFile)
 	AVIFileInit();             // Открывает файл
 
 	// Открытие AVI потока
-	if (AVIStreamOpenFromFile(&pavi, szFile, streamtypeVIDEO, 0, OF_READ, NULL) != 0)
+	if (AVIStreamOpenFromFile(&pavi, szFile.c_str(), streamtypeVIDEO, 0, OF_READ, NULL) != 0)
 	{
 		// Если ошибка
 		MessageBox(HWND_DESKTOP, "Failed To Open The AVI Stream",
@@ -107,11 +112,11 @@ void Video::OpenAVI(LPCSTR szFile)  // Вскрытие AVI файла (szFile)
 	//SetWindowText(g_window->hWnd, title);  // Изменение заголовка
 }
 
-void Video::GrabAVIFrame(int frame) // Захват кадра
+void Video::GrabAVIFrame(int frame_) // Захват кадра
 {
 	LPBITMAPINFOHEADER lpbi;  // Содержит BitmapInfoHeader
 	// Получение данных из потока
-	lpbi = (LPBITMAPINFOHEADER)AVIStreamGetFrame(pgf, frame);
+	lpbi = (LPBITMAPINFOHEADER)AVIStreamGetFrame(pgf, frame_);
 	// Указатель на данные возвращенные AVIStreamGetFrame
 	// (Пропуск заголовка для получения указателя на данные)
 	pdata = (char *)lpbi + lpbi->biSize + lpbi->biClrUsed * sizeof(RGBQUAD);
@@ -133,7 +138,7 @@ void Video::CloseAVI()             // Функция закрытия
 	AVIFileExit();                // Закрытие файла
 }
 
-bool Video::Initialize() //Инициализация
+bool Video::Initialize(const std::string& szFile) //Инициализация
 {
 	//g_window = window;
 	//g_keys = keys;
@@ -163,7 +168,7 @@ bool Video::Initialize() //Инициализация
 	// Включение автогенерации текстурных координат по координате T сферического наложения
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
-	OpenAVI("Face2.avi");          // Откроем видео-файл
+	OpenAVI(szFile);          // Откроем видео-файл
 
 	// Создание текстуры
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -176,49 +181,8 @@ void Video::Deinitialize(void) //Вся деиницилизация здесь
 	CloseAVI();            // Закрываем AVI
 }
 
-void Video::Update(DWORD milliseconds) // Движение обновляется тут
+void Video::Update(unsigned long milliseconds) // Движение обновляется тут
 {
-	/*
-	if (g_keys->keyDown[VK_ESCAPE] == true) // Если ESC нажат
-	{
-		//TerminateApplication(g_window); // Завершение приложения
-	}
-
-	if (g_keys->keyDown[VK_F1] == true) // Если F1 нажата
-	{
-		//ToggleFullscreen(g_window); // Включение полноэкранного режима
-	}
-
-	if ((g_keys->keyDown[' ']) && !sp) // Пробел нажат и не удерживается
-	{
-		sp = true;      // Установка sp в истину
-		effect++;     // Изменение эффекта (увеличение effect)
-		if (effect > 3) // Превышен лимит?
-			effect = 0;   // Возвращаемся к нулю
-	}
-
-	if (!g_keys->keyDown[' ']) // Если пробел отпущен
-		sp = false; // Установка sp в false
-
-	if ((g_keys->keyDown['B']) && !bp) // ‘B’ нажат и не удерживается
-	{
-		bp = true; // Установка bp в true
-		bg = !bg;  // Включение фона Off/On
-	}
-
-	if (!g_keys->keyDown['B']) // Если ‘B’ отпущен
-		bp = false; //Установка bp в false
-
-	if ((g_keys->keyDown['E']) && !ep) // Если ‘E’ нажат и не удерживается
-	{
-		ep = true;  // Установка ep в true
-		env = !env; // Включение отображения среды Off/On
-	}
-
-	if (!g_keys->keyDown['E']) // Если 'E' отпущен?
-		ep = false;                // Установка ep в false
-		*/
-
 	angle += (float)(milliseconds) / 60.0f; // Обновление angle на основе времени
 
 	next += milliseconds;  // Увеличение next основанное на таймере (миллисекундах)
@@ -228,7 +192,6 @@ void Video::Update(DWORD milliseconds) // Движение обновляетс�
 		frame = 0;            // Сбрасываем frame назад в нуль (начало анимации)
 		next = 0;             // Сбрасываем таймер анимации (next)
 	}
-
 }
 
 void Video::Draw(void)         // Прорисовка сцены
@@ -238,9 +201,41 @@ void Video::Draw(void)         // Прорисовка сцены
 
 	GrabAVIFrame(frame);   // Захват кадра анимации
 
+	Vector2f sizeV = GetSize();
+
+	Vector3f axic;
+	float angle;
+	Quaternion q = GetAngleQ();
+	q.toAxisAngle(axic, angle);
+
+	Vector3f pos = GetPos();
+
+	//glLoadIdentity();    // Сброс матрицы просмотра
+
+	glPushMatrix();
+	
+
+	glTranslatef(pos.x, pos.y, pos.z);
+
+	glRotatef(angle, axic.x, axic.y, axic.z);
+
+	
+
+	glBegin(GL_QUADS);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(GetSize().x / 2.0f, GetSize().y / 2.0f, pos.z / 2.0f);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(-(GetSize().x / 2.0f), GetSize().y / 2.0f, pos.z / 2.0f);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(-(GetSize().x / 2.0f), -(GetSize().y / 2.0f), pos.z / 2.0f);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f(GetSize().x / 2.0f, -(GetSize().y) / 2.0f, pos.z / 2.0f);
+	glEnd();             // Конец рисования
+
+	glPopMatrix();
+
+
+	/*
+	
 	if (bg)                // Фоновое изображение показывать?
 	{
-		glLoadIdentity();    // Сброс матрицы просмотра
+		//glLoadIdentity();    // Сброс матрицы просмотра
 		glBegin(GL_QUADS);   // Начало прорисовки фонового рисунка
 		// Передняя грань
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(11.0f, 8.3f, -20.0f);
@@ -249,7 +244,7 @@ void Video::Draw(void)         // Прорисовка сцены
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(11.0f, -8.3f, -20.0f);
 		glEnd();             // Конец рисования
 	}
-
+	
 	glLoadIdentity();     // Сброс матрицы
 	glTranslatef(0.0f, 0.0f, -10.0f); // На десять единиц в экран
 	if (env)               // Включено отображение эффектов
@@ -328,7 +323,7 @@ void Video::Draw(void)         // Прорисовка сцены
 	{
 		glDisable(GL_TEXTURE_GEN_S); // Вкл. автогенерация координат текстуры по S (Новое)
 		glDisable(GL_TEXTURE_GEN_T); // Вкл. автогенерация координат текстуры по T (Новое)
-	}
+	}*/
 
 	glFlush();              // Визуализация
 }

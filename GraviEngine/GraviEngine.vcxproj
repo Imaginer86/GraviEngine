@@ -24,6 +24,7 @@
     <ClCompile Include="..\Sources\Physics\Sphere.cpp" />
     <ClCompile Include="..\Sources\Physics\Video.cpp" />
     <ClCompile Include="..\Sources\Physics\Wave.cpp" />
+    <ClCompile Include="..\Sources\Physics\Wave2.cpp" />
     <ClCompile Include="..\Sources\Physics\WaveOut.cpp" />
     <ClCompile Include="..\Sources\Render\RenderGL.cpp" />
     <ClCompile Include="..\Sources\Render\Texture.cpp" />
@@ -56,6 +57,7 @@
     <ClInclude Include="..\Sources\Physics\Sphere.h" />
     <ClInclude Include="..\Sources\Physics\Video.h" />
     <ClInclude Include="..\Sources\Physics\Wave.h" />
+    <ClInclude Include="..\Sources\Physics\Wave2.h" />
     <ClInclude Include="..\Sources\Physics\WaveOut.h" />
     <ClInclude Include="..\Sources\Render\Render.h" />
     <ClInclude Include="..\Sources\Render\RenderGL.h" />

@@ -1,34 +1,60 @@
 ﻿#pragma once
+#include "Entity.h"
 #include "../Math/Vector3f.h"
-#include "../Math/Color.h"
+#include "../Math/Quaternion.h"
 
 namespace Physics
 {
-
-class Wave
-{
-public:
-	Wave()
-		: tGame(0.0f)
-	{}
-	virtual ~Wave(){}
-
-	void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float w_, const Math::Color4f& _color)
+	class Wave : public Entity
 	{
-		pos = pos_;
-		numR = numR_;
-		numRo = numRo_;
-		w = w_;
-		color = _color;
+	public:
+		Wave();
+		Wave(float mass_, unsigned n_, unsigned m_, float size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_);
+		virtual ~Wave();
+
+		bool initialize();
+
+		virtual void simulateForce(float dt);
+
+		virtual void Draw();
+
+	private:
+		static const unsigned sizeN = 32;
+		static const unsigned sizeM = 32;
+		float wave_movement;										// Our Variable To Move The Waves Across The Mesh
+		float mesh[sizeN][sizeM][3];
+		Quaternion q;
+		Quaternion qVel;
+		float size;
+	};
+
+	inline Wave::Wave()
+		:Entity()
+		, wave_movement(0.0f)
+		, q(0.0f, 0.0f, 1.0f, 0.0f)
+		, qVel(0.0f, 0.0f, 1.0f, 0.0f)
+		//, sizeN(32)
+		//, sizeM(32)
+		, size(1.0f)
+	{
 	}
-	virtual void Update(float dt_);
-	virtual void Draw();
-private:
-	float tGame;
-	Vector3f pos;
-	unsigned numR, numRo;
-	float w;
-	Math::Color4f color;
-};
+
+	inline Wave::Wave(float mass_, unsigned n_, unsigned m_, float size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_)
+		:Entity(mass_, pos_, vel_, color_)
+		, wave_movement(0.0f)
+		, q(q_)
+		, qVel(qVel_)
+		//, sizeN(n_)
+		//, sizeM(m_)
+		, size(size_)
+	{
+
+	}
+
+	inline Wave::~Wave()
+	{
+
+	}
+
 
 }

@@ -23,15 +23,41 @@
 #include "Physics/Sphere.h"
 #include "Physics/Plane.h"
 #include "Physics/Box.h"
+#include "Physics/Wave.h"
 #include "Physics/Smoke.h"
 #include "Physics/Shape.h"
 #include "Physics/Video.h"
 //#include "Physics/Sky.h"
 
+bool Game::initialize()
+{
+	bool res = true;
+	for (unsigned i = 0; i < numEntitys; i++)		// We will init() every mass
+	{
+		if (typeid(*Entities[i]) == typeid(Physics::Wave))
+		{
+			Physics::Wave* wave = dynamic_cast<Physics::Wave*>(Entities[i]);
+			if (!wave->initialize())
+			{
+				res = false;
+			}
+		}
+	}
+
+	return res;
+}
+
 void Game::Init() /* this method will call the init() method of every mass */
 {	
 	for (unsigned i = 0; i < numEntitys; i++)		// We will init() every mass
+	{
 		Entities[i]->init();						// call init() method of the mass
+		//if (typeid(*Entities[i]) == typeid(Physics::Wave))
+		//{
+			//Physics::Wave* wave = dynamic_cast<Physics::Wave*>(Entities[i]);
+			//wave->initialize();
+		//}
+	}
 }
 
 void Game::Release() /* delete the masses created */
@@ -117,6 +143,14 @@ void Game::AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vect
 {
 	Physics::Box *box = new Physics::Box(m, size, pos, vel, q, qVel, color);
 	Entities[countAddEntities] = box;
+	++countAddEntities;
+}
+
+void Game::AddWave(float m, unsigned sizeN, unsigned sizeM, float size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
+{
+	Physics::Wave *wave = new Physics::Wave(m, sizeN, sizeM, size, pos, vel, q, qVel, color);
+	//wave->initialize();
+	Entities[countAddEntities] = wave;
 	++countAddEntities;
 }
 
@@ -971,6 +1005,31 @@ bool Game::LoadData(const std::string& fileName)
 			qVel.normalize();
 
 			AddPlane(m, size, pos, vel, q, qVel, color);
+		}
+		else if (str == "Wave")
+		{
+			float m = dataFile.GetFloat();
+			unsigned sizeN = dataFile.GetUnsigned();
+			unsigned sizeM = dataFile.GetUnsigned();
+			float size = dataFile.GetFloat();
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			Vector3f angleAxic = dataFile.GetVector3f();
+			float angle = dataFile.GetFloat();
+			Vector3f angleVelAxic = dataFile.GetVector3f();
+			float angleVel = dataFile.GetFloat();
+			Math::Color4f color = dataFile.GetColor();
+
+			Quaternion q;
+			q.fromAxisAngle(angleAxic, angle);
+			q.normalize();
+
+			Quaternion qVel;
+			qVel.fromAxisAngle(angleVelAxic, angleVel);
+			qVel.normalize();
+			
+
+			AddWave(m, sizeN, sizeM, size, pos, vel, q, qVel, color);
 		}
 		else if (str == "Smoker")
 		{

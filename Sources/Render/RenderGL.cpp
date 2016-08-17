@@ -521,23 +521,25 @@ bool RenderGL::Init()
 	glFrontFace(GL_CCW);		// Counter clock-wise polygons face out
 	glEnable(GL_CULL_FACE);		// Do not calculate inside of jet
 
-	//glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
-	//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
-	//glClearDepth(1.0f);              // Разрешить очистку буфера глубины
-	//glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
-	//glDepthFunc(GL_LEQUAL);            // Тип теста глубины
-	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
-	//glEnable(GL_COLOR_MATERIAL);
+	glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
+	glClearDepth(1.0f);              // Разрешить очистку буфера глубины
+	glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
+	glDepthFunc(GL_LEQUAL);            // Тип теста глубины
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
+	glEnable(GL_COLOR_MATERIAL);
 
 	//glEnable(GL_TEXTURE_2D);
 
-	SetGLLight();
+	
 
 	// Enable color tracking
 	glEnable(GL_COLOR_MATERIAL);
 
 	// Set Material properties to follow glColor values
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+	SetGLLight();
 
 	// Black blue background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

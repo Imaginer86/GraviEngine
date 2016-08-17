@@ -5,10 +5,11 @@
 
 void main()
 {
-	if (Game::Instance().LoadData("data/data2.dat"))
+	if (Game::Instance().LoadData("data/data1.dat"))
 	{
 		if (Core::Master::Instance().Init(&Game::Instance()))
 		{
+			Game::Instance().initialize();
 			Core::Master::Instance().Run();
 			Core::Master::Instance().Release();			
 		}

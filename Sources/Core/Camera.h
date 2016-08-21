@@ -4,55 +4,55 @@
 
 namespace Core
 {
-class Camera
-{
-public:
-	Camera();
-
-	virtual  ~Camera();
-
-	static Camera& Instance()
+	class Camera
 	{
-		static Camera SingleCamera;
-		return SingleCamera;
-	}
+	public:
+		Camera();
 
-	void RotateUpDown(float anglef);
+		virtual  ~Camera();
 
-	void RotateLR(float angle);
+		static Camera& Instance()
+		{
+			static Camera SingleCamera;
+			return SingleCamera;
+		}
 
-	void MoveCamera(float speed);		
+		void RotateUpDown(float anglef);
 
-	void MoveLRCamera(float speed);
+		void RotateLR(float angle);
 
-	Vector3f GetView();
+		void MoveCamera(float speed);		
 
-	void Interpolate(Quaternion& q_)
-	{
-		q *= q_;
-	}
+		void MoveLRCamera(float speed);
 
-	void SetPos(Vector3f& pos_)
-	{
-		pos = pos_;
-	}
+		Math::Vector3f GetView();
 
-	Vector3f& GetPos()
-	{
-		return pos;
-	}
+		void Interpolate(Math::Quaternion& q_)
+		{
+			q *= q_;
+		}
 
-	Quaternion GetQuaternion()
-	{
-		return q;
-	}
+		void SetPos(Math::Vector3f& pos_)
+		{
+			pos = pos_;
+		}
 
-	void SetQuaternion(Quaternion& q_)
-	{
-		q = q_;
-	}
-private:
-	Vector3f pos;
-	Quaternion q;
-};
+		Math::Vector3f& GetPos()
+		{
+			return pos;
+		}
+
+		Math::Quaternion GetQuaternion()
+		{
+			return q;
+		}
+
+		void SetQuaternion(Math::Quaternion& q_)
+		{
+			q = q_;
+		}
+	private:
+		Math::Vector3f pos;
+		Math::Quaternion q;
+	};
 }

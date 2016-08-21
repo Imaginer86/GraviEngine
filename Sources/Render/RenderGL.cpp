@@ -19,9 +19,9 @@
 #include "../Math/Plane.h"
 #include "../Math/Vector3f.h"
 
-using namespace Math;
-using namespace Core;
 using namespace Render;
+using namespace Core;
+using namespace Math;
 
 #pragma pack(1)
 typedef struct
@@ -204,7 +204,7 @@ void RenderGL::KillFont()									// Delete The Font
 	glDeleteLists(gFontBase, 256);								// Delete All 256 Characters
 }
 
-void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
+void RenderGL::Print(const char *fmt, ...)					// Custom GL "Print" Routine
 {
 	float		length = 0;								// Used To Find The Length Of The Text
 	char		text[256];								// Holds Our String
@@ -231,7 +231,7 @@ void RenderGL::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	glPopMatrix();
 }
 
-int RenderGL::LoadGLTextures()
+int RenderGL::LoadTextures()
 {
 	return 1;
 }
@@ -299,6 +299,11 @@ GLvoid RenderGL::ReSizeGLScene(unsigned width, unsigned height)        // Изм
 	// 	glLoadIdentity();              // Сброс матрицы вида модели
 }
 
+bool RenderGL::IsLight()
+{
+	return LightOn;
+}
+
 void RenderGL::SetGLLight()
 {
 	GLfloat rLightAmbient[4] = {Master::Instance().GetLightAmient().r, Master::Instance().GetLightAmient().g, Master::Instance().GetLightAmient().b, Master::Instance().GetLightAmient().a};
@@ -311,7 +316,7 @@ void RenderGL::SetGLLight()
 
 	glEnable(GL_LIGHT0); // Разрешение источника света номер один
 
-	if (GetLightOn())
+	if (LightOn)
 	{
 		glEnable(GL_LIGHTING);
 	}
@@ -496,13 +501,13 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 void RenderGL::EnableLight()
 {
 	glEnable(GL_LIGHTING);		// Разрешить освещение
-	SetLightOn(true);
+	LightOn = true;	
 }
 
 void RenderGL::DisableLight()
 {		
 	glDisable(GL_LIGHTING);		// Запрет освещения
-	SetLightOn(false);
+	LightOn = false;
 }
 
 bool RenderGL::Init()
@@ -753,29 +758,29 @@ void RenderGL::DrawDebugInfo()
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glTranslatef(-33.0f, 18.0f, -50.0f);
 	//glScalef(0.5f, 0.5f, 0.5f);	
-	glPrint("Scene #: %s", Master::Instance().GetGMGame()->GetSceneName().c_str());
+	Print("Scene #: %s", Master::Instance().GetGMGame()->GetSceneName().c_str());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("TPS: %u", Master::Instance().GetGTPS());						// Print GL Text To The Screen
+	Print("TPS: %u", Master::Instance().GetGTPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("FPS: %u", Master::Instance().GetGFPS());						// Print GL Text To The Screen
+	Print("FPS: %u", Master::Instance().GetGFPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("UPS: %u", Master::Instance().GetGUPS());						// Print GL Text To The Screen
+	Print("UPS: %u", Master::Instance().GetGUPS());						// Print GL Text To The Screen
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time: %2.2f", Master::Instance().GetGTime());
+	Print("Time: %2.2f", Master::Instance().GetGTime());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Time Scale: %2.2f", Master::Instance().GetGTimeScale());
+	Print("Time Scale: %2.2f", Master::Instance().GetGTimeScale());
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
+	Print("Camera Pos: %2.2f %2.2f %2.2f", Camera::Instance().GetPos().x, Camera::Instance().GetPos().y, Camera::Instance().GetPos().z);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
+	Print("Camera View: %2.2f %2.2f %2.2f", Camera::Instance().GetView().x, Camera::Instance().GetView().y, Camera::Instance().GetView().z);
 	Quaternion q = Camera::Instance().GetQuaternion();
 	Vector3f axic;
 	float angle;
 	q.toAxisAngle(axic, angle);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
+	Print("Camera Axic: %2.2f %2.2f %2.2f", axic.x, axic.y, axic.z);
 	glTranslatef(0.0f, -1.0f, 0);
-	glPrint("Camera Angle: %2.2f", angle);
+	Print("Camera Angle: %2.2f", angle);
 	glPopMatrix();
 	glLoadIdentity();
 	//SetGLLight();

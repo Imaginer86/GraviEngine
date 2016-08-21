@@ -29,6 +29,8 @@
 #include "Physics/Video.h"
 //#include "Physics/Sky.h"
 
+using namespace Math;
+
 bool Game::initialize()
 {
 	bool res = true;

@@ -11,12 +11,6 @@ public:
 
 	virtual ~GameBase(void){};
 
-// 	static GameBase& Instance()
-// 	{
-// 		static GameBase SingleGameBase;
-// 		return SingleGameBase;
-// 	}
-
 	virtual bool LoadData(const std::string& fileName) = 0;
 	virtual bool SaveData(const std::string& fileName) = 0;
 
@@ -27,10 +21,6 @@ public:
 	virtual void Update(float dt) = 0;
 
 	virtual void Draw() = 0;
-
-	//virtual void SetSceneNum(unsigned sceneNum) = 0;
-
-	//virtual unsigned GetSceneNum() = 0;
 
 	virtual void SetSceneName(const std::string& scenName_) = 0;
 	virtual std::string GetSceneName() = 0;

@@ -10,6 +10,7 @@
 #pragma comment( lib, "vfw32.lib" )    // Искать VFW32.lib при линковке
 
 using namespace Physics;
+using namespace Math;
 
 	// Пользовательские переменные
 	//float  angle;              // Для вращения

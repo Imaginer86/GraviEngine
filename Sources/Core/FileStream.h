@@ -37,9 +37,9 @@ namespace Core
 		bool GetBool();
 		float GetFloat();
 		unsigned GetUnsigned();
-		Vector2f GetVector2f();
-		Vector3f GetVector3f();
-		Quaternion GetQuaternion();
+		Math::Vector2f GetVector2f();
+		Math::Vector3f GetVector3f();
+		Math::Quaternion GetQuaternion();
 		Math::Color4f GetColor();
 		bool GetParameter(const std::string& paramName);
 	private:

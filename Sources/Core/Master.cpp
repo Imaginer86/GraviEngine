@@ -105,7 +105,7 @@ void Master::Release()
 	gmGame->Release();
 	gTime = 0.0f;
 	gTimeScale = 1.0f;
-	//RenderGL::Instance().Release();						// Разрушаем окно
+	Render::RenderGL::Instance().Release();						// Разрушаем окно
 }
 
 void Master::Run()
@@ -379,8 +379,7 @@ void Master::UpdateKeys()
 	if ( gKeys['L'] && !gLightOnKey )			// Клавиша 'L' нажата и не удерживается?
 	{
 		gLightOnKey=true;						// lp присвоили TRUE
-		Render::RenderGL::Instance().SetLightOn(!Render::RenderGL::Instance().GetLightOn());				// Переключение света TRUE/FALSE
-		if (Render::RenderGL::Instance().GetLightOn())					// Если не свет
+		if (Render::RenderGL::Instance().IsLight())					// Если не свет
 		{
 			Render::RenderGL::Instance().EnableLight();
 		}
@@ -423,6 +422,7 @@ void Master::UpdateKeys()
 			fileName += std::string(std::to_string(i + 1));
 			fileName += ".dat";			
 			gDone = !gmGame->LoadData(fileName);
+			Init(gmGame);
 			Render::RenderGL::Instance().SetGLLight();
 		}
 	}

@@ -3,6 +3,7 @@
 #include <iostream>
 
 using namespace Core;
+using namespace Math;
 
 bool FileStream::OpenRead(const std::string& fileName)
 {

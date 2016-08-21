@@ -2,6 +2,7 @@
 #include "../Render/RenderGL.h"
 
 using namespace Physics;
+using namespace Math;
 
 void Box::simulateForce(float dt)
 {

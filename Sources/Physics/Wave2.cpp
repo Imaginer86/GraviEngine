@@ -5,6 +5,7 @@
 #include <GL\glu.h>
 
 using namespace Physics;
+using namespace Math;
 
 void Wave2::Update(float dt_)
 {

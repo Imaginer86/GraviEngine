@@ -11,7 +11,7 @@ class Box: public Entity
 public:
 
 	Box();
-	Box(float m_, const Vector3f& size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_);
+	Box(float m_, const Math::Vector3f& size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_);
 
 	virtual ~Box(){}
 
@@ -19,40 +19,40 @@ public:
 
 	virtual void Draw();
 
-	Vector3f GetSize()
+	Math::Vector3f GetSize()
 	{
 		return size;
 	}
 
-	void SetSize(const Vector3f& size_)
+	void SetSize(const Math::Vector3f& size_)
 	{
 		this->size = size_;
 	}
 
-	Quaternion GetAngleQ()
+	Math::Quaternion GetAngleQ()
 	{
 		return q;
 	}
 
-	void SetAngleQ(const Quaternion& q_)
+	void SetAngleQ(const Math::Quaternion& q_)
 	{
 		q = q_;
 	}
 
-	Quaternion GetAngleVelQ()
+	Math::Quaternion GetAngleVelQ()
 	{
 		return qVel;
 	}
 
-	void SetAngleVelQ(const Quaternion& qVel_)
+	void SetAngleVelQ(const Math::Quaternion& qVel_)
 	{
 		qVel = qVel_;
 	}
 
 private:	
-	Vector3f size;
-	Quaternion q;
-	Quaternion qVel;
+	Math::Vector3f size;
+	Math::Quaternion q;
+	Math::Quaternion qVel;
 };
 
 inline Box::Box()
@@ -63,7 +63,7 @@ inline Box::Box()
 {
 }
 
-inline Box::Box(float m_, const Vector3f& size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_)
+inline Box::Box(float m_, const Math::Vector3f& size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_)
 : Entity(m_, pos_, vel_, color_)
 , size(size_)
 , q(q_)

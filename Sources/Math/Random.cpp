@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <ctime>
 
+using namespace Math;
+
 void Random::randomize()
 {
 	srand(static_cast<unsigned>(time(NULL)));

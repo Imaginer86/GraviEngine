@@ -2,6 +2,7 @@
 
 
 using namespace Core;
+using namespace Math;
 
 Camera::Camera()
 :pos(0.0, 0.0, 0.0)

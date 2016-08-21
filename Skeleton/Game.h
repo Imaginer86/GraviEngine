@@ -36,15 +36,15 @@ public:
 
 	virtual bool LoadData(const std::string& fileName);
 
-	void AddSphere(float m, float r, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
-	void AddPlane(float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
-	void AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
-	void AddWave(float m, unsigned sizeN, unsigned sizeM, float size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
-	void AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& vel0, const Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
-	bool AddModel(const std::string& fileName, const float m, const Vector3f& pos, const Vector3f& vel, const Math::Color4f& color);
-	bool AddVideo(const std::string& fileName, const float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color);
+	void AddSphere(float m, float r, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Color4f& color);
+	void AddPlane(float m, const Math::Vector2f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	void AddBox(float m, const Math::Vector3f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	void AddWave(float m, unsigned sizeN, unsigned sizeM, float size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	void AddSmoker(const Math::Vector3f& pos, const Math::Vector3f& rand, const Math::Vector3f& vel0, const Math::Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
+	bool AddModel(const std::string& fileName, const float m, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Color4f& color);
+	bool AddVideo(const std::string& fileName, const float m, const Math::Vector2f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
 
-	Vector3f GraviForce(int a, int b);
+	Math::Vector3f GraviForce(int a, int b);
 
 	void SimVel(float dt);
 	void Solve(float dt);							// no implementation because no forces are wanted in this basic container;
@@ -53,7 +53,7 @@ public:
 	void AddWindAcc(float dt);
 	void Collision(float dt);
 
-	bool InterPlanePoint(Vector3f pr, Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3);
+	bool InterPlanePoint(Math::Vector3f pr, Math::Vector3f p0, Math::Vector3f p1, Math::Vector3f p2, Math::Vector3f p3);
 
 	void SetNumStars(unsigned numStars, bool randomize = true);
 
@@ -109,11 +109,6 @@ public:
 		return bCollisions;
 	}
 
-	void SetGraviAcc(const Vector3f& graviAcc_)
-	{
-		graviAcc = graviAcc_;
-	}
-
 	void SetNumSpherees(unsigned numSpherees_)
 	{
 		numSpherees = numSpherees_;
@@ -149,7 +144,12 @@ public:
 		numModels = numModels_;
 	}
 
-	Vector3f GetGraviAcc()
+	void SetGraviAcc(const Math::Vector3f& graviAcc_)
+	{
+		graviAcc = graviAcc_;
+	}
+
+	Math::Vector3f GetGraviAcc()
 	{
 		return graviAcc;
 	}
@@ -182,7 +182,7 @@ private:
 	unsigned numEntitys;
 	Physics::Entity** Entities;
 
-	Vector3f graviAcc;
+	Math::Vector3f graviAcc;
 
 	Physics::Sky* mSky;
 };

@@ -13,7 +13,7 @@ namespace Physics
 		{}
 		virtual ~Wave2() {}
 
-		void Set(const Vector3f& pos_, unsigned numR_, unsigned numRo_, float w_, const Math::Color4f& _color)
+		void Set(const Math::Vector3f& pos_, unsigned numR_, unsigned numRo_, float w_, const Math::Color4f& _color)
 		{
 			pos = pos_;
 			numR = numR_;
@@ -25,7 +25,7 @@ namespace Physics
 		virtual void Draw();
 	private:
 		float tGame;
-		Vector3f pos;
+		Math::Vector3f pos;
 		unsigned numR, numRo;
 		float w;
 		Math::Color4f color;

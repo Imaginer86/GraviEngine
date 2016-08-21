@@ -1,22 +1,25 @@
 ﻿#pragma once
 #include "../Constans.h"
 
-class Random
+namespace Math
 {
-public:
-	static Random& Instance()
+	class Random
 	{
-		static Random SingleRender;
-		return SingleRender;
-	}
+	public:
+		static Random& Instance()
+		{
+			static Random SingleRender;
+			return SingleRender;
+		}
 
-	Random() {}
-	virtual ~Random() {}
+		Random() {}
+		virtual ~Random() {}
 
-	void randomize();
+		void randomize();
 
-	float randf();
-	float randfd();
+		float randf();
+		float randfd();
 
-	float randf(float a, float b);
-};
+		float randf(float a, float b);
+	};
+}

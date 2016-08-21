@@ -29,25 +29,24 @@ namespace Render
 
 		virtual void SetGLLight();
 
-		virtual int LoadGLTextures();
-	
-		//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
-
 		virtual void EnableLight();
 		virtual void DisableLight();
 
+		virtual bool IsLight();
+
+		//virtual void SetLight(const float *LightAmbient, const float *gLightDiffuse, const float *gLightPosition);
+
+		virtual int LoadTextures();		
+
 		virtual bool CreateWin(long* WndProc, const char *title, unsigned width, unsigned height, int bits);
 
-		virtual void glPrint(const char *fmt, ...);
+		virtual void Print(const char *fmt, ...);
 
 		virtual void DrawDebugInfo();
-		virtual void DrawTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const ::Math::Color4f& color) const;
-		virtual void DrawPlane(const Vector3f& pos, const Vector2f& size, const Vector3f& axic, const float angle, const ::Math::Color4f& color) const;
-		virtual void DrawBox(const Vector3f& pos, const Vector3f& size, const Vector3f& axic, const float angle, const ::Math::Color4f& color) const;
-		virtual void DrawSphere(const Vector3f& pos, const float r, const ::Math::Color4f& color) const;
-
-		virtual void SetLightOn(bool LightOn_) { LightOn = LightOn_; }
-		virtual bool GetLightOn() { return LightOn; }
+		virtual void DrawTriangle(const Math::Vector3f& p1, const Math::Vector3f& p2, const Math::Vector3f& p3, const Math::Color4f& color) const;
+		virtual void DrawPlane(const Math::Vector3f& pos, const Math::Vector2f& size, const Math::Vector3f& axic, const float angle, const Math::Color4f& color) const;
+		virtual void DrawBox(const Math::Vector3f& pos, const Math::Vector3f& size, const Math::Vector3f& axic, const float angle, const Math::Color4f& color) const;
+		virtual void DrawSphere(const Math::Vector3f& pos, const float r, const Math::Color4f& color) const;
 
 		virtual void SetFullScreen(bool Fullscreen_) { Fullscreen = Fullscreen_; }
 		virtual bool GetFullScreen() { return Fullscreen;}

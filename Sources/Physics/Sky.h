@@ -40,7 +40,7 @@ private:
 	//Quaternion *q;
 	float RMax;
 	float RMin;
-	Vector3f *Pos;
+	Math::Vector3f *Pos;
 	float *r;
 	Math::Color4f *color;
 };

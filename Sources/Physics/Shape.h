@@ -10,7 +10,7 @@ class Shape: public Entity
 public:
 
 	Shape(){};
-	Shape(float m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_);								// Constructor	
+	Shape(float m_, Math::Vector3f pos_, Math::Vector3f vel_, Math::Color4f color_);								// Constructor	
 
 	virtual ~Shape(){}
 
@@ -25,7 +25,7 @@ public:
 		//vector[vector.size() - 1] = index_;
 	}
 
-	void AddCoord(Vector3f& coord_)
+	void AddCoord(Math::Vector3f& coord_)
 	{
 		Coord.back().push_back(coord_);
 		//std::vector<Vector3f>& vector = Coord[Coord.size() - 1];
@@ -37,7 +37,7 @@ public:
 	{
 		//Coord.resize(numCoord_);
 		//CoordIndex.resize(numCoordIndex_);
-		std::vector<Vector3f> coord;
+		std::vector<Math::Vector3f> coord;
 		Coord.push_back(coord);
 		std::vector<unsigned> coordIndex;
 		CoordIndex.push_back(coordIndex);
@@ -50,11 +50,11 @@ public:
 	}
 
 private:
-	std::vector<std::vector<Vector3f>> Coord;
+	std::vector<std::vector<Math::Vector3f>> Coord;
 	std::vector<std::vector<unsigned>> CoordIndex;		
 };
 
-inline Shape::Shape(float m_, Vector3f pos_, Vector3f vel_, Math::Color4f color_)
+inline Shape::Shape(float m_, Math::Vector3f pos_, Math::Vector3f vel_, Math::Color4f color_)
 : Entity(m_, pos_, vel_, color_)
 //, numPart(numPart_)
 //, Coord(nullptr)

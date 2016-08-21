@@ -10,7 +10,7 @@ class Smoke: public Entity
 public:
 	Smoke();
 	virtual ~Smoke();
-	void SetRand(const Vector3f& rand_)
+	void SetRand(const Math::Vector3f& rand_)
 	{
 		rand = rand_;
 	}
@@ -19,20 +19,20 @@ public:
 		return E[i];
 	}
 
-	virtual void Init( float m_, const Vector3f& pos_, const Vector3f& rand_, const Vector3f& vel0_, const Vector3f& vel_, const Math::Color4f& color_, unsigned numParticles_, bool createCollision_);
+	virtual void Init( float m_, const Math::Vector3f& pos_, const Math::Vector3f& rand_, const Math::Vector3f& vel0_, const Math::Vector3f& vel_, const Math::Color4f& color_, unsigned numParticles_, bool createCollision_);
 	virtual void Draw();
 
-	virtual void applyAcc(Vector3f& acc, float dt);
+	virtual void applyAcc(Math::Vector3f& acc, float dt);
 	virtual void simulateForce(float dt);
 
 	void ApplyWind(float dt);
 
-	void SetVel0(const Vector3f& vel0_)
+	void SetVel0(const Math::Vector3f& vel0_)
 	{
 		vel0 = vel0_;
 	}
 
-	Vector3f GetVel0()
+	Math::Vector3f GetVel0()
 	{
 		return vel0;
 	}
@@ -53,8 +53,8 @@ public:
 	}
 private:
 	Entity *E;	
-	Vector3f rand;
-	Vector3f vel0;
+	Math::Vector3f rand;
+	Math::Vector3f vel0;
 	unsigned numParticles;
 	bool createCollision;
 };

@@ -101,12 +101,12 @@ namespace Core
 			return gLightDiffuse;
 		}
 
-		void SetLightPosition(const Vector3f& gLightPosition_)
+		void SetLightPosition(const Math::Vector3f& gLightPosition_)
 		{
 			gLightPosition = gLightPosition_;
 		}
 
-		Vector3f GetLightPosition()
+		Math::Vector3f GetLightPosition()
 		{
 			return gLightPosition;
 		}
@@ -165,8 +165,8 @@ namespace Core
 
 		bool gUpdateCamera, gFirstLoad;		
 
-		::Math::Color4f gLightAmbient, gLightDiffuse;
-		Vector3f gLightPosition;     // Позиция света
+		Math::Color4f gLightAmbient, gLightDiffuse;
+		Math::Vector3f gLightPosition;     // Позиция света
 	};
 
 	inline Master::Master()

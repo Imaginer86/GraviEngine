@@ -3,6 +3,7 @@
 #include "../Render/RenderGL.h"
 
 using namespace Physics;
+using namespace Math;
 
 void Plane::simulateForce(float dt)
 {

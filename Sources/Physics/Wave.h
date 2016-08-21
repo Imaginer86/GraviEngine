@@ -9,7 +9,7 @@ namespace Physics
 	{
 	public:
 		Wave();
-		Wave(float mass_, unsigned n_, unsigned m_, float size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_);
+		Wave(float mass_, unsigned n_, unsigned m_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_);
 		virtual ~Wave();
 
 		bool initialize();
@@ -23,8 +23,8 @@ namespace Physics
 		static const unsigned sizeM = 32;
 		float wave_movement;										// Our Variable To Move The Waves Across The Mesh
 		float mesh[sizeN][sizeM][3];
-		Quaternion q;
-		Quaternion qVel;
+		Math::Quaternion q;
+		Math::Quaternion qVel;
 		float size;
 	};
 
@@ -39,7 +39,7 @@ namespace Physics
 	{
 	}
 
-	inline Wave::Wave(float mass_, unsigned n_, unsigned m_, float size_, const Vector3f& pos_, const Vector3f& vel_, const Quaternion& q_, const Quaternion& qVel_, const Math::Color4f& color_)
+	inline Wave::Wave(float mass_, unsigned n_, unsigned m_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_)
 		:Entity(mass_, pos_, vel_, color_)
 		, wave_movement(0.0f)
 		, q(q_)
@@ -55,6 +55,4 @@ namespace Physics
 	{
 
 	}
-
-
 }

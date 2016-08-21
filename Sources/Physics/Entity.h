@@ -10,22 +10,22 @@ class Entity
 {
 public:
 	Entity();
-	Entity(float m_, const Vector3f& pos_, const Vector3f& vel_, const Math::Color4f& color_);
+	Entity(float m_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Color4f& color_);
 	virtual ~Entity(){};
 
 	virtual void init()
 	{
-		force = Vector3f(0.0f, 0.0f, 0.0f);
+		force = Math::Vector3f(0.0f, 0.0f, 0.0f);
 	}
 
 	virtual void Draw() {}
 	
-	virtual void applyForce(const Vector3f& force_)
+	virtual void applyForce(const Math::Vector3f& force_)
 	{
 		this->force += force_;					// The external force is added to the force of the mass
 	}
 
-	virtual void applyAcc(Vector3f& acc, float dt)
+	virtual void applyAcc(Math::Vector3f& acc, float dt) //todo
 	{
 		vel += acc*dt;
 	}
@@ -50,22 +50,22 @@ public:
 		this->m = mass;
 	}
 
-	Vector3f GetPos()
+	Math::Vector3f GetPos()
 	{
 		return pos;
 	}
 
-	void SetPos(Vector3f pos_)
+	void SetPos(Math::Vector3f pos_)
 	{
 		this->pos = pos_;
 	}
 
-	Vector3f GetVel()
+	Math::Vector3f GetVel()
 	{
 		return vel;
 	}
 
-	void SetVel(const Vector3f& v)
+	void SetVel(const Math::Vector3f& v)
 	{
 		this->vel = v;
 	}
@@ -83,9 +83,9 @@ public:
 private:
 	//Mash* Mashes;
 	float m;
-	Vector3f pos;
-	Vector3f vel;
-	Vector3f force;
+	Math::Vector3f pos;
+	Math::Vector3f vel;
+	Math::Vector3f force;
 	Math::Color4f color;
 };
 
@@ -97,7 +97,7 @@ inline Entity::Entity()
 {
 }
 
-inline Entity::Entity(float m_, const Vector3f& pos_, const Vector3f& vel_, const Math::Color4f& color_)
+inline Entity::Entity(float m_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Color4f& color_)
 :pos(pos_)
 ,m(m_)
 ,vel(vel_)

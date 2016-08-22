@@ -39,10 +39,10 @@ public:
 	void AddSphere(float m, float r, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Color4f& color);
 	void AddPlane(float m, const Math::Vector2f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
 	void AddBox(float m, const Math::Vector3f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
-	void AddWave(float m, unsigned sizeN, unsigned sizeM, float size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	void AddWave(float m, float size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
 	void AddSmoker(const Math::Vector3f& pos, const Math::Vector3f& rand, const Math::Vector3f& vel0, const Math::Vector3f& vel, const Math::Color4f& color, unsigned numParticles, bool createCollision);
-	bool AddModel(const std::string& fileName, const float m, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Color4f& color);
-	bool AddVideo(const std::string& fileName, const float m, const Math::Vector2f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	void AddVideo(const std::string& fileName, const float m, const Math::Vector2f& size, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Quaternion& q, const Math::Quaternion& qVel, const Math::Color4f& color);
+	bool AddModel(const std::string& fileName, const float m, const Math::Vector3f& pos, const Math::Vector3f& vel, const Math::Color4f& color);	
 
 	Math::Vector3f GraviForce(int a, int b);
 
@@ -109,41 +109,6 @@ public:
 		return bCollisions;
 	}
 
-	void SetNumSpherees(unsigned numSpherees_)
-	{
-		numSpherees = numSpherees_;
-	}
-
-	unsigned GetNumSpherees()
-	{
-		return numSpherees;
-	}
-
-	void SetNumBoxes(unsigned numBoxes_)
-	{
-		numBoxes= numBoxes_;
-	}
-
-	unsigned GetNumBoxes()
-	{
-		return numBoxes;
-	}
-
-	void SetNumSmokers(unsigned numSmokers_)
-	{
-		numSmokers = numSmokers_;
-	}
-
-	unsigned GetNumSmokers()
-	{
-		return numSmokers;
-	}
-
-	void SetNumModels(unsigned numModels_)
-	{
-		numModels = numModels_;
-	}
-
 	void SetGraviAcc(const Math::Vector3f& graviAcc_)
 	{
 		graviAcc = graviAcc_;
@@ -168,11 +133,6 @@ private:
 	std::string  gSceneName;
 
 	unsigned countAddEntities;
-
-	unsigned numSpherees;
-	unsigned numBoxes;
-	unsigned numSmokers;
-	unsigned numModels;
 
 	bool bGraviSpherees;
 	bool bGraviAcc;

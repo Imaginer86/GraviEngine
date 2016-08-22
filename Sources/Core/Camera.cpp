@@ -52,8 +52,9 @@ void Camera::RotateLR(float anglef)
 
  Vector3f Camera::GetView()
  {
- 	Vector3f view(0,0,1);	
- 	view = q.rotate(view);
+ 	Vector3f view(0,0,1);
+	Quaternion q_ = q*view*q.conjugate();
+	view = Vector3f(q_.x, q_.y, q_.z);
  	view.unitize();		  
  	return view;
 }

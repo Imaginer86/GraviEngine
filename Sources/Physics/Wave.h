@@ -9,7 +9,7 @@ namespace Physics
 	{
 	public:
 		Wave();
-		Wave(float mass_, unsigned n_, unsigned m_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_);
+		Wave(float mass_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_);
 		virtual ~Wave();
 
 		bool initialize();
@@ -39,13 +39,11 @@ namespace Physics
 	{
 	}
 
-	inline Wave::Wave(float mass_, unsigned n_, unsigned m_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_)
+	inline Wave::Wave(float mass_, float size_, const Math::Vector3f& pos_, const Math::Vector3f& vel_, const Math::Quaternion& q_, const Math::Quaternion& qVel_, const Math::Color4f& color_)
 		:Entity(mass_, pos_, vel_, color_)
 		, wave_movement(0.0f)
 		, q(q_)
 		, qVel(qVel_)
-		//, sizeN(n_)
-		//, sizeM(m_)
 		, size(size_)
 	{
 

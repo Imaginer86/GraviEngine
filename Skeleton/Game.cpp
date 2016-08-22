@@ -43,6 +43,14 @@ bool Game::initialize()
 			{
 				res = false;
 			}
+		} 
+		else if (typeid(*Entities[i]) == typeid(Physics::Video))
+		{
+			Physics::Video* video = dynamic_cast<Physics::Video*>(Entities[i]);
+			if (!video->Initialize())
+			{
+				res = false;
+			}
 		}
 	}
 
@@ -70,9 +78,6 @@ void Game::Release() /* delete the masses created */
 	}
 
 	numEntitys = 0;
-	numSpherees = 0;
-	numBoxes = 0;
-	numSmokers = 0;
 
 	countAddEntities = 0;
 	Entities = nullptr;
@@ -90,7 +95,7 @@ void Game::Update(float dt)
 	{
 		Solve(dt);									// Step 2: apply forces		
 	}
-	if (bGraviAcc)
+	if (bGraviAcc && graviAcc.length() > Math::EPSILON)
 	{
 		AddGraviAcc(dt);		
 	}
@@ -148,9 +153,9 @@ void Game::AddBox(float m, const Vector3f& size, const Vector3f& pos, const Vect
 	++countAddEntities;
 }
 
-void Game::AddWave(float m, unsigned sizeN, unsigned sizeM, float size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
+void Game::AddWave(float m, float size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
 {
-	Physics::Wave *wave = new Physics::Wave(m, sizeN, sizeM, size, pos, vel, q, qVel, color);
+	Physics::Wave *wave = new Physics::Wave(m, size, pos, vel, q, qVel, color);
 	//wave->initialize();
 	Entities[countAddEntities] = wave;
 	++countAddEntities;
@@ -161,6 +166,21 @@ void Game::AddSmoker(const Vector3f& pos, const Vector3f& rand, const Vector3f& 
 	Physics::Smoke *smoke = new Physics::Smoke;
 	smoke->Init(1.0f, pos, rand, vel0, vel, color, numEntitys_, createCollision);
 	Entities[countAddEntities] = smoke;
+	++countAddEntities;
+}
+
+void Game::AddVideo(const std::string& fileName, const float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
+{
+	Physics::Video* video = new Physics::Video();
+	video->SetMass(m);
+	video->SetSize(size);
+	video->SetPos(pos);
+	video->SetVel(vel);
+	video->SetAngleQ(q);
+	video->SetAngleVelQ(qVel);
+	video->SetColor(color);
+	video->SetFileName(fileName);
+	Entities[countAddEntities] = video;
 	++countAddEntities;
 }
 
@@ -248,21 +268,7 @@ bool Game::AddModel(const std::string& fileName, const float m, const Vector3f& 
 	return true;
 }
 
-bool Game::AddVideo(const std::string& fileName, const float m, const Vector2f& size, const Vector3f& pos, const Vector3f& vel, const Quaternion& q, const Quaternion& qVel, const Math::Color4f& color)
-{
-	Physics::Video* video = new Physics::Video();
-	video->SetMass(m);
-	video->SetSize(size);
-	video->SetPos(pos);
-	video->SetVel(vel);
-	video->SetAngleQ(q);
-	video->SetAngleVelQ(qVel);
-	video->SetColor(color);
-	bool res = video->Initialize(fileName);
-	Entities[countAddEntities] = video;
-	++countAddEntities;
-	return res;
-}
+
 
 /*
 void Game::SetLine(float m, float r, float h, Vector3 pos, Quaternion q, Color4f color)
@@ -294,10 +300,11 @@ void Game::Solve(float dt)
 	{		
 		for(unsigned b = 0; b < numEntitys; ++b)
 		{			
-			if (a != b 
-				&& Math::closeEnough(Entities[a]->GetVel().x, Entities[b]->GetVel().x)
-				&& Math::closeEnough(Entities[a]->GetVel().y, Entities[b]->GetVel().y)
-				&& Math::closeEnough(Entities[a]->GetVel().z, Entities[b]->GetVel().z))
+			if (a != b
+				//&&(Math::closeEnough(Entities[a]->GetVel().x, Entities[b]->GetVel().x)
+				//|| Math::closeEnough(Entities[a]->GetVel().y, Entities[b]->GetVel().y)
+				//|| Math::closeEnough(Entities[a]->GetVel().z, Entities[b]->GetVel().z))
+				)
 			{
 				Vector3f force(GraviForce(a,b));
 				//if ( force.unitize() > Math::EPSILON )
@@ -346,7 +353,7 @@ void Game::Simulate(float dt) /* Iterate the masses by the change in time */
 		if (typeid(*Entities[i]) == typeid(Physics::Video))
 		{
 			Physics::Video* video = dynamic_cast<Physics::Video*>(Entities[i]);
-			video->Update(dt/TicksPerSrcond);
+			video->Update(static_cast<unsigned long>(dt/TicksPerSrcond));
 		}
 	}
 }
@@ -481,7 +488,8 @@ void Game::Collision(float dt)
 					for (int i = 0; i < 8; i++)
 					{
 						Vector3f d = P[i] - pb;
-						d = q1.rotate(d);
+						Quaternion q_ = q1 * d * q.conjugate();
+						d = Vector3f(q_.x, q_.y, q_.z);
 						P[i] = pb + d;
 					}
 
@@ -518,8 +526,9 @@ void Game::Collision(float dt)
 									qq.fromAxisAngle(axic, -2.0f*angle);
 									qq.normalize();
 									//std::cout << "angle" << angle << std::endl;
-									//std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
-									vm = qq.rotate(vm);
+									//std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
+									Quaternion q_ = qq * vm * qq.conjugate();
+									vm = Vector3f(q_.x, q_.y, q_.z);
 									//std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
 								}
 								//else
@@ -570,7 +579,8 @@ void Game::Collision(float dt)
 					for (int i = 0; i < 4; ++i)
 					{
 						Vector3f d = P[i] - pb;
-						d = q1.rotate(d);
+						Quaternion q_ = q1 * d * q1.conjugate();
+						d = Vector3f(q_.x, q_.y, q_.z);
 						P[i] = pb + d;
 					}
 
@@ -603,7 +613,8 @@ void Game::Collision(float dt)
 								qq.normalize();
 								//std::cout << "angle" << angle << std::endl;
 								//std::cout << "    vm0 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;									
-								vm = qq.rotate(vm);
+								Quaternion q_ = qq * vm * qq.conjugate();
+								vm = Vector3f(q_.x, q_.y, q_.z);
 								//std::cout << "    vm1 " << vm.x << " " << vm.y << " " << vm.z << " " << std::endl;
 							}
 							//else
@@ -1011,8 +1022,6 @@ bool Game::LoadData(const std::string& fileName)
 		else if (str == "Wave")
 		{
 			float m = dataFile.GetFloat();
-			unsigned sizeN = dataFile.GetUnsigned();
-			unsigned sizeM = dataFile.GetUnsigned();
 			float size = dataFile.GetFloat();
 			Vector3f pos = dataFile.GetVector3f();
 			Vector3f vel = dataFile.GetVector3f();
@@ -1031,7 +1040,7 @@ bool Game::LoadData(const std::string& fileName)
 			qVel.normalize();
 			
 
-			AddWave(m, sizeN, sizeM, size, pos, vel, q, qVel, color);
+			AddWave(m, size, pos, vel, q, qVel, color);
 		}
 		else if (str == "Smoker")
 		{
@@ -1045,26 +1054,12 @@ bool Game::LoadData(const std::string& fileName)
 
 			AddSmoker( pos, rand, vel0, vel, color, numParticless, createCollision);
 		}
-		else if (str == "Model")
-		{
-			float m = dataFile.GetFloat();			
-			Vector3f pos = dataFile.GetVector3f();
-			Vector3f vel = dataFile.GetVector3f();
-			Math::Color4f color = dataFile.GetColor();	
-			std::string fileNameModel = dataFile.GetString();
-
-			if (!AddModel(fileNameModel, m, pos, vel, color))
-			{
-				std::cerr << "Can not Load Model " << fileNameModel << std::endl;
-				return false;
-			}
-		}
 		else if (str == "Video")
 		{
 			float m = dataFile.GetFloat();
 			Vector2f size = dataFile.GetVector2f();
 			Vector3f pos = dataFile.GetVector3f();
-			Vector3f vel = dataFile.GetVector3f();			
+			Vector3f vel = dataFile.GetVector3f();
 			Vector3f angleAxic = dataFile.GetVector3f();
 			float angle = dataFile.GetFloat();
 			Vector3f angleVelAxic = dataFile.GetVector3f();
@@ -1080,9 +1075,19 @@ bool Game::LoadData(const std::string& fileName)
 			qVel.fromAxisAngle(angleVelAxic, angleVel);
 			qVel.normalize();
 
-			if (!AddVideo(fileNameVideo, m, size, pos, vel, q, qVel, color))
+			AddVideo(fileNameVideo, m, size, pos, vel, q, qVel, color);
+		}
+		else if (str == "Model")
+		{
+			float m = dataFile.GetFloat();			
+			Vector3f pos = dataFile.GetVector3f();
+			Vector3f vel = dataFile.GetVector3f();
+			Math::Color4f color = dataFile.GetColor();	
+			std::string fileNameModel = dataFile.GetString();
+
+			if (!AddModel(fileNameModel, m, pos, vel, color))
 			{
-				std::cerr << "Can not Load Video " << fileNameVideo << std::endl;
+				std::cerr << "Can not Load Model " << fileNameModel << std::endl;
 				return false;
 			}
 		}

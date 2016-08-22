@@ -38,7 +38,8 @@ namespace Render
 
 		virtual int LoadTextures();		
 
-		virtual bool CreateWin(long* WndProc, const char *title, unsigned width, unsigned height, int bits);
+		//virtual bool CreateWin(long* WndProc, const char *title, unsigned width, unsigned height, int bits);
+		virtual bool CreateWin(const char *title, unsigned width, unsigned height, int bits);
 
 		virtual void Print(const char *fmt, ...);
 

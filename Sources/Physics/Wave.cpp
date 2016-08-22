@@ -37,7 +37,7 @@ bool Wave::initialize()
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);					// Set Perspective Calculations To Most Accurate
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);							// Draw Our Mesh In Wireframe Mode
 	glEnable(GL_FRONT_FACE);
-	glFrontFace(GL_CCW);
+	//glFrontFace(GL_CCW);
 
 	for (int x = 0; x < sizeN; x++)
 	{

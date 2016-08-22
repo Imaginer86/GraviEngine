@@ -2,7 +2,7 @@
 #include "../Constans.h"
 #include "Math.h"
 #include "Vector3f.h"
-#include "Matrix3.h"
+//#include "Matrix3.h"
 
 namespace Math
 {
@@ -16,7 +16,7 @@ namespace Math
 		float w, x, y, z;
 
 		Quaternion() {}
-		Quaternion(float w_, float x_, float y_, float z_);
+		Quaternion(float _w, float _x, float _y, float _z);
 		~Quaternion() {}
 
 		bool operator==(const Quaternion &rhs) const;
@@ -25,18 +25,23 @@ namespace Math
 		Quaternion &operator+=(const Quaternion &rhs);
 		Quaternion &operator-=(const Quaternion &rhs);
 		Quaternion &operator*=(const Quaternion &rhs);
+		Quaternion operator*=(const Vector3f &vec);
 		Quaternion &operator*=(float scalar);
 		Quaternion &operator/=(float scalar);
 
 		Quaternion operator+(const Quaternion &rhs) const;
 		Quaternion operator-(const Quaternion &rhs) const;
 		Quaternion operator*(const Quaternion &rhs) const;
+		Quaternion operator*(const Vector3f &vec) const;
 		Quaternion operator*(float scalar) const;
 		Quaternion operator/(float scalar) const;
 
 		//	void rotate(Vector3 &v) const;
 
 		Quaternion conjugate() const;
+
+		void normalize();
+
 		void fromAxisAngle(const Vector3f &axis, float degrees);
 		//	void fromHeadPitchRoll(float headDegrees, float pitchDegrees, float rollDegrees);
 		void fromAngleXYZ(const Vector3f &angle);
@@ -44,8 +49,8 @@ namespace Math
 		void identity();
 		Quaternion inverse() const;
 		float magnitude() const;
-		Vector3f rotate(const Vector3f &p);
-		void normalize();
+		//Vector3f rotate(const Vector3f &p);
+		
 		void set(float w_, float x_, float y_, float z_);
 		void toAxisAngle(Vector3f &axis, float &degrees) const;
 		//	void toHeadPitchRoll(float &headDegrees, float &pitchDegrees, float &rollDegrees) const;
@@ -110,6 +115,18 @@ namespace Math
 		return *this;
 	}
 
+	inline Quaternion Quaternion::operator*=(const Vector3f &v)
+	{
+		const float w_ = -(x * v.x) - (y * v.y) - (z * v.z);
+		const float x_ = (w * v.x) + (y * v.z) - (z * v.y);
+		const float y_ = (w * v.y) + (z * v.x) - (x * v.z);
+		const float z_ = (w * v.z) + (x * v.y) - (y * v.x);
+
+		Quaternion ret(x_, y_, z_, w_);
+
+		return ret;
+	}
+
 	inline Quaternion &Quaternion::operator*=(float scalar)
 	{
 		w *= scalar, x *= scalar, y *= scalar, z *= scalar;
@@ -140,6 +157,13 @@ namespace Math
 	{
 		Quaternion tmp(*this);
 		tmp *= rhs;
+		return tmp;
+	}
+
+	inline Quaternion Quaternion::operator*(const Vector3f &vec) const
+	{
+		Quaternion tmp(*this);
+		tmp *= vec;
 		return tmp;
 	}
 
@@ -223,7 +247,7 @@ namespace Math
 		return sqrt(w * w + x * x + y * y + z * z);
 	}
 
-
+	/*
 	inline Vector3f Quaternion::rotate(const Vector3f &p)
 	{
 
@@ -241,7 +265,7 @@ namespace Math
 
 		Vector3f p1 = RotateM * p;
 		return p1;
-	}
+	}*/
 	inline void Quaternion::normalize()
 	{
 		if (w == 0.0f&&x == 0.0f&&y == 0.0f&&z == 0.0f)

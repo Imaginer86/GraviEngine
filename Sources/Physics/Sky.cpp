@@ -43,8 +43,9 @@ void Sky::Init(unsigned numStars_)
 		q.fromAxisAngle(axic, angle);
 		float dist = RMin + (RMax - RMin)*Random::Instance().randf();
 
+		Quaternion q_ = q * (n*dist) * q.conjugate();
 		
-		Pos[i] =  q.rotate(n*dist);
+		Pos[i] =  Vector3f(q_.x, q_.y, q_.z);
 		color[i] = Color4f(Random::Instance().randf(), Random::Instance().randf(), Random::Instance().randf(), Random::Instance().randf());		
 		r[i] = Random::Instance().randf()*5.0f;
 	}

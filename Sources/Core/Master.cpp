@@ -13,16 +13,9 @@
 
 using namespace Core;
 
-bool Master::gActive = true;
+bool Master::gActive = false;
 bool Master::gKeys[256];
 
-bool gLightOnKey = false;			// L нажата?
-bool gShowDebugInfoKey = false;		// TAB нажат?
-bool gReverseKeyPress = false;		// Q нажат?
-bool gSwitchFullscreen = false;		// F1 нажат?
-bool gReloadKeyPress = false;		// F5 нажат?
-bool gSaveKeyPress = false;			// F6 нажат?
-bool gLoadKeyPress = false;			// F9 нажат?
 
 //::Math::Color4f gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f );//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 
@@ -90,7 +83,7 @@ bool Master::Init(GameBase* gameBase_)
 	countDraw = 1;
 
 	// Создать наше OpenGL окно	
-	bool assert = !Render::RenderGL::Instance().CreateWin( (long*)WndProc, "Gravi Engine", gcWidth, gcHeight, 32);
+	bool assert = !Render::RenderGL::Instance().CreateWin( "Gravi Engine", gcWidth, gcHeight, 32);
 	if (assert)
 	{
 		std::cerr << "CreateWin Failed!" << std::endl;
@@ -214,7 +207,8 @@ void Master::UpdateKeys()
 		Render::RenderGL::Instance().Release();					// Разрушаем текущее окно
 		Render::RenderGL::Instance().SetFullScreen( !Render::RenderGL::Instance().GetFullScreen() );		// Переключаем режим
 		// Пересоздаём наше OpenGL окно
-		gDone = !Render::RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
+		//gDone = !Render::RenderGL::Instance().CreateWin((long*)Master::Instance().WndProc, ("NeHe OpenGL структура"), gcWidth, gcHeight, 32 );
+		gDone = !Render::RenderGL::Instance().CreateWin(("NeHe OpenGL структура"), gcWidth, gcHeight, 32);
 	}
 
 	if (gSwitchFullscreen && !gKeys[VK_F1])
@@ -229,6 +223,7 @@ void Master::UpdateKeys()
 		gFirstLoad = true;
 		Release();		
 		gDone = !gmGame->LoadData(gmGame->GetSceneName());
+		Init(gmGame);
 		Render::RenderGL::Instance().SetGLLight();
 	}
 

@@ -139,7 +139,12 @@ void Video::CloseAVI()             // Функция закрытия
 	AVIFileExit();                // Закрытие файла
 }
 
-bool Video::Initialize(const std::string& szFile) //Инициализация
+void Video::SetFileName(const std::string& fileName_)
+{
+	fileName = fileName_;
+}
+
+bool Video::Initialize() //Инициализация
 {
 	//g_window = window;
 	//g_keys = keys;
@@ -169,7 +174,7 @@ bool Video::Initialize(const std::string& szFile) //Инициализация
 	// Включение автогенерации текстурных координат по координате T сферического наложения
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
-	OpenAVI(szFile);          // Откроем видео-файл
+	OpenAVI(fileName);          // Откроем видео-файл
 
 	// Создание текстуры
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -206,10 +211,7 @@ void Video::Draw(void)         // Прорисовка сцены
 
 	Vector3f axic;
 	float angle;
-	Quaternion q = GetAngleQ();
 	q.toAxisAngle(axic, angle);
-
-	Vector3f pos = GetPos();
 
 	//glLoadIdentity();    // Сброс матрицы просмотра
 

@@ -167,10 +167,19 @@ namespace Core
 
 		Math::Color4f gLightAmbient, gLightDiffuse;
 		Math::Vector3f gLightPosition;     // Позиция света
+
+
+		bool gLightOnKey;			// L нажата?
+		bool gShowDebugInfoKey;		// TAB нажат?
+		bool gReverseKeyPress;		// Q нажат?
+		bool gSwitchFullscreen;		// F1 нажат?
+		bool gReloadKeyPress;		// F5 нажат?
+		bool gSaveKeyPress;			// F6 нажат?
+		bool gLoadKeyPress;			// F9 нажат?
+
 	};
 
 	inline Master::Master()
-	//:gActive(true)                // Флаг активности окна
 	:gDone(false)	// Логическая переменная для выхода из цикла
 	,gPause(true)
 	,gShowDebugInfo(true)
@@ -198,6 +207,13 @@ namespace Core
 	,gLightAmbient( 0.8f, 0.8f, 0.8f, 1.0f )
 	,gLightDiffuse( 0.5f, 0.5f, 0.5f, 1.0f )
 	,gLightPosition( 0.0f, 10.0f, 0.0f)
+	,gLightOnKey(false)
+	,gShowDebugInfoKey(false)
+	,gReverseKeyPress(false)
+	,gSwitchFullscreen(false)
+	,gReloadKeyPress(false)
+	,gSaveKeyPress(false)
+	,gLoadKeyPress(false)
 	{
 	}
 

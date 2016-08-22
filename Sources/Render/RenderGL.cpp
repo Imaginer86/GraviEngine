@@ -326,7 +326,7 @@ void RenderGL::SetGLLight()
 	}
 }
 
-bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsigned height, int bits)
+bool RenderGL::CreateWin(/*long* WndProc,*/const char *title, unsigned width, unsigned height, int bits)
 {
 	GLuint		PixelFormat;			    // Хранит результат после поиска
 	WNDCLASS	wc;						   // Структура класса окна
@@ -343,7 +343,8 @@ bool RenderGL::CreateWin(long* WndProc,const char *title, unsigned width, unsign
 	rhInstance = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
 
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
-	wc.lpfnWndProc = WNDPROC(WndProc);					  // Процедура обработки сообщений
+	//wc.lpfnWndProc = WNDPROC(WndProc);					  // Процедура обработки сообщений
+	wc.lpfnWndProc = WNDPROC(&Core::Master::Instance().WndProc);					  // Процедура обработки сообщений
 	wc.cbClsExtra = 0;									 // Нет дополнительной информации для окна
 	wc.cbWndExtra = 0;							 	    // Нет дополнительной информации для окна
 	wc.hInstance = rhInstance;						   // Устанавливаем дескриптор
@@ -512,6 +513,8 @@ void RenderGL::DisableLight()
 
 bool RenderGL::Init()
 {
+	//return true;
+
 	//if (!LoadGLTextures())								// If Loading The Textures Failed
 	//{
 		//return false;									// Return False
@@ -523,8 +526,8 @@ bool RenderGL::Init()
 
 
 	glEnable(GL_DEPTH_TEST);	// Hidden surface removal
-	glFrontFace(GL_CCW);		// Counter clock-wise polygons face out
-	glEnable(GL_CULL_FACE);		// Do not calculate inside of jet
+	//glFrontFace(GL_CCW);		// Counter clock-wise polygons face out
+	//glEnable(GL_CULL_FACE);		// Do not calculate inside of jet
 
 	glShadeModel(GL_SMOOTH);            // Разрешить плавное цветовое сглаживание
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          // Очистка экрана в черный цвет
@@ -532,23 +535,17 @@ bool RenderGL::Init()
 	glEnable(GL_DEPTH_TEST);            // Разрешить тест глубины
 	glDepthFunc(GL_LEQUAL);            // Тип теста глубины
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);      // Улучшение в вычислении перспективы
+															// Enable color tracking
 	glEnable(GL_COLOR_MATERIAL);
-
-	//glEnable(GL_TEXTURE_2D);
-
-	
-
-	// Enable color tracking
-	glEnable(GL_COLOR_MATERIAL);
-
 	// Set Material properties to follow glColor values
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
+	glEnable(GL_TEXTURE_2D);
+	
 	SetGLLight();
 
 	// Black blue background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
 
 	// Load texture
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -25,7 +25,7 @@ namespace Math
 		Quaternion &operator+=(const Quaternion &rhs);
 		Quaternion &operator-=(const Quaternion &rhs);
 		Quaternion &operator*=(const Quaternion &rhs);
-		Quaternion operator*=(const Vector3f &vec);
+		Quaternion &operator*=(const Vector3f &vec);
 		Quaternion &operator*=(float scalar);
 		Quaternion &operator/=(float scalar);
 
@@ -115,7 +115,7 @@ namespace Math
 		return *this;
 	}
 
-	inline Quaternion Quaternion::operator*=(const Vector3f &v)
+	inline Quaternion &Quaternion::operator*=(const Vector3f &v)
 	{
 		const float w_ = -(x * v.x) - (y * v.y) - (z * v.z);
 		const float x_ = (w * v.x) + (y * v.z) - (z * v.y);
@@ -124,7 +124,8 @@ namespace Math
 
 		Quaternion ret(x_, y_, z_, w_);
 
-		return ret;
+		*this = ret;
+		return *this;
 	}
 
 	inline Quaternion &Quaternion::operator*=(float scalar)

@@ -49,7 +49,7 @@ HINSTANCE  rhInstance = nullptr;              // Здесь будет хран�
 GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
 GLuint	gFontBase;				// Base Display List For The Font Set
 
-GLuint texture[1];
+extern GLuint texture[1];
 
 //extern Color4f gLightAmbient;//= { 0.8f, 0.8f, 0.8f, 1.0f }; // Значения фонового света
 //extern Color4f gLightDiffuse;//= { 1.0f, 1.0f, 1.0f, 1.0f }; // Значения диффузного света
@@ -812,7 +812,7 @@ void RenderGL::DrawSphere(const Vector3f& pos, const float r, const Color4f& col
 	//glEnable(GL_TEXTURE_GEN_S);							// Enable Sphere Mapping
 	//glEnable(GL_TEXTURE_GEN_T);							// Enable Sphere Mapping	
 
-	gluSphere(quadratic, r, 32, 16);
+	gluSphere(quadratic, r, 256, 128);
 	//glDisable(GL_TEXTURE_GEN_S);
 	//glDisable(GL_TEXTURE_GEN_T);
 

@@ -1,9 +1,9 @@
 ﻿timeScale
 UPF FPS UPS
-GraviMasses
-GraviAcc
-Wind
-Collissions
+bGraviMasses
+bGraviAcc
+bWind
+bCollissions
 CameraPos
 Camera AngleAxic Angle
 UpdateCamera

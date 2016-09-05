@@ -20,7 +20,7 @@ namespace Core
 
 		bool Init(GameBase* gameBase_);
 		void Run();
-		void Tick(long dtick);
+		void Tick(unsigned long dtick);
 		void Update(float dt);
 		void Draw();
 		void Release();

@@ -899,8 +899,8 @@ bool Game::LoadData(const std::string& fileName)
 		//>> gUpdateCamera;
 	Core::Master::Instance().SetGUpdateCamera(gUpdateCamera);
 
-	if (Core::Master::Instance().GetGUpdateCamera() || Core::Master::Instance().GetGFirstLoad())
-	{
+	//if (Core::Master::Instance().GetGUpdateCamera() || Core::Master::Instance().GetGFirstLoad())
+	//{
 		Core::Master::Instance().SetGFirstLoad(false);
 		Core::Camera::Instance().SetPos(cameraPos);
 		Quaternion q;
@@ -910,7 +910,7 @@ bool Game::LoadData(const std::string& fileName)
 			q.normalize();
 		}
 		Core::Camera::Instance().SetQuaternion(q);
-	}
+	//}
 
 	Math::Color4f LightAmbient = dataFile.GetColor();
 	Math::Color4f LightDiffuse = dataFile.GetColor();

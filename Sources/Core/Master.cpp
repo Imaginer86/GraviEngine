@@ -103,8 +103,8 @@ void Master::Release()
 
 void Master::Run()
 {
-	unsigned lastTickCount = ::GetTickCount64();		// Get Tick Count
-	unsigned tickCount, dtick, count;
+	unsigned long lastTickCount = static_cast<unsigned long>(::GetTickCount64());		// Get Tick Count
+	unsigned long tickCount, dtick, count;
 	tickCount = 0, dtick = 0, count = 0;
 
 
@@ -129,7 +129,7 @@ void Master::Run()
 			// Прорисовываем сцену.
 			if( gActive )          // Активна ли программа?
 			{
-				tickCount = ::GetTickCount64();			// Get The Tick Count
+				tickCount = static_cast<unsigned long>(::GetTickCount64());			// Get The Tick Count
 				UpdateKeys();
 				
 				if ( count > 1000 )
@@ -151,7 +151,7 @@ void Master::Run()
 	}
 }
 
-void Master::Tick(long dtick)
+void Master::Tick(unsigned long dtick)
 {
 	unsigned i = 0;
 	//for(i; i < UPR; ++i)
@@ -159,7 +159,7 @@ void Master::Tick(long dtick)
 	{
 		for (i; i < UPF; ++i)
 		{
-			float dt = float(dtick) * TicksPerSrcond;
+			float dt = static_cast<float>(dtick) * TicksPerSrcond;
 			Update(dt);
 		}
 	}
@@ -249,6 +249,7 @@ void Master::UpdateKeys()
 		gLoadKeyPress = true;
 
 		Release();
+		Init(gmGame);
 		gDone = !gmGame->LoadData("data/quickSave.dat");
 		Render::RenderGL::Instance().SetGLLight();
 	}
@@ -413,11 +414,11 @@ void Master::UpdateKeys()
 			gKeys[c] = false;
 			gFirstLoad = true;
 			Release();
+			Init(gmGame);
 			std::string fileName = "data/data";
 			fileName += std::string(std::to_string(i + 1));
 			fileName += ".dat";			
 			gDone = !gmGame->LoadData(fileName);
-			Init(gmGame);
 			Render::RenderGL::Instance().SetGLLight();
 		}
 	}

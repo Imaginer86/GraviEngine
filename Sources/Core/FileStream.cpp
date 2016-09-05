@@ -72,7 +72,7 @@ std::string FileStream::GetString()
 
 bool FileStream::GetBool()
 {
-	bool res;
+	bool res = false;
 	file >> res;
 	return res;
 }

@@ -5,11 +5,11 @@
 #include <GL\gl.h>
 #include <GL\glu.h>
 
-#include <cg\cg.h>														// NEW: Cg Header
-#include <cg\cggl.h>													// NEW: Cg OpenGL Specific Header
+//#include <cg\cg.h>														// NEW: Cg Header
+//#include <cg\cggl.h>													// NEW: Cg OpenGL Specific Header
 
-#pragma comment( lib, "cg.lib" )										// Search For Cg.lib While Linking
-#pragma comment( lib, "cggl.lib" )										// Search For CgGL.lib While Linking
+//#pragma comment( lib, "cg.lib" )										// Search For Cg.lib While Linking
+//#pragma comment( lib, "cggl.lib" )										// Search For CgGL.lib While Linking
 
 
 using namespace Physics;
@@ -21,14 +21,16 @@ bool		cg_enable = TRUE, sp;										// Toggle Cg Program On / Off, Space Presse
 //GLfloat		mesh[SIZE][SIZE][3];										// Our Static Mesh
 //GLfloat		wave_movement = 0.0f;										// Our Variable To Move The Waves Across The Mesh
 
-CGcontext	cgContext;													// A Context To Hold Our Cg Program(s)
-CGprogram	cgProgram;													// Our Cg Vertex Program
-CGprofile	cgVertexProfile;											// The Profile To Use For Our Vertex Shader
-CGparameter	position, color, modelViewMatrix, wave;						// The Parameters Needed For Our Shader
+//todo
+//CGcontext	cgContext;													// A Context To Hold Our Cg Program(s)
+//CGprogram	cgProgram;													// Our Cg Vertex Program
+//CGprofile	cgVertexProfile;											// The Profile To Use For Our Vertex Shader
+//CGparameter	position, color, modelViewMatrix, wave;						// The Parameters Needed For Our Shader
 
 
 bool Wave::initialize()
 {
+/*
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);								// Black Background
 	glClearDepth(1.0f);												// Depth Buffer Setup
 	glDepthFunc(GL_LEQUAL);											// The Type Of Depth Testing
@@ -93,8 +95,8 @@ bool Wave::initialize()
 	wave = cgGetNamedParameter(cgProgram, "IN.wave");
 	modelViewMatrix = cgGetNamedParameter(cgProgram, "ModelViewProj");
 
+	*/
 	return TRUE;														// Return TRUE (Initialization Successful)
-
 
 }
 
@@ -110,7 +112,9 @@ void Wave::Draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);				// Clear Screen And Depth Buffer
 	//glLoadIdentity();													// Reset The Modelview Matrix
 
-																		// Position The Camera To Look At Our Mesh From A Distance
+		
+		
+	/*																// Position The Camera To Look At Our Mesh From A Distance
 	//gluLookAt(0.0f, 25.0f, -45.0f, 0.0f, 0.0f, 0.0f, 0, 1, 0);
 
 	// Set The Modelview Matrix Of Our Shader To Our OpenGL Modelview Matrix
@@ -147,6 +151,8 @@ void Wave::Draw()
 
 	if (cg_enable)
 		cgGLDisableProfile(cgVertexProfile);							// Disable Our Vertex Profile
+
+		*/
 
 	glFlush();															// Flush The GL Rendering Pipeline
 }

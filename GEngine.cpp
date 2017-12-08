@@ -95,8 +95,8 @@ void Init()
 
 
 	FileReader fileReader;
-	fileReader.ReadModelOBJ(model, "data/Dragon/BGE_Dragon_2.5_Blender_Game_Engine.obj");
-	//fileReader.ReadModelOBJ(model, "data/T34/T34_FBX.obj");
+	fileReader.ReadModelOBJ(model, "data/T34/T34_FBX.obj");
+	//fileReader.ReadModelOBJ(model, "data/Dragon/BGE_Dragon_2.5_Blender_Game_Engine.obj");	
 	//fileReader.ReadModelOBJ(model, "data/T34/t_34_obj.obj");
 	//fileReader.ReadModelOBJ(model, "data/Manowar.obj");
 

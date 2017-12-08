@@ -42,10 +42,10 @@ public:
 inline Render::Render()
 : fullscreen(false)
 , lightOn(true)
-, camera(Vector3f(20.0f, 5.0f, 0.0f), Quaternion(0.0f, Vector3f(0.0f, 0.0f, 0.0f)))
+, camera(Vector3f(0.0f, 0.75f, 4.0f), Quaternion(0.0f, Vector3f(0.0f, 0.0f, 0.0f)))
 {
 	//camera.q *= Quaternion(90, Vector3f(1.0f, 0.0f, 0.0f));
-	camera.q *= Quaternion(90, Vector3f(0.0f, 1.0f, 0.0f));
+	//camera.q *= Quaternion(180, Vector3f(0.0f, 1.0f, 0.0f));
 
 }
 

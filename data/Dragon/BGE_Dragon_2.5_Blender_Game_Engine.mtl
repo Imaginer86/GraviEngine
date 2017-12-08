@@ -1,0 +1,117 @@
+# Blender MTL File: 'BGE_Dragon_2.5_Blender_Game_Engine.blend'
+# Material Count: 9
+
+newmtl EYES
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\Programming\Lab\GEngine\data\AppData\Local\Temp\Rar$DIa0.078\New_texture\Nor.jpg
+map_Bump textures\\Dragon_Nor_mirror2.jpg
+map_Ke textures\\Dragon_Bump_Col2.jpg
+map_Ks textures\\Dragon_Bump_Col2.jpg
+
+newmtl Game_dragon
+Ns 76.470588
+Ka 1.000000 1.000000 1.000000
+Kd 0.122992 0.041593 0.017175
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd D:\Programming\Lab\GEngine\data\AppData\Local\Temp\Rar$DIa0.078\New_texture\Nor.jpg
+map_Bump textures\\Dragon_Nor_mirror2.jpg
+map_Ks textures\\Dragon_Bump_Col2.jpg
+
+newmtl Game_dragon.001
+Ns 76.470588
+Ka 1.000000 1.000000 1.000000
+Kd 0.165674 0.165674 0.165674
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd D:\Programming\Lab\GEngine\data\AppData\Local\Temp\Rar$DIa0.078\New_texture\Nor.jpg
+map_Bump textures\\Dragon_Nor_mirror2.jpg
+map_Ks textures\\Dragon_Bump_Col2.jpg
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 1.600000 1.600000 1.600000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd I:\Blendswap\ani feuer1.png
+map_d textures\\Ani_Fire_A.png
+
+newmtl Material.001_Ani_Fire_A.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 1.600000 1.600000 1.600000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd textures\Ani_Fire_A.png
+map_d textures\\Ani_Fire_A.png
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.131025 0.131025 0.131025
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump textures\\Floor_N.jpg
+map_Kd textures\\Floor_C.jpg
+map_Ks textures\\Floor_S.jpg
+
+newmtl Material.008
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.009
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+map_Kd I:\Blendswap\ani feuer1.png
+map_Ke textures\\Fire_A_2.png
+map_Ks textures\\Ani_Fire_A.png
+map_d textures\\Ani_Fire_A.png
+
+newmtl Material.009_Ani_Fire_A.png
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+map_Kd textures\Ani_Fire_A.png
+map_Ke textures\\Fire_A_2.png
+map_Ks textures\\Ani_Fire_A.png
+map_d textures\\Ani_Fire_A.png

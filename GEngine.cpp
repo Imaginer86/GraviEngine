@@ -9,7 +9,7 @@
 //#include "MotionUnderGravitation.h"
 //#include "MassConnectedWithSpring.h"
 
-//#include "Tera.h"
+#include "Tera.h"
 
 #include "RenderGL.h"
 
@@ -35,47 +35,21 @@ bool active = true;
 bool pause = false;
 bool keys[256];                // Массив, используемый для операций с клавиатурой
 
+unsigned FPS = 0;
 
-//Simulation* simulation = nullptr;
+bool drawDebugInfo = false;
+
+enum Scene { Scene0, Scene1, Scene2, Scene3 };
+
+Scene scene;
+
+Simulation* simulation = nullptr;
 
 Model model;
 
-//Tera tera;
+Tera tera;
 
 // Эта функция устанавливает значение цвета для конкретного номера, зависящего от номера высоты
-
-/*void LoadRawFile(const char* fileName, const unsigned nSize, unsigned char* pHeightMap)
-{
-	FILE *pFile = NULL;
-
-	// открытие файла в режиме бинарного чтения
-	pFile = fopen(fileName, "rb");
-
-	// Файл найден?
-	if (pFile == NULL)
-	{
-		// Выводим сообщение об ошибке и выходим из процедуры
-		MessageBox(NULL, "Can't Find The Height Map!", "Error", MB_OK);
-		return;
-	}
-
-	// Загружаем .RAW файл в массив pHeightMap
-	// Каждый раз читаем по одному байту, размер = ширина * высота
-	fread(pHeightMap, 1, nSize, pFile);
-
-	// Проверяем на наличие ошибки
-	int result = ferror(pFile);
-
-	// Если произошла ошибка
-	if (result)
-	{
-		MessageBox(NULL, "Failed To Get Data!", "Error", MB_OK);
-	}
-
-	// Закрываем файл
-	fclose(pFile);
-}
-*/
 
 void Init()
 {
@@ -84,46 +58,57 @@ void Init()
 	//fullscreen = false;          // Оконный режим
 	//}
 
-	render = new RenderGL;
+	FileReader fileReader;
+	int sceneInt = fileReader.GetSceneNum("GEngine.ini");
+	scene = static_cast<Scene>(sceneInt);
+
+	render = new RenderGL(fullscreen, true, Vector3f(0.0f, 0.0f, 1000.0f), Quaternion(0.0f, Vector3f(0.0f, 0.0f, 0.0f)));
 
 	// Создать наше OpenGL окно
-	if (!render->createWindow(title, width, height, bits, fullscreen))
+	if (!render->createWindow(title, width, height, bits))
 	{
 		return;              // Выйти, если окно не может быть создано
 	}
 
+	if (scene == Scene::Scene0)
+	{
+		//fileReader.ReadModelOBJ(model, "data/Boat/MedievalBoat.obj");
+		//fileReader.ReadModelOBJ(model, "data/PirateShip/PirateShip.obj");
+		fileReader.ReadModelOBJ(model, "data/Tank/Tank.obj");
+		//fileReader.ReadModelOBJ(model, "data/T34/T34_FBX.obj");
+		//fileReader.ReadModelOBJ(model, "data/Dragon/BGE_Dragon_2.5_Blender_Game_Engine.obj");	
+		//fileReader.ReadModelOBJ(model, "data/T34/t_34_obj.obj");
+		//fileReader.ReadModelOBJ(model, "data/Manowar.obj");
+	}
 
+	if (scene == Scene::Scene1)
+	{
+		fileReader.LoadRawFile("data/Terrain.raw", tera.MAP_SIZE * tera.MAP_SIZE, tera.HeightMap);
+	}
 
-	FileReader fileReader;
-	fileReader.ReadModelOBJ(model, "data/T34/T34_FBX.obj");
-	//fileReader.ReadModelOBJ(model, "data/Dragon/BGE_Dragon_2.5_Blender_Game_Engine.obj");	
-	//fileReader.ReadModelOBJ(model, "data/T34/t_34_obj.obj");
-	//fileReader.ReadModelOBJ(model, "data/Manowar.obj");
+	if (scene == Scene::Scene2)
+	{
+		//simulation = new ConstantVelocity(8, Vector3f(0.0f, -1.0f, 0.0f));
+		simulation = new ConstantVelocity(2);
 
-	//LoadRawFile("Terrain.raw", tera.MAP_SIZE * tera.MAP_SIZE, tera.HeightMap);
+		simulation->getMass(0)->m = 1.9885E6f;
+		simulation->getMass(0)->r = 15.0f;
+		simulation->getMass(0)->color = Color4f(0.8f, 0.4f, 0.2f, 1.0f);
+		simulation->getMass(0)->pos = Vector3f(0.0f, 0.0f, 100.0f);
+		simulation->getMass(0)->vel = Vector3f(0.0f, 0.0f, 0.0f);
 
-	/*
-	//simulation = new ConstantVelocity(8, Vector3f(0.0f, -1.0f, 0.0f));
-	simulation = new ConstantVelocity(2);
-
-	simulation->getMass(0)->m = 1.9885E6f;
-	simulation->getMass(0)->r = 15.0f;
-	simulation->getMass(0)->color = Color4f(0.8f, 0.4f, 0.2f, 1.0f);
-	simulation->getMass(0)->pos = Vector3f(0.0f, 0.0f, 100.0f);
-	simulation->getMass(0)->vel = Vector3f(0.0f, 0.0f, 0.0f);
-
-	simulation->getMass(1)->m = 5.9726f;
-	simulation->getMass(1)->r = 5.0f;
-	simulation->getMass(1)->color = Color4f(0.1f, 0.4f, 0.9f, 1.0f);
-	//simulation->getMass(1)->pos = Vector3f(147.098290f, 0, 0);
-	simulation->getMass(1)->pos = Vector3f(152.098232f, 0.0f, 0.0f);
-	simulation->getMass(1)->vel = Vector3f(0.0f, 297.83f, 0.0f);
-	*/
+		simulation->getMass(1)->m = 5.9726f;
+		simulation->getMass(1)->r = 5.0f;
+		simulation->getMass(1)->color = Color4f(0.1f, 0.4f, 0.9f, 1.0f);
+		//simulation->getMass(1)->pos = Vector3f(147.098290f, 0, 0);
+		simulation->getMass(1)->pos = Vector3f(152.098232f, 0.0f, 0.0f);
+		simulation->getMass(1)->vel = Vector3f(0.0f, 297.83f, 0.0f);
+	}
 }
 
 void Update(float dt)
 {
-	//simulation->operate(dt);
+	if (scene == Scene::Scene2)	simulation->operate(dt);
 }
 
 void Draw()
@@ -134,108 +119,131 @@ void Draw()
 	//render->drawBox(Vector3f(0.0f, 50.0f, 0.0f), Vector3f(1.0f, 100.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 1.0f));
 	//render->drawBox(Vector3f(0.0f, 0.0f, 50.0f), Vector3f(1.0f, 1.0f, 100.0f), Color4f(0.0f, 0.0f, 1.0f, 1.0f));
 
-	for (size_t i = 0; i < model.nGroup; ++i)
-	{
-		if (model.groups[i].name == "Player_BOX_Cube.003") continue;
-		for (size_t j = 0; j < model.groups[i].size; ++j)
-		{
-			Surface surface = model.groups[i].surfaces[j];
-			if (surface.n == 3)
-			{
-				Color4f color(0.2f, 0.75f, 0.2f, 1.0f);
-				render->drawTriangle(model.vertexs[surface.Vertexs[0]], model.vertexs[surface.Vertexs[1]], model.vertexs[surface.Vertexs[2]], model.normals[surface.Normals[0]], color);
-			}
-			else if (surface.n == 4)
-			{
-				Vector3f quad[4];
-				Vector3f n = model.vertexs[surface.Normals[0]];
-				quad[0] = model.vertexs[surface.Vertexs[0]];
-				quad[1] = model.vertexs[surface.Vertexs[1]];
-				quad[2] = model.vertexs[surface.Vertexs[2]];
-				quad[3] = model.vertexs[surface.Vertexs[3]];
-				Color4f color(0.2f, 0.2f, 0.25f, 1.0f);
-				render->drawQuad(quad, n, color);
-			}
-			else if (surface.n == 5)
-			{
-				int t = 0;
-			}
-			else if (surface.n == 6)
-			{
-				//render->drawTriangle(model.vertexs[surface.Vertexs[0]], model.vertexs[surface.Vertexs[1]], model.vertexs[surface.Vertexs[2]], model.normals[surface.Normals[0]], Color4f(0.5f, 0.5f, 0.5f, 1.0f));
-				//render->drawTriangle(model.vertexs[surface.Vertexs[3]], model.vertexs[surface.Vertexs[4]], model.vertexs[surface.Vertexs[5]], model.normals[surface.Normals[0]], Color4f(0.5f, 0.5f, 0.5f, 1.0f));
-				Vector3f quad[4];
-				quad[0] = model.vertexs[surface.Vertexs[0]];
-				quad[1] = model.vertexs[surface.Vertexs[1]];
-				quad[2] = model.vertexs[surface.Vertexs[4]];
-				quad[3] = model.vertexs[surface.Vertexs[5]];
-
-				Vector3f n = model.vertexs[surface.Normals[0]];
-
-				Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
-				//render->drawQuad(quad, n, color);
-
-				//Vector3f norm[6];
-				//for (int i = 0; i < surface.n; ++i)
-				//{
-					//vert[i] = model.vertexs[surface.Vertexs[i]];
-					//norm[i] = model.normals[surface.Normals[i]];
-				//}
-
-				//render->drawTriangleStrip(6, vert, norm, color);
-			}
-			else if (surface.n == 10)
-			{
-				Vector3f vert[10];
-				Vector3f norm[10];
-				for (int i = 0; i < surface.n; ++i)
-				{
-					vert[i] = model.vertexs[surface.Vertexs[i]];
-					norm[i] = model.normals[surface.Normals[i]];
-				}
-				Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
-				//render->drawTriangleStrip(10, vert, norm, color);
-			}
-			else
-			{
-				int t = 0;
-			}
-		}
-	}
-
 	//Draw Sea
 	//render->drawSphere(Vector3f(0.0f, 0.0f, -500), 500.0f, Vector3f(0.1f, 0.3f, 0.9f));
-
-
-	//simulation->draw(*render);
-
-/*
-	for (int Xint = 0; Xint < tera.MAP_SIZE; Xint += tera.STEP_SIZE)
-		for (int Yint = 0; Yint < tera.MAP_SIZE; Yint += tera.STEP_SIZE)
-		{
-			float X = static_cast<float>(Xint) * teraScale.x;
-			float Y = static_cast<float>(Yint) * teraScale.y;
-			float difX = - tera.MAP_SIZE * teraScale.x / 2;
-			float difY = -tera.MAP_SIZE * teraScale.y / 2;
-			Vector3f vertexs[4];
-			Color4f colors[4];
-			float fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint)) / 256.0f);
-			vertexs[0] = Vector3f(X + difX, Y + difY, static_cast<float>(tera.Height(Xint, Yint)) * teraScale.z);
-			colors[0] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-			fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) / 256.0f);
-			vertexs[1] = Vector3f(X + difX, Y + difY + tera.STEP_SIZE, static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) * teraScale.z);
-			colors[1] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-			fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) / 256.0f);
-			vertexs[2] = Vector3f(X + tera.STEP_SIZE + difX, Y + tera.STEP_SIZE + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) * teraScale.z);
-			colors[2] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-			fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) / 256.0f);
-			vertexs[3] = Vector3f(X + tera.STEP_SIZE + difX, Y + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) * teraScale.z);
-			colors[3] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-			render->drawQuad(vertexs, colors);
-		}
-		*/
 	
+	switch (scene)
+	{
+	case Scene::Scene0:
+		for (size_t i = 0; i < model.nGroup; ++i)
+		{
+			for (size_t j = 0; j < model.groups[i].size; ++j)
+			{
+				Surface surface = model.groups[i].surfaces[j];
+				if (surface.n == 3)
+				{
+					Color4f color(0.2f, 0.75f, 0.2f, 1.0f);
+					render->drawTriangle(model.vertexs[surface.Vertexs[0]], model.vertexs[surface.Vertexs[1]], model.vertexs[surface.Vertexs[2]], model.normals[surface.Normals[0]], color);
+				}
+				else if (surface.n == 4)
+				{
+					Vector3f quad[4];
+					Vector3f n = model.vertexs[surface.Normals[0]];
+					quad[0] = model.vertexs[surface.Vertexs[0]];
+					quad[1] = model.vertexs[surface.Vertexs[1]];
+					quad[2] = model.vertexs[surface.Vertexs[2]];
+					quad[3] = model.vertexs[surface.Vertexs[3]];
+					Color4f color(0.2f, 0.2f, 0.25f, 1.0f);
+					render->drawQuad(quad, n, color);
+				}
+				else if (surface.n == 5)
+				{
+					Vector3f vert[5];
+					Vector3f norm[5];
+					vert[0] = model.vertexs[surface.Vertexs[0]];
+					norm[0] = model.normals[surface.Normals[0]];
+					vert[1] = model.vertexs[surface.Vertexs[1]];
+					norm[1] = model.normals[surface.Normals[1]];
+					vert[2] = model.vertexs[surface.Vertexs[2]];
+					norm[2] = model.normals[surface.Normals[2]];
+					vert[3] = model.vertexs[surface.Vertexs[3]];
+					norm[3] = model.normals[surface.Normals[3]];
+					vert[4] = model.vertexs[surface.Vertexs[4]];
+					norm[4] = model.normals[surface.Normals[4]];
+					Color4f color(0.0f, 1.0f, 0.0f, 1.0f);
+					render->drawTriangleStrip(5, vert, norm, color);
+				}
+				else if (surface.n == 6)
+				{
+					Vector3f vert[6];
+					Vector3f norm[6];
+					vert[0] = model.vertexs[surface.Vertexs[0]];
+					norm[0] = model.normals[surface.Normals[0]];
+					vert[1] = model.vertexs[surface.Vertexs[1]];
+					norm[1] = model.normals[surface.Normals[1]];
+					vert[2] = model.vertexs[surface.Vertexs[2]];
+					norm[2] = model.normals[surface.Normals[2]];
+					vert[3] = model.vertexs[surface.Vertexs[3]];
+					norm[3] = model.normals[surface.Normals[3]];
+					vert[4] = model.vertexs[surface.Vertexs[4]];
+					norm[4] = model.normals[surface.Normals[4]];
+					vert[5] = model.vertexs[surface.Vertexs[4]];
+					norm[5] = model.normals[surface.Normals[4]];
 
+
+					Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
+					render->drawTriangleStrip(6, vert, norm, color);
+				}
+				else if (surface.n == 10)
+				{
+					Vector3f vert[10];
+					Vector3f norm[10];
+					for (int i = 0; i < surface.n; ++i)
+					{
+						vert[i] = model.vertexs[surface.Vertexs[i]];
+						norm[i] = model.normals[surface.Normals[i]];
+					}
+					Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
+					//render->drawTriangleStrip(10, vert, norm, color);
+				}
+				else
+				{
+					int t = 0;
+				}
+			}
+		}
+		break;
+	case Scene::Scene1:
+		for (int Xint = 0; Xint < tera.MAP_SIZE; Xint += tera.STEP_SIZE)
+			for (int Yint = 0; Yint < tera.MAP_SIZE; Yint += tera.STEP_SIZE)
+			{
+				float X = static_cast<float>(Xint) * teraScale.x;
+				float Y = static_cast<float>(Yint) * teraScale.y;
+				float difX = -tera.MAP_SIZE * teraScale.x / 2;
+				float difY = -tera.MAP_SIZE * teraScale.y / 2;
+				Vector3f vertexs[4];
+				Vector3f n;
+				Color4f colors[4];
+				float fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint)) / 256.0f);
+				vertexs[0] = Vector3f(X + difX, Y + difY, static_cast<float>(tera.Height(Xint, Yint)) * teraScale.z);
+				colors[0] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+				fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) / 256.0f);
+				vertexs[1] = Vector3f(X + difX, Y + difY + tera.STEP_SIZE, static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) * teraScale.z);
+				colors[1] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+				fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) / 256.0f);
+				vertexs[2] = Vector3f(X + tera.STEP_SIZE + difX, Y + tera.STEP_SIZE + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) * teraScale.z);
+				colors[2] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+				fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) / 256.0f);
+				vertexs[3] = Vector3f(X + tera.STEP_SIZE + difX, Y + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) * teraScale.z);
+				colors[3] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+
+				n = ((vertexs[1] - vertexs[0]) * (vertexs[4] - vertexs[0])).unit();
+				render->drawQuad(vertexs, n, colors[0]);
+			}
+		break;
+	case Scene::Scene2:
+		simulation->draw(*render);
+		break;
+	//case Scene::Scene3:
+		//break;
+	default:
+		break;
+	}
+
+	if (drawDebugInfo)
+	{
+		render->print(Vector3f(-22.0f, 11.0f, -30.0f), "FPS: %d", FPS);
+	}
 	render->endDraw();
 }
 
@@ -251,19 +259,21 @@ void UpdateKeys()
 	}
 	if (keys['W'])
 	{
-		render->MoveCameraQ(1.0f * moveScale);		
+		//render->MoveCameraQ(10.0f * moveScale);
+		render->MoveCamera(Vector3f(0.0f, 25.0f * moveScale, 0.0f));
 	}
 	if (keys['S'])
 	{
-		render->MoveCameraQ(-1.0f*moveScale);		
+		//render->MoveCameraQ(-10.0f*moveScale);
+		render->MoveCamera(Vector3f(0.0f, -25.0f * moveScale, 0.0f));
 	}
 	if (keys['A'])
 	{
-		render->MoveCamera(Vector3f(-1.0f * moveScale, 0.0f, 0.0f));
+		render->MoveCamera(Vector3f(-25.0f * moveScale, 0.0f, 0.0f));
 	}
 	if (keys['D'])
 	{
-		render->MoveCamera(Vector3f(1.0f * moveScale, 0.0f, 0.0f));
+		render->MoveCamera(Vector3f(25.0f * moveScale, 0.0f, 0.0f));
 	}
 	if (keys[VK_UP])
 	{
@@ -280,6 +290,11 @@ void UpdateKeys()
 	if (keys[VK_RIGHT])
 	{
 		render->RotateCamera(Quaternion(-1.0f * rotateScale, Vector3f(0.0f, 1.0f, 0.0f)));
+	}
+	if (keys[VK_TAB])
+	{
+		keys[VK_TAB] = false;
+		drawDebugInfo = !drawDebugInfo;
 	}
 }
 //int main()
@@ -332,6 +347,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,	_In_opt_ HINSTANCE hPrevInstance
 				DWORD milliseconds = tickCount - lastTickCount;//_WIN#32
 				lastTickCount = tickCount;
 				float dt = static_cast<float>(milliseconds) / 1000.0f; // Преобразуем миллисекунды в секунды
+
+				if (dt > 0.0f)
+					FPS = static_cast<unsigned>(1.0f / dt);
 				dt /= slowMotionRatio;             // Делим на slowMotionRatio
 
 				timeElapsed += dt;                 // Изменяем кол-во прошедшего времени
@@ -353,7 +371,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,	_In_opt_ HINSTANCE hPrevInstance
 				render->killWindow();          // Разрушаем текущее окно
 				fullscreen = !fullscreen;      // Переключаем режим
 											   // Пересоздаём наше OpenGL окно
-				if (!render->createWindow(title, width, height, bits, fullscreen))
+				render->setFullscreen(fullscreen);
+				if (!render->createWindow(title, width, height, bits))
 				{
 					done = true;
 				}
@@ -406,8 +425,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (wParam)            // Останавливаем системный вызов
 		{
-		case SC_SCREENSAVE:        // Пытается ли запустится скринсейвер?
-		case SC_MONITORPOWER:        // Пытается ли монитор перейти в режим сбережения энергии?
+			case SC_SCREENSAVE:        // Пытается ли запустится скринсейвер?
+			case SC_MONITORPOWER:        // Пытается ли монитор перейти в режим сбережения энергии?
 			return 0;          // Предотвращаем это
 		}
 		break;              // Выход

@@ -94,6 +94,6 @@ public:
 	void setSizeVertex(size_t n);
 	void setSizeNormal(size_t n);
 
-	void Draw();
+	//void Draw();
 };
 

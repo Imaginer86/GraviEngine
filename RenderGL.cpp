@@ -1,6 +1,9 @@
 #include "GEngine.h"
 #include "RenderGL.h"
 
+#include <cstdio>
+#include <cstdarg>
+
 #include <gl\GL.h>
 #include <gl\GLU.h>
 
@@ -16,7 +19,11 @@ GLfloat gLightAmbient[4] = {0.25f, 0.25f, 0.25f, 1.0f};
 GLfloat gLightDiffuse[4] = {0.5f, 0.5f, 0.5f, 1.0f};
 GLfloat gLightPosition[4] = {0.25f, 0.25f, 0.25f, 1.0f};
 
-RenderGL::RenderGL()
+GLYPHMETRICSFLOAT gmFont[256];	// Storage For Information About Our Outline Font Characters
+GLuint	gFontBase;				// Base Display List For The Font Set
+
+RenderGL::RenderGL(bool fullscreen_, bool light_, Vector3f cameraPos, Quaternion cameraQ)
+: Render(fullscreen_, light_, cameraPos, cameraQ)
 {
 }
 
@@ -25,7 +32,7 @@ RenderGL::~RenderGL()
 {
 }
 
-bool RenderGL::createWindow(const char* title, unsigned width, unsigned height, unsigned char bits, bool fullscreenflag)
+bool RenderGL::createWindow(const char* title, unsigned width, unsigned height, unsigned char bits)
 {
 	GLuint    PixelFormat;              // Хранит результат после поиска
 	WNDCLASS  wc;                // Структура класса окна
@@ -36,7 +43,7 @@ bool RenderGL::createWindow(const char* title, unsigned width, unsigned height, 
 	WindowRect.right = (long)width;              // Установить правую составляющую в Width
 	WindowRect.top = (long)0;                // Установить верхнюю составляющую в 0
 	WindowRect.bottom = (long)height;              // Установить нижнюю составляющую в Height
-	fullscreen = fullscreenflag;              // Устанавливаем значение глобальной переменной fullscreen
+	//fullscreen = fullscreenflag;              // Устанавливаем значение глобальной переменной fullscreen
 	hInstance = GetModuleHandle(NULL);        // Считаем дескриптор нашего приложения
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;      // Перерисуем при перемещении и создаём скрытый DC
 	wc.lpfnWndProc = (WNDPROC)WndProc;          // Процедура обработки сообщений
@@ -214,6 +221,8 @@ void RenderGL::killWindow()
 		MessageBox(NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
 		hInstance = NULL;                // Установить hInstance в NULL
 	}
+
+	killFont();
 }
 
 void RenderGL::init()
@@ -231,6 +240,8 @@ void RenderGL::init()
 	glEnable(GL_COLOR_MATERIAL);	// Set Material properties to follow glColor values
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 	//glEnable(GL_TEXTURE_2D);	
+
+	buildFont();				// Build The Font
 }
 
 void RenderGL::resize(unsigned width, unsigned height)
@@ -274,13 +285,11 @@ void RenderGL::beginDraw() const
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);      // Очистить экран и буфер глубины	
 	glMatrixMode(GL_MODELVIEW);								  // Выбор матрицы вида модели
 	glLoadIdentity();										 // Сбросить текущую матрицу
-
+	glTranslatef(-camera.pos.x, -camera.pos.y, -camera.pos.z);
 	Vector3f axic;
 	float angle;
 	camera.q.toAngleAxis(angle, axic);
-	glRotatef(angle, axic.x, -axic.y, axic.z);
-
-	glTranslatef(-camera.pos.x, -camera.pos.y, -camera.pos.z);
+	glRotatef(angle, axic.x, -axic.y, axic.z);	
 }
 
 void RenderGL::endDraw() const
@@ -289,10 +298,83 @@ void RenderGL::endDraw() const
 	SwapBuffers(hDC);//_WIN32					// Меняем буфер (двойная буферизация)
 }
 
+void RenderGL::buildFont()
+{
+	HFONT	font;										// Windows Font ID
+
+	gFontBase = glGenLists(256);								// Storage For 256 Characters
+
+	font = CreateFont(
+		-20,							// Height Of Font
+		0,								// Width Of Font
+		0,								// Angle Of Escapement
+		0,								// Orientation Angle
+		FW_BOLD,						// Font Weight
+		TRUE,							// Italic
+		TRUE,							// Underline
+		TRUE,							// Strikeout
+										//SYMBOL_CHARSET,					// Character Set Identifier
+		ANSI_CHARSET,					// Character Set Identifier
+		OUT_TT_PRECIS,					// Output Precision
+		CLIP_DEFAULT_PRECIS,			// Clipping Precision
+		ANTIALIASED_QUALITY,			// Output Quality
+		FF_DONTCARE | DEFAULT_PITCH,		// Family And Pitch
+											//"Comic Sans MS"				// Font Name
+		"Arial"							// Font Name
+	);
+
+	SelectObject(hDC, font);							// Selects The Font We Created
+
+	wglUseFontOutlines(hDC,							// Select The Current DC
+		0,								// Starting Character
+		255,							// Number Of Display Lists To Build
+		gFontBase,							// Starting Display Lists
+		0.0f,							// Deviation From The True Outlines
+		0.1f,							// Font Thickness In The Z Direction
+		WGL_FONT_POLYGONS,			// Use Polygons, Not Lines
+									//WGL_FONT_LINES,					// Use Polygons, Not Lines
+		gmFont);							// Address Of Buffer To Recieve Data
+
+}
+
+void RenderGL::killFont()
+{
+	glDeleteLists(gFontBase, 256);								// Delete All 256 Characters
+}
+
+void RenderGL::print(const Vector3f &pos, const char *fmt, ...)
+{
+	float		length = 0;								// Used To Find The Length Of The Text
+	char		text[256];								// Holds Our String
+	va_list		ap;										// Pointer To List Of Arguments
+
+	if (fmt == NULL)									// If There's No Text
+		return;											// Do Nothing
+
+	va_start(ap, fmt);									// Parses The String For Variables
+	vsprintf_s(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+	va_end(ap);											// Results Are Stored In Text
+
+	for (unsigned loop = 0; loop<(strlen(text)); loop++)	// Loop To Find Text Length
+	{
+		length += gmFont[text[loop]].gmfCellIncX;			// Increase Length By Each Characters Width
+	}
+
+	glLoadIdentity();
+
+	//glPushMatrix();
+	glTranslatef(pos.x, pos.y, pos.z);					// Center Our Text On The Screen
+	glPushAttrib(GL_LIST_BIT);							// Pushes The Display List Bits
+	glListBase(gFontBase);									// Sets The Base Character to 0
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
+	glPopAttrib();										// Pops The Display List Bits
+	//glPopMatrix();
+}
+
 void RenderGL::drawTriangleStrip(size_t n, const Vector3f * vertexs, const Vector3f * normals, const Color4f & color) const
 {
 	glColor4f(color.r, color.g, color.b, color.a);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_TRIANGLE_FAN);
 	for (size_t i = 0; i < n; ++i)
 	{
 		glNormal3f(normals[i].x, normals[i].y, normals[i].z);

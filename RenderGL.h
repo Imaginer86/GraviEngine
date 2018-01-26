@@ -3,15 +3,20 @@
 class RenderGL:	public Render
 {
 public:
-	RenderGL();
+	RenderGL() {}
+	RenderGL(bool fullscreen_, bool light_, Vector3f cameraPos, Quaternion cameraQ);
 	virtual ~RenderGL();
 
 	virtual void init();
 	virtual void resize(unsigned width, unsigned height);
-	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits, bool fullscreenflag);
+	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits);
 	virtual void killWindow();
 	virtual void beginDraw() const;
 	virtual void endDraw() const;
+
+	virtual void buildFont();
+	virtual void killFont();
+	virtual void print(const Vector3f &pos, const char *fmt, ...);
 
 	virtual void drawTriangleStrip(size_t n, const Vector3f *vertexs, const Vector3f* normals, const Color4f& color) const;
 	virtual void drawTriangle(const Vector3f& a, const Vector3f& b, const Vector3f& c, const Vector3f& n, const Color4f& color) const;

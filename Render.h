@@ -11,13 +11,19 @@ protected:
 	bool	lightOn;
 	Camera	camera;
 public:
-	Render();
+	Render() {};
+	Render(bool fullscreen_, bool light_, Vector3f cameraPos, Quaternion cameraQ);
 	virtual ~Render() {};
 
 	virtual void init() = 0;
 	virtual void resize(unsigned width, unsigned height) = 0;
-	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits, bool fullscreenflag) = 0;	
+	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits) = 0;	
 	virtual void killWindow() = 0;
+	virtual void setFullscreen(bool fullscreen_) { fullscreen = fullscreen_; }
+
+	virtual void buildFont() = 0;
+	virtual void killFont() = 0;
+	virtual void print(const Vector3f &pos, const char *fmt, ...) = 0;
 
 	virtual void beginDraw() const = 0;
 	virtual void endDraw() const = 0;
@@ -39,10 +45,10 @@ public:
 	//Camera& GetCamera() { return camera; }
 };
 
-inline Render::Render()
-: fullscreen(false)
-, lightOn(true)
-, camera(Vector3f(0.0f, 0.75f, 4.0f), Quaternion(0.0f, Vector3f(0.0f, 0.0f, 0.0f)))
+inline Render::Render(bool fullscreen_, bool light_, Vector3f cameraPos, Quaternion cameraQ)
+: fullscreen(fullscreen_)
+, lightOn(light_)
+, camera(cameraPos, cameraQ)
 {
 	//camera.q *= Quaternion(90, Vector3f(1.0f, 0.0f, 0.0f));
 	//camera.q *= Quaternion(180, Vector3f(0.0f, 1.0f, 0.0f));

@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <list>
@@ -13,6 +14,38 @@ FileReader::FileReader()
 
 FileReader::~FileReader()
 {
+}
+
+void FileReader::LoadRawFile(const char * fileName, const unsigned nSize, unsigned char * pHeightMap)
+{
+	FILE *pFile = NULL;
+
+	// открытие файла в режиме бинарного чтения
+	pFile = fopen(fileName, "rb");
+
+	// Файл найден?
+	if (pFile == NULL)
+	{
+		// Выводим сообщение об ошибке и выходим из процедуры
+		cerr << "Can't Find The Height Map!" << std::endl; //MessageBox(NULL, "Can't Find The Height Map!", "Error", MB_OK);
+		return;
+	}
+
+	// Загружаем .RAW файл в массив pHeightMap
+	// Каждый раз читаем по одному байту, размер = ширина * высота
+	fread(pHeightMap, 1, nSize, pFile);
+
+	// Проверяем на наличие ошибки
+	int result = ferror(pFile);
+
+	// Если произошла ошибка
+	if (result)
+	{
+		std::cerr << "Failed To Get Data!" << std::endl;// (NULL, "Failed To Get Data!", "Error", MB_OK);
+	}
+
+	// Закрываем файл
+	fclose(pFile);
 }
 
 void FileReader::ReadModelOBJ(Model &model, const char *fileName)
@@ -134,6 +167,10 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 				norm.push_back(static_cast<size_t>(n));
 			}
 			surface.n = vert.size();
+			if (surface.n == 5)
+			{
+				int t = 0;
+			}
 			surface.Vertexs = new size_t[surface.n];
 			surface.Normals = new size_t[surface.n];
 
@@ -226,4 +263,18 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 	}
 	lGroups.clear();
 
+}
+
+int FileReader::GetSceneNum(const char * fileName)
+{
+	ifstream inFile;
+	inFile.open(fileName, ios::in);
+
+	string str;
+	inFile >> str;
+	int res = 0;
+	if (str == "scene")	inFile >> res;
+	return res;
+
+	return 0;
 }

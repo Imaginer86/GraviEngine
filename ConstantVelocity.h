@@ -44,6 +44,7 @@ inline void ConstantVelocity::simulate(float dt)
 	Simulation::simulate(dt);
 	return;
 
+	/*
 	for (unsigned a = 0; a < numOfMasses; ++a)
 		for (unsigned b = a + 1; b < numOfMasses; ++b)
 		{
@@ -101,5 +102,6 @@ inline void ConstantVelocity::simulate(float dt)
 				massb->simulate(dc);
 			}
 		}
+		*/
 	//Simulation::simulate(dt);
 }

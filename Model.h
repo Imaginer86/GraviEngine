@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
+#include "Entity.h"
 #include "Vector3f.h"
 
+//
 class Surface
 {
 public:
@@ -9,7 +11,7 @@ public:
 	size_t *Vertexs;
 	size_t *Normals;
 
-	Surface():n(0), Vertexs(nullptr), Normals(nullptr) {};
+	Surface():n(0), Vertexs(NULL), Normals(NULL) {};
 	Surface(const Surface &surface)
 	{
 		n = surface.n;
@@ -40,6 +42,8 @@ public:
 	}
 	~Surface() { if(Vertexs) delete[] Vertexs; if (Normals) delete[] Normals; }
 };
+
+//
 class Group
 {
 public:
@@ -47,7 +51,7 @@ public:
 	size_t size;
 	Surface *surfaces;
 public:
-	Group():size(0), surfaces(nullptr) {};
+	Group():size(0), surfaces(NULL) {};
 	Group(const Group &group)
 	{
 		name = group.name;

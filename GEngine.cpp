@@ -1,6 +1,14 @@
 //#include <iostream>
 
-#include "GEngine.h"
+//#include "GEngine.h"
+/*
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN             // Исключите редко используемые компоненты из заголовков Windows
+// Файлы заголовков Windows:
+#include <Windows.h>
+#endif
+
 #include "Vector3f.h"
 #include "Quaternion.h"
 #include "FileReader.h"
@@ -19,8 +27,10 @@ Render* render = nullptr;
 const char* title = "GEngine";
 unsigned width = 1366;
 unsigned height = 768;
-unsigned char bits = 32;
 bool fullscreen = false;
+
+
+//unsigned char bits = 32;
 
 float slowMotionRatio = 1.0f;
 float timeElapsed = 0.0f;
@@ -39,38 +49,20 @@ unsigned FPS = 0;
 
 bool drawDebugInfo = false;
 
-enum Scene { Scene0, Scene1, Scene2, Scene3 };
-
-Scene scene;
-
 Simulation* simulation = nullptr;
 
 Model model;
 
 Tera tera;
 
-// Эта функция устанавливает значение цвета для конкретного номера, зависящего от номера высоты
-
 void Init()
 {
-	//if (MessageBox(NULL, "Хотите ли Вы запустить приложение в полноэкранном режиме?", "Запустить в полноэкранном режиме?", MB_YESNO | MB_ICONQUESTION) == IDNO)
-	//{
-	//fullscreen = false;          // Оконный режим
-	//}
-
 	FileReader fileReader;
-	int sceneInt = fileReader.GetSceneNum("GEngine.ini");
-	scene = static_cast<Scene>(sceneInt);
-
 	render = new RenderGL(fullscreen, true, Vector3f(0.0f, 0.0f, 1000.0f), Quaternion(0.0f, Vector3f(0.0f, 0.0f, 0.0f)));
 
 	// Создать наше OpenGL окно
-	if (!render->createWindow(title, width, height, bits))
-	{
-		return;              // Выйти, если окно не может быть создано
-	}
-
-	if (scene == Scene::Scene0)
+	if (!render->createWindow(title, width, height))	return;	// Выйти, если окно не может быть создано
+	
 	{
 		//fileReader.ReadModelOBJ(model, "data/Boat/MedievalBoat.obj");
 		//fileReader.ReadModelOBJ(model, "data/PirateShip/PirateShip.obj");
@@ -81,12 +73,10 @@ void Init()
 		//fileReader.ReadModelOBJ(model, "data/Manowar.obj");
 	}
 
-	if (scene == Scene::Scene1)
 	{
 		fileReader.LoadRawFile("data/Terrain.raw", tera.MAP_SIZE * tera.MAP_SIZE, tera.HeightMap);
 	}
-
-	if (scene == Scene::Scene2)
+		
 	{
 		//simulation = new ConstantVelocity(8, Vector3f(0.0f, -1.0f, 0.0f));
 		simulation = new ConstantVelocity(2);
@@ -100,7 +90,6 @@ void Init()
 		simulation->getMass(1)->m = 5.9726f;
 		simulation->getMass(1)->r = 5.0f;
 		simulation->getMass(1)->color = Color4f(0.1f, 0.4f, 0.9f, 1.0f);
-		//simulation->getMass(1)->pos = Vector3f(147.098290f, 0, 0);
 		simulation->getMass(1)->pos = Vector3f(152.098232f, 0.0f, 0.0f);
 		simulation->getMass(1)->vel = Vector3f(0.0f, 297.83f, 0.0f);
 	}
@@ -108,7 +97,7 @@ void Init()
 
 void Update(float dt)
 {
-	if (scene == Scene::Scene2)	simulation->operate(dt);
+	simulation->operate(dt);
 }
 
 void Draw()
@@ -122,128 +111,118 @@ void Draw()
 	//Draw Sea
 	//render->drawSphere(Vector3f(0.0f, 0.0f, -500), 500.0f, Vector3f(0.1f, 0.3f, 0.9f));
 	
-	switch (scene)
+	for (size_t i = 0; i < model.nGroup; ++i)
 	{
-	case Scene::Scene0:
-		for (size_t i = 0; i < model.nGroup; ++i)
+		for (size_t j = 0; j < model.groups[i].size; ++j)
 		{
-			for (size_t j = 0; j < model.groups[i].size; ++j)
+			Surface surface = model.groups[i].surfaces[j];
+			if (surface.n == 3)
 			{
-				Surface surface = model.groups[i].surfaces[j];
-				if (surface.n == 3)
-				{
-					Color4f color(0.2f, 0.75f, 0.2f, 1.0f);
-					render->drawTriangle(model.vertexs[surface.Vertexs[0]], model.vertexs[surface.Vertexs[1]], model.vertexs[surface.Vertexs[2]], model.normals[surface.Normals[0]], color);
-				}
-				else if (surface.n == 4)
-				{
-					Vector3f quad[4];
-					Vector3f n = model.vertexs[surface.Normals[0]];
-					quad[0] = model.vertexs[surface.Vertexs[0]];
-					quad[1] = model.vertexs[surface.Vertexs[1]];
-					quad[2] = model.vertexs[surface.Vertexs[2]];
-					quad[3] = model.vertexs[surface.Vertexs[3]];
-					Color4f color(0.2f, 0.2f, 0.25f, 1.0f);
-					render->drawQuad(quad, n, color);
-				}
-				else if (surface.n == 5)
-				{
-					Vector3f vert[5];
-					Vector3f norm[5];
-					vert[0] = model.vertexs[surface.Vertexs[0]];
-					norm[0] = model.normals[surface.Normals[0]];
-					vert[1] = model.vertexs[surface.Vertexs[1]];
-					norm[1] = model.normals[surface.Normals[1]];
-					vert[2] = model.vertexs[surface.Vertexs[2]];
-					norm[2] = model.normals[surface.Normals[2]];
-					vert[3] = model.vertexs[surface.Vertexs[3]];
-					norm[3] = model.normals[surface.Normals[3]];
-					vert[4] = model.vertexs[surface.Vertexs[4]];
-					norm[4] = model.normals[surface.Normals[4]];
-					Color4f color(0.0f, 1.0f, 0.0f, 1.0f);
-					render->drawTriangleStrip(5, vert, norm, color);
-				}
-				else if (surface.n == 6)
-				{
-					Vector3f vert[6];
-					Vector3f norm[6];
-					vert[0] = model.vertexs[surface.Vertexs[0]];
-					norm[0] = model.normals[surface.Normals[0]];
-					vert[1] = model.vertexs[surface.Vertexs[1]];
-					norm[1] = model.normals[surface.Normals[1]];
-					vert[2] = model.vertexs[surface.Vertexs[2]];
-					norm[2] = model.normals[surface.Normals[2]];
-					vert[3] = model.vertexs[surface.Vertexs[3]];
-					norm[3] = model.normals[surface.Normals[3]];
-					vert[4] = model.vertexs[surface.Vertexs[4]];
-					norm[4] = model.normals[surface.Normals[4]];
-					vert[5] = model.vertexs[surface.Vertexs[4]];
-					norm[5] = model.normals[surface.Normals[4]];
+				Color4f color(0.2f, 0.75f, 0.2f, 1.0f);
+				render->drawTriangle(model.vertexs[surface.Vertexs[0]], model.vertexs[surface.Vertexs[1]], model.vertexs[surface.Vertexs[2]], model.normals[surface.Normals[0]], color);
+			}
+			else if (surface.n == 4)
+			{
+				Vector3f quad[4];
+				Vector3f n = model.vertexs[surface.Normals[0]];
+				quad[0] = model.vertexs[surface.Vertexs[0]];
+				quad[1] = model.vertexs[surface.Vertexs[1]];
+				quad[2] = model.vertexs[surface.Vertexs[2]];
+				quad[3] = model.vertexs[surface.Vertexs[3]];
+				Color4f color(0.2f, 0.2f, 0.25f, 1.0f);
+				render->drawQuad(quad, n, color);
+			}
+			else if (surface.n == 5)
+			{
+				Vector3f vert[5];
+				Vector3f norm[5];
+				vert[0] = model.vertexs[surface.Vertexs[0]];
+				norm[0] = model.normals[surface.Normals[0]];
+				vert[1] = model.vertexs[surface.Vertexs[1]];
+				norm[1] = model.normals[surface.Normals[1]];
+				vert[2] = model.vertexs[surface.Vertexs[2]];
+				norm[2] = model.normals[surface.Normals[2]];
+				vert[3] = model.vertexs[surface.Vertexs[3]];
+				norm[3] = model.normals[surface.Normals[3]];
+				vert[4] = model.vertexs[surface.Vertexs[4]];
+				norm[4] = model.normals[surface.Normals[4]];
+				Color4f color(0.0f, 1.0f, 0.0f, 1.0f);
+				render->drawTriangleStrip(5, vert, norm, color);
+			}
+			else if (surface.n == 6)
+			{
+				Vector3f vert[6];
+				Vector3f norm[6];
+				vert[0] = model.vertexs[surface.Vertexs[0]];
+				norm[0] = model.normals[surface.Normals[0]];
+				vert[1] = model.vertexs[surface.Vertexs[1]];
+				norm[1] = model.normals[surface.Normals[1]];
+				vert[2] = model.vertexs[surface.Vertexs[2]];
+				norm[2] = model.normals[surface.Normals[2]];
+				vert[3] = model.vertexs[surface.Vertexs[3]];
+				norm[3] = model.normals[surface.Normals[3]];
+				vert[4] = model.vertexs[surface.Vertexs[4]];
+				norm[4] = model.normals[surface.Normals[4]];
+				vert[5] = model.vertexs[surface.Vertexs[4]];
+				norm[5] = model.normals[surface.Normals[4]];
 
 
-					Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
-					render->drawTriangleStrip(6, vert, norm, color);
-				}
-				else if (surface.n == 10)
+				Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
+				render->drawTriangleStrip(6, vert, norm, color);
+			}
+			else if (surface.n == 10)
+			{
+				Vector3f vert[10];
+				Vector3f norm[10];
+				for (int k = 0; k < surface.n; ++k)
 				{
-					Vector3f vert[10];
-					Vector3f norm[10];
-					for (int i = 0; i < surface.n; ++i)
-					{
-						vert[i] = model.vertexs[surface.Vertexs[i]];
-						norm[i] = model.normals[surface.Normals[i]];
-					}
-					Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
-					//render->drawTriangleStrip(10, vert, norm, color);
+					vert[k] = model.vertexs[surface.Vertexs[k]];
+					norm[k] = model.normals[surface.Normals[k]];
 				}
-				else
-				{
-					int t = 0;
-				}
+				Color4f color(0.0f, 0.0f, 1.0f, 1.0f);
+				//render->drawTriangleStrip(10, vert, norm, color);
+			}
+			else
+			{
+				int t = 0;
 			}
 		}
-		break;
-	case Scene::Scene1:
-		for (int Xint = 0; Xint < tera.MAP_SIZE; Xint += tera.STEP_SIZE)
-			for (int Yint = 0; Yint < tera.MAP_SIZE; Yint += tera.STEP_SIZE)
-			{
-				float X = static_cast<float>(Xint) * teraScale.x;
-				float Y = static_cast<float>(Yint) * teraScale.y;
-				float difX = -tera.MAP_SIZE * teraScale.x / 2;
-				float difY = -tera.MAP_SIZE * teraScale.y / 2;
-				Vector3f vertexs[4];
-				Vector3f n;
-				Color4f colors[4];
-				float fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint)) / 256.0f);
-				vertexs[0] = Vector3f(X + difX, Y + difY, static_cast<float>(tera.Height(Xint, Yint)) * teraScale.z);
-				colors[0] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-				fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) / 256.0f);
-				vertexs[1] = Vector3f(X + difX, Y + difY + tera.STEP_SIZE, static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) * teraScale.z);
-				colors[1] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-				fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) / 256.0f);
-				vertexs[2] = Vector3f(X + tera.STEP_SIZE + difX, Y + tera.STEP_SIZE + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) * teraScale.z);
-				colors[2] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-				fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) / 256.0f);
-				vertexs[3] = Vector3f(X + tera.STEP_SIZE + difX, Y + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) * teraScale.z);
-				colors[3] = Color4f(0.2f, fColor, 0.2f, 1.0f);
-
-				n = ((vertexs[1] - vertexs[0]) * (vertexs[4] - vertexs[0])).unit();
-				render->drawQuad(vertexs, n, colors[0]);
-			}
-		break;
-	case Scene::Scene2:
-		simulation->draw(*render);
-		break;
-	//case Scene::Scene3:
-		//break;
-	default:
-		break;
 	}
+
+	for (int Xint = 0; Xint < tera.MAP_SIZE; Xint += tera.STEP_SIZE)
+		for (int Yint = 0; Yint < tera.MAP_SIZE; Yint += tera.STEP_SIZE)
+		{
+			float X = static_cast<float>(Xint) * teraScale.x;
+			float Y = static_cast<float>(Yint) * teraScale.y;
+			float difX = -tera.MAP_SIZE * teraScale.x / 2;
+			float difY = -tera.MAP_SIZE * teraScale.y / 2;
+			Vector3f vertexs[4];
+			Vector3f n;
+			Color4f colors[4];
+			float fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint)) / 256.0f);
+			vertexs[0] = Vector3f(X + difX, Y + difY, static_cast<float>(tera.Height(Xint, Yint)) * teraScale.z);
+			colors[0] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+			fColor = -0.15f + (static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) / 256.0f);
+			vertexs[1] = Vector3f(X + difX, Y + difY + tera.STEP_SIZE, static_cast<float>(tera.Height(Xint, Yint + tera.STEP_SIZE)) * teraScale.z);
+			colors[1] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+			fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) / 256.0f);
+			vertexs[2] = Vector3f(X + tera.STEP_SIZE + difX, Y + tera.STEP_SIZE + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint + tera.STEP_SIZE)) * teraScale.z);
+			colors[2] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+			fColor = -0.15f + (static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) / 256.0f);
+			vertexs[3] = Vector3f(X + tera.STEP_SIZE + difX, Y + difY, static_cast<float>(tera.Height(Xint + tera.STEP_SIZE, Yint)) * teraScale.z);
+			colors[3] = Color4f(0.2f, fColor, 0.2f, 1.0f);
+
+			n = ((vertexs[1] - vertexs[0]) * (vertexs[4] - vertexs[0])).unit();
+			render->drawQuad(vertexs, n, colors[0]);
+		}
+
+	simulation->draw(*render);
 
 	if (drawDebugInfo)
 	{
 		render->print(Vector3f(-22.0f, 11.0f, -30.0f), "FPS: %d", FPS);
 	}
+
 	render->endDraw();
 }
 
@@ -298,11 +277,14 @@ void UpdateKeys()
 	}
 }
 //int main()
-//_WIN#32
+#ifdef _WIN32
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,	_In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR    lpCmdLine, _In_ int       nCmdShow)
+#endif
 {
+	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(nCmdShow);
 
 	Init();
 	Draw();
@@ -372,7 +354,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,	_In_opt_ HINSTANCE hPrevInstance
 				fullscreen = !fullscreen;      // Переключаем режим
 											   // Пересоздаём наше OpenGL окно
 				render->setFullscreen(fullscreen);
-				if (!render->createWindow(title, width, height, bits))
+				if (!render->createWindow(title, width, height))
 				{
 					done = true;
 				}
@@ -456,3 +438,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
+*/

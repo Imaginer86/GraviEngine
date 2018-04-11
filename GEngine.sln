@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GEngine", "GEngine.vcxproj", "{CEDA5BDE-9584-4030-B7A4-C5F56D073693}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BattleCity", "..\BattleCity\BattleCity.vcxproj", "{BA18485C-BCCD-4326-9BDF-9559129FEB94}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CEDA5BDE-9584-4030-B7A4-C5F56D073693} = {CEDA5BDE-9584-4030-B7A4-C5F56D073693}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +26,14 @@ Global
 		{CEDA5BDE-9584-4030-B7A4-C5F56D073693}.Release|x64.Build.0 = Release|x64
 		{CEDA5BDE-9584-4030-B7A4-C5F56D073693}.Release|x86.ActiveCfg = Release|Win32
 		{CEDA5BDE-9584-4030-B7A4-C5F56D073693}.Release|x86.Build.0 = Release|Win32
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Debug|x64.ActiveCfg = Debug|x64
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Debug|x64.Build.0 = Debug|x64
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Debug|x86.ActiveCfg = Debug|Win32
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Debug|x86.Build.0 = Debug|Win32
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Release|x64.ActiveCfg = Release|x64
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Release|x64.Build.0 = Release|x64
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Release|x86.ActiveCfg = Release|Win32
+		{BA18485C-BCCD-4326-9BDF-9559129FEB94}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

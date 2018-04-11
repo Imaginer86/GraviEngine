@@ -7,17 +7,19 @@
 class Render
 {
 protected:
+	Render() {};
+	
 	bool	fullscreen;
 	bool	lightOn;
 	Camera	camera;
-public:
-	Render() {};
+public:	
+	
 	Render(bool fullscreen_, bool light_, Vector3f cameraPos, Quaternion cameraQ);
 	virtual ~Render() {};
 
 	virtual void init() = 0;
 	virtual void resize(unsigned width, unsigned height) = 0;
-	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits) = 0;	
+	virtual bool createWindow(const char* title, unsigned width, unsigned height, unsigned char bits = 32) = 0;	
 	virtual void killWindow() = 0;
 	virtual void setFullscreen(bool fullscreen_) { fullscreen = fullscreen_; }
 
@@ -28,11 +30,13 @@ public:
 	virtual void beginDraw() const = 0;
 	virtual void endDraw() const = 0;
 
-	virtual void drawTriangleStrip(size_t n, const Vector3f *vertexs, const Vector3f* normals, const Color4f& color) const = 0;
+	virtual void Translate(const Vector3f& t) const = 0;
+
+	//virtual void drawTriangleStrip(size_t n, const Vector3f *vertexs, const Vector3f* normals, const Color4f& color) const = 0;
 	virtual void drawTriangle(const Vector3f& a, const Vector3f& b, const Vector3f& c, const Vector3f& n, const Color4f& color) const = 0;
 	virtual void drawQuad(const Vector3f& a, const Vector3f& b, const Vector3f& c, const Vector3f& d, const Vector3f& n, const Color4f& color) const = 0;
-	virtual void drawQuad(const Vector3f& a, const Vector3f& b, const Vector3f& c, const Vector3f& d) = 0;
-	virtual void drawQuad(const Vector3f *vertexs, const Vector3f& n, const Color4f &colors) = 0;
+	virtual void drawQuad(const Vector3f& a, const Vector3f& b, const Vector3f& c, const Vector3f& d, const Color4f& color) const = 0;
+	virtual void drawQuad(const Vector3f *vertexs, const Vector3f& n, const Color4f &colors) const = 0;
 	virtual void drawBox(const Vector3f& pos, const Vector3f& size, const Color4f& color) const = 0;
 	virtual void drawBox(const Vector3f& pos, const Vector3f& size, float angle, const Vector3f& axic, const Color4f& color) const = 0;
 	virtual void drawBox(const Vector3f& pos, const Vector3f& size, const Quaternion& rotation, const Color4f& color) const = 0;

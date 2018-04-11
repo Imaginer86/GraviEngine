@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <list>
+
 #include "FileReader.h"
 
 using namespace std;
@@ -18,42 +19,49 @@ FileReader::~FileReader()
 
 void FileReader::LoadRawFile(const char * fileName, const unsigned nSize, unsigned char * pHeightMap)
 {
-	FILE *pFile = NULL;
+	//#ifdef _WIN32
+	//FILE *pFile = NULL;
+	//#else
+	//char *pFIle;
+	//#endif
 
-	// открытие файла в режиме бинарного чтения
-	pFile = fopen(fileName, "rb");
+	fstream in;
+	in.open(fileName);
 
-	// Файл найден?
-	if (pFile == NULL)
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	//fopen(&pFIle, fileName, "rb");
+
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ?
+	if (!in.is_open())
 	{
-		// Выводим сообщение об ошибке и выходим из процедуры
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		cerr << "Can't Find The Height Map!" << std::endl; //MessageBox(NULL, "Can't Find The Height Map!", "Error", MB_OK);
 		return;
 	}
 
-	// Загружаем .RAW файл в массив pHeightMap
-	// Каждый раз читаем по одному байту, размер = ширина * высота
-	fread(pHeightMap, 1, nSize, pFile);
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ .RAW пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ pHeightMap
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ = пїЅпїЅпїЅпїЅпїЅпїЅ * пїЅпїЅпїЅпїЅпїЅпїЅ
+	//fread(pHeightMap, 1, nSize, in);
+	//todo
 
-	// Проверяем на наличие ошибки
-	int result = ferror(pFile);
-
-	// Если произошла ошибка
-	if (result)
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	//int result = ferror(in);
+	
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	if (in.eof())
 	{
 		std::cerr << "Failed To Get Data!" << std::endl;// (NULL, "Failed To Get Data!", "Error", MB_OK);
 	}
-
-	// Закрываем файл
-	fclose(pFile);
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+	in.close();
 }
 
 void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 {
-	list<Vector3f> lVertexs;
-	list<Vector3f> lNormals;
-	list<Group> lGroups;
-	list<Surface> lSurface;
+	std::list<Vector3f> lVertexs;
+	std::list<Vector3f> lNormals;
+	std::list<Group> lGroups;
+	std::list<Surface> lSurface;
 	
 
 	ifstream infile;
@@ -92,7 +100,7 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 		}
 		case 'v':
 		{
-			char ch = sstr.peek();
+			char ch = static_cast<char>(sstr.peek());
 			if (ch == 'n')
 			{
 				sstr >> ch;
@@ -169,25 +177,25 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 			surface.n = vert.size();
 			if (surface.n == 5)
 			{
-				int t = 0;
+				int tt = 0;
 			}
 			surface.Vertexs = new size_t[surface.n];
 			surface.Normals = new size_t[surface.n];
 
 			size_t i = 0;
-			for (auto it : vert)
+			for (std::list<size_t>::iterator it = vert.begin(); it != vert.end(); ++it)
 			{
-				surface.Vertexs[i] = it;
+				surface.Vertexs[i] = *it;
 				++i;
 			}
 
 			i = 0;
-			for (auto it : norm)
+			for (std::list<size_t>::iterator it = norm.begin(); it != norm.end(); ++it)
 			{
-				surface.Normals[i] = it;
+				surface.Normals[i] = *it;
 				++i;
 			}
-
+			
 			lSurface.push_back(surface);
 
 			break;
@@ -216,11 +224,11 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 				group.surfaces = new Surface[group.size];
 
 				size_t i = 0;
-				for (auto it : lSurface)
+
+				for (std::list<Surface>::iterator it = lSurface.begin(); it != lSurface.end(); ++it, ++i)
 				{
-					group.surfaces[i].n = it.n;
-					group.surfaces[i] = it;
-					++i;
+					//group.surfaces[i].n = *it.n;
+					group.surfaces[i] = *it;
 				}
 				lGroups.push_back(group);
 				lSurface.clear();
@@ -235,46 +243,40 @@ void FileReader::ReadModelOBJ(Model &model, const char *fileName)
 
 	size_t n = lVertexs.size();
 	model.setSizeVertex(n);
+	
 	size_t i = 0;
-	for (auto it : lVertexs)
+	for (std::list<Vector3f>::iterator it = lVertexs.begin(); it != lVertexs.end(); ++it, ++i)
 	{
-		model.vertexs[i] = it;
-		++i;
+		model.vertexs[i] = *it;
 	}
 	lVertexs.clear();
 
-	n = lNormals.size();
-	model.setSizeNormal(n);;
+	model.setSizeNormal(n);
 	i = 0;
-	for (auto it : lNormals)
+	for(std::list<Vector3f>::iterator it = lNormals.begin(); it != lNormals.end(); ++it, ++i)
 	{
-		model.normals[i] = it;
-		++i;
+		model.normals[i] = *it;
 	}
 	lNormals.clear();
 
-	n = lGroups.size();
 	model.setSizeGroup(n);
 	i = 0;
-	for (auto it : lGroups)
+	for(std::list<Group>::iterator it = lGroups.begin(); it != lGroups.end(); ++it, ++i)
 	{
-		model.groups[i] = it;
-		++i;
+		model.groups[i] = *it;		
 	}
 	lGroups.clear();
 
 }
 
-int FileReader::GetSceneNum(const char * fileName)
-{
-	ifstream inFile;
-	inFile.open(fileName, ios::in);
-
-	string str;
-	inFile >> str;
-	int res = 0;
-	if (str == "scene")	inFile >> res;
-	return res;
-
-	return 0;
-}
+//int FileReader::GetSceneNum(const char * fileName)
+//{
+	//ifstream inFile;
+	//inFile.open(fileName, ios::in);
+	//string str;
+	//inFile >> str;
+	//int res = 0;
+	//if (str == "scene")	inFile >> res;
+	//return res;
+	//return 0;
+//}
